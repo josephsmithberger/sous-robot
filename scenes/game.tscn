@@ -1,32 +1,61 @@
-[gd_scene format=3 uid="uid://ceb63r5puxbhk"]
+[gd_scene format=3 uid="uid://6drof03lyr6n"]
 
-[ext_resource type="Script" uid="uid://cosre32qjbpd2" path="res://scripts/game_scene.gd" id="1_p57ef"]
-[ext_resource type="Script" uid="uid://rr43vymo32yc" path="res://scripts/kitchen_floor_multimesh.gd" id="2_u5sy4"]
-[ext_resource type="PackedScene" uid="uid://cd5e5w4ybul3g" path="res://assets/kitchen-pack/wall_window_closed.gltf" id="3_iywne"]
-[ext_resource type="PackedScene" uid="uid://bmxodky3gmro3" path="res://assets/kitchen-pack/wall_orderwindow_decorated.gltf" id="4_p57ef"]
-[ext_resource type="PackedScene" uid="uid://bymmpbt8b0e4s" path="res://assets/kitchen-pack/wall_decorated.gltf" id="5_iywne"]
-[ext_resource type="PackedScene" uid="uid://c8ht7rsidvojb" path="res://assets/kitchen-pack/table_round_A_decorated.gltf" id="9_kvpfn"]
+[ext_resource type="PackedScene" uid="uid://cl50h4s8igla8" path="res://scenes/store.tscn" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://ceb63r5puxbhk" path="res://scenes/kitchen.tscn" id="1_yqjtg"]
 
-[node name="game" type="Node3D" unique_id=1560217773]
-script = ExtResource("1_p57ef")
+[node name="game" type="Control" unique_id=892098176]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Floor" type="Node3D" parent="." unique_id=588190647]
-script = ExtResource("2_u5sy4")
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=52210457]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 10
 
-[node name="StaticGeometry" type="Node3D" parent="." unique_id=1356837661]
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer" unique_id=926340717]
+layout_mode = 2
+theme_override_constants/separation = 30
 
-[node name="Architecture" type="Node3D" parent="." unique_id=2000394010]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer" unique_id=2008478624]
+layout_mode = 2
 
-[node name="wall_window_closed" parent="Architecture" unique_id=2072423849 instance=ExtResource("3_iywne")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/VBoxContainer" unique_id=1586889003]
+layout_mode = 2
+text = "Stats"
 
-[node name="wall_orderwindow_decorated" parent="Architecture" unique_id=2022026200 instance=ExtResource("4_p57ef")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 0, -2)
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/HSplitContainer" unique_id=1437426389]
+layout_mode = 2
+current_tab = 0
 
-[node name="wall_decorated" parent="Architecture" unique_id=1127799789 instance=ExtResource("5_iywne")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.007507682, 0, 8)
+[node name="Kitchen" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=282776521]
+layout_mode = 2
+metadata/_tab_index = 0
 
-[node name="Furniture" type="Node3D" parent="." unique_id=1792927789]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen" unique_id=2036908561]
+layout_mode = 2
 
-[node name="table_round_A_decorated" parent="Furniture" unique_id=1431207110 instance=ExtResource("9_kvpfn")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -17, 0, -8)
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer" unique_id=1042667808]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/SubViewportContainer" unique_id=1062805651]
+handle_input_locally = false
+size = Vector2i(854, 480)
+render_target_update_mode = 4
+
+[node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
+
+[node name="Store" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=1583282709 instance=ExtResource("1_uwrxv")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
