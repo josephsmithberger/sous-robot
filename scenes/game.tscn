@@ -1,3 +1,32 @@
 [gd_scene format=3 uid="uid://ceb63r5puxbhk"]
 
+[ext_resource type="Script" uid="uid://cosre32qjbpd2" path="res://scripts/game_scene.gd" id="1_p57ef"]
+[ext_resource type="Script" uid="uid://rr43vymo32yc" path="res://scripts/kitchen_floor_multimesh.gd" id="2_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://cd5e5w4ybul3g" path="res://assets/kitchen-pack/wall_window_closed.gltf" id="3_iywne"]
+[ext_resource type="PackedScene" uid="uid://bmxodky3gmro3" path="res://assets/kitchen-pack/wall_orderwindow_decorated.gltf" id="4_p57ef"]
+[ext_resource type="PackedScene" uid="uid://bymmpbt8b0e4s" path="res://assets/kitchen-pack/wall_decorated.gltf" id="5_iywne"]
+[ext_resource type="PackedScene" uid="uid://c8ht7rsidvojb" path="res://assets/kitchen-pack/table_round_A_decorated.gltf" id="9_kvpfn"]
+
 [node name="game" type="Node3D" unique_id=1560217773]
+script = ExtResource("1_p57ef")
+
+[node name="Floor" type="Node3D" parent="." unique_id=588190647]
+script = ExtResource("2_u5sy4")
+
+[node name="StaticGeometry" type="Node3D" parent="." unique_id=1356837661]
+
+[node name="Architecture" type="Node3D" parent="." unique_id=2000394010]
+
+[node name="wall_window_closed" parent="Architecture" unique_id=2072423849 instance=ExtResource("3_iywne")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
+
+[node name="wall_orderwindow_decorated" parent="Architecture" unique_id=2022026200 instance=ExtResource("4_p57ef")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 0, -2)
+
+[node name="wall_decorated" parent="Architecture" unique_id=1127799789 instance=ExtResource("5_iywne")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.007507682, 0, 8)
+
+[node name="Furniture" type="Node3D" parent="." unique_id=1792927789]
+
+[node name="table_round_A_decorated" parent="Furniture" unique_id=1431207110 instance=ExtResource("9_kvpfn")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -17, 0, -8)

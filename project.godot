@@ -27,15 +27,9 @@ renderer/rendering_method="mobile"
 
 project/editorState=[{
 "column": 0,
-"line": 0,
-"path": "res://scripts/scene_loader.gd",
-"transient": true,
-"type": "file"
-}, {
-"column": 0,
 "current": true,
 "line": 0,
-"path": "res://scripts/title.gd",
+"path": "res://scripts/kitchen_floor_multimesh.gd",
 "type": "file"
 }]
 project/shaderEditorState=[]
