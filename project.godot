@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="robot-sous"
+run/main_scene="uid://ct7d4u74y3oht"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneLoader="*res://scripts/scene_loader.gd"
 
 [rendering]
 
@@ -20,7 +25,19 @@ renderer/rendering_method="mobile"
 
 [xogot]
 
-project/editorState=[]
+project/editorState=[{
+"column": 0,
+"line": 0,
+"path": "res://scripts/scene_loader.gd",
+"transient": true,
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://scripts/title.gd",
+"type": "file"
+}]
 project/shaderEditorState=[]
 project/breakpoints={}
 project/disabled_breakpoints={}
