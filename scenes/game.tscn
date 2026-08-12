@@ -23,6 +23,11 @@ shader_parameter/blur = 0.0
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_u5sy4"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u5sy4"]
+bg_color = Color(0.921431, 0.92145264, 0.921441, 1)
+
+[sub_resource type="SystemFont" id="SystemFont_u5sy4"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_tab_unselected"]
 content_margin_left = 16.0
 content_margin_top = 6.0
@@ -114,6 +119,24 @@ vertical_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/HSplitContainer/stats" unique_id=690439288]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
+
+[node name="orders" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1412917122]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_u5sy4")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/orders" unique_id=848917316]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/MarginContainer" unique_id=942788482]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/MarginContainer/VBoxContainer" unique_id=923350188]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+text = "Orders"
+horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="MarginContainer/HSplitContainer/stats" unique_id=1918919157]
 layout_mode = 2
