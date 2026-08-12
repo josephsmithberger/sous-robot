@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1qsaqtd5d85n"
-path="res://.godot/imported/restaurant-interface-symbol-of-fork-and-knife-couple.svg-aa2cf509fdb54f1b62348d1a26702a7e.ctex"
+path="res://.godot/imported/utensil_decal.svg-2dcbfb2e51c10090d0e3da20801b4095.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/restaurant-interface-symbol-of-fork-and-knife-couple.svg"
-dest_files=["res://.godot/imported/restaurant-interface-symbol-of-fork-and-knife-couple.svg-aa2cf509fdb54f1b62348d1a26702a7e.ctex"]
+source_file="res://assets/ui/utensil_decal.svg"
+dest_files=["res://.godot/imported/utensil_decal.svg-2dcbfb2e51c10090d0e3da20801b4095.ctex"]
 
 [params]
 

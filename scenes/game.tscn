@@ -6,7 +6,7 @@
 [ext_resource type="Shader" uid="uid://dguhn0gn6nyii" path="res://shaders/rounded_subviewport.gdshader" id="2_rounded"]
 [ext_resource type="FontFile" uid="uid://dd0mykotyonnj" path="res://assets/fonts/LilitaOne-Regular.ttf" id="3_font"]
 [ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_p57ef"]
-[ext_resource type="Texture2D" uid="uid://c1qsaqtd5d85n" path="res://assets/restaurant-interface-symbol-of-fork-and-knife-couple.svg" id="4_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://c1qsaqtd5d85n" path="res://assets/ui/utensil_decal.svg" id="4_u5sy4"]
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
