@@ -7,6 +7,7 @@
 [ext_resource type="FontFile" uid="uid://dd0mykotyonnj" path="res://assets/fonts/LilitaOne-Regular.ttf" id="3_font"]
 [ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_p57ef"]
 [ext_resource type="Texture2D" uid="uid://c1qsaqtd5d85n" path="res://assets/ui/utensil_decal.svg" id="4_u5sy4"]
+[ext_resource type="Script" uid="uid://dsgxrcuyb2f73" path="res://scripts/orders_receipt.gd" id="5_receipt"]
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
@@ -23,10 +24,31 @@ shader_parameter/blur = 0.0
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_u5sy4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u5sy4"]
-bg_color = Color(0.921431, 0.92145264, 0.921441, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.992157, 0.972549, 0.901961, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.176471, 0.160784, 0.137255, 1)
+shadow_color = Color(0.109804, 0.0941176, 0.0745098, 0.28)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="SystemFont" id="SystemFont_u5sy4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_footer"]
+content_margin_left = 7.0
+content_margin_top = 7.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
+bg_color = Color(0.94902, 0.905882, 0.764706, 1)
+border_width_top = 1
+border_color = Color(0.176471, 0.160784, 0.137255, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_tab_unselected"]
 content_margin_left = 16.0
@@ -103,7 +125,7 @@ layout_mode = 2
 theme_override_constants/separation = 52
 
 [node name="stats" type="VBoxContainer" parent="MarginContainer/HSplitContainer" unique_id=2008478624]
-custom_minimum_size = Vector2(148, 0)
+custom_minimum_size = Vector2(178, 0)
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/HSplitContainer/stats" unique_id=1586889003]
@@ -121,27 +143,147 @@ layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
 
 [node name="orders" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1412917122]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_u5sy4")
+theme_override_styles/panel = SubResource("StyleBox_receipt")
+script = ExtResource("5_receipt")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/orders" unique_id=848917316]
+[node name="ReceiptPadding" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/orders" unique_id=1689450883]
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/MarginContainer" unique_id=942788482]
+[node name="ReceiptLayout" type="VBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding" unique_id=845727992]
 layout_mode = 2
+theme_override_constants/separation = 3
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/MarginContainer/VBoxContainer" unique_id=923350188]
+[node name="ReceiptTitle" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=38596681]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = SubResource("SystemFont_u5sy4")
-text = "Orders"
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = ExtResource("3_p57ef")
+theme_override_font_sizes/font_size = 20
+text = "ORDERS"
 horizontal_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HSplitContainer/stats" unique_id=1918919157]
+[node name="OrderCount" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=161848742]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.290196, 0.258824, 0.211765, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 9
+text = "0 ORDERS · 0 DONE"
+horizontal_alignment = 1
+
+[node name="TopDots" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=1112632699]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 10
+text = "······························"
+horizontal_alignment = 1
+
+[node name="ColumnHeaders" type="HBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=596022423]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Item" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/ColumnHeaders" unique_id=2104087072]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.290196, 0.258824, 0.211765, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 9
+text = "ITEM"
+
+[node name="Total" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/ColumnHeaders" unique_id=1536851462]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.290196, 0.258824, 0.211765, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 9
+text = "TOTAL"
+horizontal_alignment = 2
+
+[node name="Tip" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/ColumnHeaders" unique_id=2049460550]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.290196, 0.258824, 0.211765, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 9
+text = "TIP"
+horizontal_alignment = 2
+
+[node name="HeaderDots" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=1732171476]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 10
+text = "······························"
+horizontal_alignment = 1
+
+[node name="OrdersScroll" type="ScrollContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=1111493689]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="OrdersList" type="VBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/OrdersScroll" unique_id=376025336]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="EmptyState" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=2019376838]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.439216, 0.403922, 0.341176, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 11
+text = "NO ORDERS YET"
+horizontal_alignment = 1
+
+[node name="FooterDots" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=315520510]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 10
+text = "······························"
+horizontal_alignment = 1
+
+[node name="EarningsPanel" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=1635785751]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_receipt_footer")
+
+[node name="EarningsRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/EarningsPanel" unique_id=1080882811]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="EarningsIcon" type="TextureRect" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/EarningsPanel/EarningsRow" unique_id=1882911633]
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 texture = ExtResource("4_u5sy4")
-expand_mode = 5
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EarningsLabel" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/EarningsPanel/EarningsRow" unique_id=1796353499]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = SubResource("SystemFont_u5sy4")
+theme_override_font_sizes/font_size = 11
+text = "EARNINGS"
+vertical_alignment = 1
+
+[node name="TotalEarnings" type="Label" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/EarningsPanel/EarningsRow" unique_id=1164148009]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.176471, 0.160784, 0.137255, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+text = "$0.00"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/HSplitContainer" unique_id=1437426389]
 layout_mode = 2

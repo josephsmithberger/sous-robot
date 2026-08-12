@@ -31,9 +31,14 @@ renderer/rendering_method="mobile"
 
 project/editorState=[{
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/kitchen_floor_multimesh.gd",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://scripts/orders_receipt.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{
