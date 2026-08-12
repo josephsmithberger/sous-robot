@@ -19,6 +19,15 @@ config/icon="res://icon.svg"
 
 SceneLoader="*res://scripts/scene_loader.gd"
 GameControl="*res://scripts/game_control.gd"
+DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+
+[dialogue_manager]
+
+runtime/balloon_path="res://addons/dialogue_manager/example_balloon/small_example_balloon.tscn"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
 
 [input_devices]
 
@@ -43,9 +52,15 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/orders_receipt.gd",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 498,
+"path": "res://addons/dialogue_manager/dialogue_manager.gd",
+"transient": true,
 "type": "file"
 }]
 project/shaderEditorState=[{
