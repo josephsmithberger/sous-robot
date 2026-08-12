@@ -1,18 +1,26 @@
 extends Control
 
 const KITCHEN_TAB := 0
+const TRAY_HEIGHT := 132.0
+const SLIDE_DURATION := 0.28
 
 @onready var _tabs: TabContainer = $MarginContainer/HSplitContainer/TabContainer
-@onready var _dialogue_slot: SubViewportContainer = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/DialogueSlot
-@onready var _dialogue_viewport: SubViewport = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/DialogueSlot/DialogueViewport
-@onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck
-@onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow
-@onready var _keyboard_hint: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint
+@onready var _dialogue_slot: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot
+@onready var _dialogue_viewport: SubViewport = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot/DialogueViewport
+@onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck
+@onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow
+@onready var _keyboard_hint: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint
 
 var _previous_dialogue_host_resolver: Callable
+var _interaction_tween: Tween
+var _dialogue_slot_is_open := false
+var _control_deck_is_open := false
 
 
 func _ready() -> void:
+	_prepare_panel(_dialogue_slot, -TRAY_HEIGHT)
+	_prepare_panel(_control_deck, TRAY_HEIGHT)
+
 	_tabs.tab_changed.connect(_on_tab_changed)
 	GameControl.controllability_changed.connect(_on_controllability_changed)
 	GameControl.input_mode_changed.connect(_on_input_mode_changed)
@@ -45,9 +53,69 @@ func _on_dialogue_activity_changed(_is_active: bool) -> void:
 
 func _update_interaction_ui() -> void:
 	var kitchen_is_active := _tabs.current_tab == KITCHEN_TAB
-	var dialogue_is_active := GameControl.is_dialogue_active()
-	_dialogue_slot.visible = kitchen_is_active and dialogue_is_active
-	_control_deck.visible = kitchen_is_active and GameControl.is_controllable and not dialogue_is_active
+	var show_dialogue := kitchen_is_active and GameControl.is_dialogue_active()
+	var show_controls := kitchen_is_active and GameControl.is_controllable
+	_animate_interaction_ui(show_dialogue, show_controls)
+
+
+func _prepare_panel(panel: Control, hidden_y: float) -> void:
+	panel.position.y = hidden_y
+	panel.modulate.a = 0.0
+	panel.visible = false
+
+
+func _animate_interaction_ui(show_dialogue: bool, show_controls: bool) -> void:
+	if show_dialogue == _dialogue_slot_is_open and show_controls == _control_deck_is_open:
+		return
+
+	_dialogue_slot_is_open = show_dialogue
+	_control_deck_is_open = show_controls
+
+	if is_instance_valid(_interaction_tween):
+		_interaction_tween.kill()
+
+	if show_dialogue:
+		_dialogue_slot.visible = true
+	if show_controls:
+		_control_deck.visible = true
+
+	_interaction_tween = create_tween()
+	_interaction_tween.set_parallel(true)
+	_interaction_tween.set_trans(Tween.TRANS_CUBIC)
+	_interaction_tween.set_ease(Tween.EASE_IN_OUT)
+	_interaction_tween.tween_property(
+		_dialogue_slot,
+		^"position:y",
+		0.0 if show_dialogue else -TRAY_HEIGHT,
+		SLIDE_DURATION
+	)
+	_interaction_tween.tween_property(
+		_dialogue_slot,
+		^"modulate:a",
+		1.0 if show_dialogue else 0.0,
+		SLIDE_DURATION * 0.75
+	)
+	_interaction_tween.tween_property(
+		_control_deck,
+		^"position:y",
+		0.0 if show_controls else TRAY_HEIGHT,
+		SLIDE_DURATION
+	)
+	_interaction_tween.tween_property(
+		_control_deck,
+		^"modulate:a",
+		1.0 if show_controls else 0.0,
+		SLIDE_DURATION * 0.75
+	)
+	_interaction_tween.finished.connect(_on_interaction_tween_finished)
+
+
+func _on_interaction_tween_finished() -> void:
+	if not _dialogue_slot_is_open:
+		_dialogue_slot.visible = false
+	if not _control_deck_is_open:
+		_control_deck.visible = false
+	_interaction_tween = null
 
 
 func _get_dialogue_host() -> Node:

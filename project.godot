@@ -52,15 +52,9 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"line": 0,
-"path": "res://scripts/orders_receipt.gd",
-"type": "file"
-}, {
-"column": 0,
 "current": true,
-"line": 498,
-"path": "res://addons/dialogue_manager/dialogue_manager.gd",
-"transient": true,
+"line": 113,
+"path": "res://scripts/game_ui.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

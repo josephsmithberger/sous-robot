@@ -336,6 +336,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/tab_disabled = SubResource("StyleBox_tab_unselected")
 theme_override_styles/tab_focus = SubResource("StyleBox_tab_focus")
 current_tab = 0
+use_hidden_tabs_for_min_size = true
 tab_0/title = "KITCHEN"
 tab_1/title = "STORE"
 
@@ -351,48 +352,84 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer" unique_id=1342903102]
 layout_mode = 2
 
-[node name="DialogueSlot" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=1174409458]
-visible = false
-custom_minimum_size = Vector2(0, 132)
+[node name="InteractionStage" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=2024578857]
+clip_contents = true
+custom_minimum_size = Vector2(850, 557)
 layout_mode = 2
-stretch = true
+size_flags_vertical = 3
+mouse_filter = 2
 
-[node name="DialogueViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/DialogueSlot" unique_id=1735045424]
-size = Vector2i(850, 132)
-render_target_update_mode = 4
-
-[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=1042667808]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=1042667808]
 material = SubResource("ShaderMaterial_rounded")
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 
-[node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/SubViewportContainer" unique_id=1062805651]
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer" unique_id=1062805651]
 handle_input_locally = false
 size = Vector2i(850, 425)
 render_target_update_mode = 4
 
-[node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
+[node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
 
-[node name="ControlDeck" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=529697605]
-visible = false
+[node name="DialogueTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=1121593790]
+z_index = 2
+clip_contents = true
 custom_minimum_size = Vector2(0, 132)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 132.0
+mouse_filter = 2
+
+[node name="DialogueSlot" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray" unique_id=1174409458]
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+
+[node name="DialogueViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot" unique_id=1735045424]
+handle_input_locally = false
+size = Vector2i(850, 132)
+render_target_update_mode = 4
+
+[node name="ControlTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=557323058]
+z_index = 3
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -132.0
+mouse_filter = 2
+
+[node name="ControlDeck" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray" unique_id=529697605]
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 theme_override_styles/panel = SubResource("StyleBox_control_deck")
 
-[node name="DeckMargin" type="MarginContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck" unique_id=421506169]
+[node name="DeckMargin" type="MarginContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck" unique_id=421506169]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 16
 
-[node name="JoystickRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin" unique_id=1616708155]
+[node name="JoystickRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin" unique_id=1616708155]
 layout_mode = 2
 
-[node name="MoveJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow" unique_id=336258728]
+[node name="MoveJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=336258728]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 128)
 layout_mode = 2
 script = ExtResource("7_joystick")
 
-[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick" unique_id=338560045]
+[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/MoveJoystick" unique_id=338560045]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -407,7 +444,7 @@ texture = ExtResource("8_joy_base")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick/Base" unique_id=1274892473]
+[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/MoveJoystick/Base" unique_id=1274892473]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -425,7 +462,7 @@ texture = ExtResource("9_joy_tip")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick" unique_id=1711010741]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/MoveJoystick" unique_id=1711010741]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -442,18 +479,18 @@ theme_override_font_sizes/font_size = 20
 text = "MOVE"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow" unique_id=9293051]
+[node name="Spacer" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=9293051]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow" unique_id=717317424]
+[node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=717317424]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 128)
 layout_mode = 2
 script = ExtResource("7_joystick")
 
-[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick" unique_id=1918641624]
+[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/LookJoystick" unique_id=1918641624]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -468,7 +505,7 @@ texture = ExtResource("8_joy_base")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick/Base" unique_id=932265575]
+[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/LookJoystick/Base" unique_id=932265575]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -486,7 +523,7 @@ texture = ExtResource("9_joy_tip")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick" unique_id=1377091026]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/LookJoystick" unique_id=1377091026]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -503,28 +540,28 @@ theme_override_font_sizes/font_size = 20
 text = "LOOK"
 horizontal_alignment = 1
 
-[node name="KeyboardHint" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck" unique_id=159299406]
+[node name="KeyboardHint" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck" unique_id=159299406]
 visible = false
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HintRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint" unique_id=645115019]
+[node name="HintRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint" unique_id=645115019]
 layout_mode = 2
 theme_override_constants/separation = 22
 
-[node name="Keys" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow" unique_id=2104296775]
+[node name="Keys" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow" unique_id=2104296775]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="TopRow" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1874121233]
+[node name="TopRow" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1874121233]
 layout_mode = 2
 
-[node name="W" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/TopRow" unique_id=771931085]
+[node name="W" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/TopRow" unique_id=771931085]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_keycap")
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/TopRow/W" unique_id=716513077]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/TopRow/W" unique_id=716513077]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_font_sizes/font_size = 20
@@ -532,16 +569,16 @@ text = "W"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BottomRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1230714517]
+[node name="BottomRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1230714517]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="A" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=641147685]
+[node name="A" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=641147685]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_keycap")
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/A" unique_id=1353051329]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/A" unique_id=1353051329]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_font_sizes/font_size = 20
@@ -549,12 +586,12 @@ text = "A"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="S" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=1871704619]
+[node name="S" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=1871704619]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_keycap")
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/S" unique_id=541975446]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/S" unique_id=541975446]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_font_sizes/font_size = 20
@@ -562,12 +599,12 @@ text = "S"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="D" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=839905606]
+[node name="D" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=839905606]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_keycap")
 
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/D" unique_id=1158194141]
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/D" unique_id=1158194141]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_font_sizes/font_size = 20
@@ -575,17 +612,17 @@ text = "D"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Instruction" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow" unique_id=345707575]
+[node name="Instruction" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow" unique_id=345707575]
 layout_mode = 2
 alignment = 1
 
-[node name="Mode" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=675892935]
+[node name="Mode" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=675892935]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.78)
 theme_override_font_sizes/font_size = 14
 text = "KEYBOARD MODE"
 
-[node name="Prompt" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=225026694]
+[node name="Prompt" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=225026694]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
