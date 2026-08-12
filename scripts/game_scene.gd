@@ -4,8 +4,62 @@ extends Node3D
 const WALL_SCENE: PackedScene = preload("res://assets/kitchen-pack/wall.gltf")
 const TABLE_ROUND_B_SCENE: PackedScene = preload("res://assets/kitchen-pack/table_round_B.gltf")
 
+const TOON_FILTER_SHADER := """
+shader_type canvas_item;
+
+// Canvas screen-read pass: compatible with the WebGL 2 Compatibility renderer.
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+uniform float color_steps : hint_range(2.0, 12.0) = 6.0;
+uniform float edge_threshold : hint_range(0.01, 0.5) = 0.20;
+uniform vec3 ink_color : source_color = vec3(0.08, 0.055, 0.10);
+
+float luminance(vec3 color) {
+	return dot(color, vec3(0.2126, 0.7152, 0.0722));
+}
+
+void fragment() {
+	vec2 pixel = SCREEN_PIXEL_SIZE;
+	vec3 screen_color = texture(screen_texture, SCREEN_UV).rgb;
+	vec3 toon_color = floor(screen_color * color_steps + 0.5) / color_steps;
+
+	float center = luminance(screen_color);
+	float edge = 0.0;
+	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV + vec2(pixel.x, 0.0)).rgb));
+	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV - vec2(pixel.x, 0.0)).rgb));
+	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV + vec2(0.0, pixel.y)).rgb));
+	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV - vec2(0.0, pixel.y)).rgb));
+
+	float outline = smoothstep(edge_threshold, edge_threshold * 2.0, edge);
+	COLOR = vec4(mix(toon_color, ink_color, outline * 0.48), 1.0);
+}
+"""
+
 func _ready() -> void:
 	_build_static_batches()
+	_add_toon_filter()
+
+
+func _add_toon_filter() -> void:
+	if get_node_or_null("ToonFilter") != null:
+		return
+
+	# A CanvasLayer screen pass works in the WebGL 2 Compatibility renderer.
+	var layer := CanvasLayer.new()
+	layer.name = "ToonFilter"
+	layer.layer = 1
+
+	var filter := ColorRect.new()
+	filter.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	filter.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var shader := Shader.new()
+	shader.code = TOON_FILTER_SHADER
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	filter.material = material
+
+	layer.add_child(filter)
+	add_child(layer)
 
 
 func _build_static_batches() -> void:

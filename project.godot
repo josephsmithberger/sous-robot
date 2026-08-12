@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 SceneLoader="*res://scripts/scene_loader.gd"
 
+[renderer]
+
+rendering_method="gl_compatibility"
+
 [rendering]
 
 renderer/rendering_method="mobile"
@@ -32,6 +36,11 @@ project/editorState=[{
 "path": "res://scripts/kitchen_floor_multimesh.gd",
 "type": "file"
 }]
-project/shaderEditorState=[]
+project/shaderEditorState=[{
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://shaders/bg.gdshader"
+}]
 project/breakpoints={}
 project/disabled_breakpoints={}
