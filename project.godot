@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="robot-sous"
+config/name="sous-robot"
 run/main_scene="uid://ct7d4u74y3oht"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
