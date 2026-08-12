@@ -10,6 +10,9 @@ const SLIDE_DURATION := 0.28
 @onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck
 @onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow
 @onready var _keyboard_hint: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint
+@onready var _move_joystick: VirtualJoystick = %MoveJoystick
+@onready var _look_joystick: VirtualJoystick = %LookJoystick
+@onready var _hand_off_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/HandOffButton
 
 var _previous_dialogue_host_resolver: Callable
 var _interaction_tween: Tween
@@ -25,16 +28,24 @@ func _ready() -> void:
 	GameControl.controllability_changed.connect(_on_controllability_changed)
 	GameControl.input_mode_changed.connect(_on_input_mode_changed)
 	GameControl.dialogue_activity_changed.connect(_on_dialogue_activity_changed)
+	GameControl.camera_mode_changed.connect(_on_camera_mode_changed)
+	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
 
 	_previous_dialogue_host_resolver = DialogueManager.get_current_scene
 	DialogueManager.get_current_scene = _get_dialogue_host
 
 	_on_input_mode_changed(GameControl.input_mode)
+	_on_camera_mode_changed(GameControl.camera_mode)
 	_on_tab_changed(_tabs.current_tab)
+
+
+func _process(_delta: float) -> void:
+	GameControl.set_virtual_input(_move_joystick.output, _look_joystick.output)
 
 
 func _exit_tree() -> void:
 	DialogueManager.get_current_scene = _previous_dialogue_host_resolver
+	GameControl.set_virtual_input(Vector2.ZERO, Vector2.ZERO)
 	GameControl.set_controllable(false)
 
 
@@ -120,6 +131,10 @@ func _on_interaction_tween_finished() -> void:
 
 func _get_dialogue_host() -> Node:
 	return _dialogue_viewport
+
+
+func _on_camera_mode_changed(mode: GameControl.CameraMode) -> void:
+	_hand_off_button.text = "HAND OFF" if mode == GameControl.CameraMode.FIRST_PERSON else "TAKE CONTROL"
 
 
 func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:

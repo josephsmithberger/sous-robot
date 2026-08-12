@@ -124,6 +124,60 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_action_button_normal"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 0.780392, 0.172549, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_action_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 0.882353, 0.396078, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_action_button_pressed"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 0.0
+bg_color = Color(0.94902, 0.623529, 0.105882, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
 anchors_preset = 15
@@ -483,6 +537,45 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+
+[node name="ActionButtons" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer" unique_id=2064017752]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -54.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="HandOffButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=758630474]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
+theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+text = "HAND OFF"
+
+[node name="ResetButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=497690131]
+custom_minimum_size = Vector2(84, 44)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
+theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+text = "RESET"
 
 [node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=717317424]
 unique_name_in_owner = true

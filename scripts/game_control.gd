@@ -4,10 +4,16 @@ extends Node
 signal controllability_changed(is_controllable: bool)
 signal input_mode_changed(input_mode: InputMode)
 signal dialogue_activity_changed(is_active: bool)
+signal camera_mode_changed(camera_mode: CameraMode)
 
 enum InputMode {
 	KEYBOARD,
 	TOUCH,
+}
+
+enum CameraMode {
+	FIRST_PERSON,
+	MARKER,
 }
 
 var is_controllable := false:
@@ -23,6 +29,16 @@ var input_mode: InputMode = InputMode.KEYBOARD:
 			return
 		input_mode = value
 		input_mode_changed.emit(input_mode)
+
+var camera_mode := CameraMode.FIRST_PERSON:
+	set(value):
+		if camera_mode == value:
+			return
+		camera_mode = value
+		camera_mode_changed.emit(camera_mode)
+
+var move_input := Vector2.ZERO
+var look_input := Vector2.ZERO
 
 var _controllability_requested := false
 var _active_dialogues := 0
@@ -46,6 +62,43 @@ func _input(event: InputEvent) -> void:
 func set_controllable(value: bool) -> void:
 	_controllability_requested = value
 	_refresh_controllability()
+
+
+func set_camera_mode(value: CameraMode) -> void:
+	camera_mode = value
+
+
+func give_player_control() -> void:
+	set_camera_mode(CameraMode.FIRST_PERSON)
+
+
+func hand_off_control() -> void:
+	set_camera_mode(CameraMode.MARKER)
+
+
+func toggle_camera_mode() -> void:
+	set_camera_mode(
+		CameraMode.MARKER
+		if camera_mode == CameraMode.FIRST_PERSON
+		else CameraMode.FIRST_PERSON
+	)
+
+
+func has_player_control() -> bool:
+	return is_controllable and camera_mode == CameraMode.FIRST_PERSON
+
+
+func set_virtual_input(move: Vector2, look: Vector2) -> void:
+	move_input = move
+	look_input = look
+
+
+func get_move_input() -> Vector2:
+	var keyboard_input := Vector2(
+		float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
+		float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
+	)
+	return (keyboard_input + move_input).limit_length()
 
 
 func is_using_touch() -> bool:
