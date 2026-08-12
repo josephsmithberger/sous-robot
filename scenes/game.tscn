@@ -8,6 +8,10 @@
 [ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_p57ef"]
 [ext_resource type="Texture2D" uid="uid://c1qsaqtd5d85n" path="res://assets/ui/utensil_decal.svg" id="4_u5sy4"]
 [ext_resource type="Script" uid="uid://dsgxrcuyb2f73" path="res://scripts/orders_receipt.gd" id="5_receipt"]
+[ext_resource type="Script" path="res://scripts/game_ui.gd" id="6_game_ui"]
+[ext_resource type="Script" path="res://addons/virtual_joystick/virtual_joystick.gd" id="7_joystick"]
+[ext_resource type="Texture2D" path="res://assets/ui/pizza_joystick_base.svg" id="8_joy_base"]
+[ext_resource type="Texture2D" path="res://assets/ui/pizza_joystick_tip.svg" id="9_joy_tip"]
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
@@ -90,6 +94,17 @@ shadow_offset = Vector2(0, 5)
 shader = ExtResource("2_rounded")
 shader_parameter/corner_radius = 20.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_control_deck"]
+content_margin_left = 10.0
+content_margin_top = 0.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 1)
+border_width_top = 4
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
 anchors_preset = 15
@@ -98,6 +113,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_game")
+script = ExtResource("6_game_ui")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1300370509]
 material = SubResource("ShaderMaterial_lnu2h")
@@ -313,16 +329,154 @@ metadata/_tab_name = "KITCHEN"
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer" unique_id=1042667808]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer" unique_id=1342903102]
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=1042667808]
 material = SubResource("ShaderMaterial_rounded")
 layout_mode = 2
 
-[node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/SubViewportContainer" unique_id=1062805651]
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/SubViewportContainer" unique_id=1062805651]
 handle_input_locally = false
-size = Vector2i(850, 525)
+size = Vector2i(850, 425)
 render_target_update_mode = 4
 
-[node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
+[node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
+
+[node name="ControlDeck" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_control_deck")
+
+[node name="DeckMargin" type="MarginContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="JoystickRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin"]
+layout_mode = 2
+
+[node name="MoveJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 128)
+layout_mode = 2
+pressed_color = Color(1, 0.92, 0.62, 1)
+deadzone_size = 8.0
+clampzone_size = 52.0
+script = ExtResource("7_joystick")
+
+[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.0
+offset_top = -42.0
+offset_right = 70.0
+offset_bottom = 98.0
+grow_horizontal = 2
+pivot_offset = Vector2(70, 70)
+texture = ExtResource("8_joy_base")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick/Base"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.0
+offset_top = -33.0
+offset_right = 33.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(33, 33)
+texture = ExtResource("9_joy_tip")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/MoveJoystick"]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_p57ef")
+theme_override_font_sizes/font_size = 20
+text = "MOVE"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 128)
+layout_mode = 2
+pressed_color = Color(1, 0.92, 0.62, 1)
+deadzone_size = 8.0
+clampzone_size = 52.0
+use_input_actions = false
+script = ExtResource("7_joystick")
+
+[node name="Base" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.0
+offset_top = -42.0
+offset_right = 70.0
+offset_bottom = 98.0
+grow_horizontal = 2
+pivot_offset = Vector2(70, 70)
+texture = ExtResource("8_joy_base")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tip" type="TextureRect" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick/Base"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.0
+offset_top = -33.0
+offset_right = 33.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(33, 33)
+texture = ExtResource("9_joy_tip")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/ControlDeck/DeckMargin/JoystickRow/LookJoystick"]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_p57ef")
+theme_override_font_sizes/font_size = 20
+text = "LOOK"
+horizontal_alignment = 1
 
 [node name="Store" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=1583282709 instance=ExtResource("1_uwrxv")]
 visible = false

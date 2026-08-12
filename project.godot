@@ -18,6 +18,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 SceneLoader="*res://scripts/scene_loader.gd"
+GameControl="*res://scripts/game_control.gd"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+pointing/emulate_mouse_from_touch=false
 
 [renderer]
 
@@ -26,6 +32,7 @@ rendering_method="gl_compatibility"
 [rendering]
 
 renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
 
 [xogot]
 
