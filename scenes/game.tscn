@@ -12,6 +12,23 @@
 [ext_resource type="Script" uid="uid://bmnqhnu4dfc8q" path="res://addons/virtual_joystick/virtual_joystick.gd" id="7_joystick"]
 [ext_resource type="Texture2D" uid="uid://0l1eof2l2kyf" path="res://assets/ui/pizza_joystick_base.svg" id="8_joy_base"]
 [ext_resource type="Texture2D" uid="uid://bp1c1y4lm6bus" path="res://assets/ui/pizza_joystick_tip.svg" id="9_joy_tip"]
+[ext_resource type="Texture2D" path="res://assets/ui/restaurant_clock_face.png" id="10_clock_face"]
+[ext_resource type="Script" path="res://scripts/clock_widget.gd" id="11_clock_widget"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_clock_frame"]
+bg_color = Color(0.152941, 0.145098, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 68
+corner_radius_top_right = 68
+corner_radius_bottom_right = 68
+corner_radius_bottom_left = 68
+shadow_color = Color(0.109804, 0.0941176, 0.0745098, 0.32)
+shadow_size = 5
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
@@ -105,50 +122,12 @@ border_color = Color(1, 0.780392, 0.172549, 1)
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_keycap"]
-content_margin_left = 4.0
-content_margin_top = 2.0
-content_margin_right = 4.0
-content_margin_bottom = 2.0
-bg_color = Color(1, 0.780392, 0.172549, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
-shadow_size = 3
-shadow_offset = Vector2(0, 3)
-
 [sub_resource type="StyleBoxFlat" id="StyleBox_action_button_normal"]
 content_margin_left = 10.0
 content_margin_top = 2.0
 content_margin_right = 10.0
 content_margin_bottom = 2.0
 bg_color = Color(1, 0.780392, 0.172549, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
-shadow_size = 3
-shadow_offset = Vector2(0, 3)
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_action_button_hover"]
-content_margin_left = 10.0
-content_margin_top = 2.0
-content_margin_right = 10.0
-content_margin_bottom = 2.0
-bg_color = Color(1, 0.882353, 0.396078, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
@@ -177,6 +156,44 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_action_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 0.882353, 0.396078, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_keycap"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 0.780392, 0.172549, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
 
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
@@ -230,6 +247,55 @@ vertical_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/HSplitContainer/stats" unique_id=690439288]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer/HSplitContainer/stats" unique_id=436325506]
+layout_mode = 2
+
+[node name="ClockShelf" type="CenterContainer" parent="MarginContainer/HSplitContainer/stats"]
+custom_minimum_size = Vector2(0, 148)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ClockFrame" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf"]
+custom_minimum_size = Vector2(136, 136)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_clock_frame")
+mouse_filter = 2
+
+[node name="ClockPadding" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+mouse_filter = 2
+
+[node name="ClockLayer" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding"]
+custom_minimum_size = Vector2(118, 118)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Face" type="TextureRect" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_clock_face")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Hands" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("11_clock_widget")
 
 [node name="orders" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1412917122]
 clip_contents = true
@@ -419,6 +485,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer" unique_id=1062805651]
 handle_input_locally = false
@@ -435,6 +503,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 132.0
+grow_horizontal = 2
 mouse_filter = 2
 
 [node name="DialogueSlot" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray" unique_id=1174409458]
@@ -443,6 +512,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 stretch = true
 
 [node name="DialogueViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot" unique_id=1735045424]
@@ -459,6 +530,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -132.0
+grow_horizontal = 2
+grow_vertical = 0
 mouse_filter = 2
 
 [node name="ControlDeck" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray" unique_id=529697605]
@@ -467,6 +540,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBox_control_deck")
 
 [node name="DeckMargin" type="MarginContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck" unique_id=421506169]
@@ -560,8 +635,8 @@ theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
-theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 text = "HAND OFF"
 
 [node name="ResetButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=497690131]
@@ -573,8 +648,8 @@ theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
-theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 text = "RESET"
 
 [node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=717317424]
