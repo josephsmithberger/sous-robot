@@ -38,10 +38,6 @@ pointing/emulate_mouse_from_touch=false
 
 locale/translations_pot_files=PackedStringArray("res://dialogue/intro.dialogue")
 
-[renderer]
-
-rendering_method="gl_compatibility"
-
 [rendering]
 
 renderer/rendering_method="mobile"

@@ -7,30 +7,65 @@ const TABLE_ROUND_B_SCENE: PackedScene = preload("res://assets/kitchen-pack/tabl
 const TOON_FILTER_SHADER := """
 shader_type canvas_item;
 
-// Canvas screen-read pass: compatible with the WebGL 2 Compatibility renderer.
-uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
-uniform float color_steps : hint_range(2.0, 12.0) = 6.0;
-uniform float edge_threshold : hint_range(0.01, 0.5) = 0.20;
-uniform vec3 ink_color : source_color = vec3(0.08, 0.055, 0.10);
+// A lightweight screen-space toon grade. It only uses SCREEN_TEXTURE, so it
+// remains compatible with the WebGL 2 Compatibility renderer.
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear;
+
+// Keep these as material uniforms so the look can be tuned without changing
+// the overlay architecture. The defaults aim for soft, animated-film bands.
+uniform float tone_steps : hint_range(2.0, 8.0, 1.0) = 5.0;
+uniform float posterize_strength : hint_range(0.0, 1.0) = 0.58;
+uniform float saturation : hint_range(0.0, 2.0) = 1.12;
+uniform float contrast : hint_range(0.5, 1.5) = 1.06;
+// Neighbor-based screen-space outlines shimmer on thin, distant geometry
+// (notably the window mullions), so keep them opt-in. The stable toon grade
+// below does not need extra texture reads and works well with FXAA.
+uniform bool outlines_enabled = false;
+uniform float edge_threshold : hint_range(0.02, 0.8) = 0.28;
+uniform float edge_softness : hint_range(0.01, 0.4) = 0.10;
+uniform float edge_strength : hint_range(0.0, 1.0) = 0.30;
+uniform vec3 ink_color : source_color = vec3(0.11, 0.075, 0.09);
 
 float luminance(vec3 color) {
 	return dot(color, vec3(0.2126, 0.7152, 0.0722));
 }
 
+vec3 adjust_saturation(vec3 color, float amount) {
+	float lightness = luminance(color);
+	return mix(vec3(lightness), color, amount);
+}
+
 void fragment() {
+	vec2 uv = SCREEN_UV;
 	vec2 pixel = SCREEN_PIXEL_SIZE;
-	vec3 screen_color = texture(screen_texture, SCREEN_UV).rgb;
-	vec3 toon_color = floor(screen_color * color_steps + 0.5) / color_steps;
+	vec3 source = texture(screen_texture, uv).rgb;
 
-	float center = luminance(screen_color);
-	float edge = 0.0;
-	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV + vec2(pixel.x, 0.0)).rgb));
-	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV - vec2(pixel.x, 0.0)).rgb));
-	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV + vec2(0.0, pixel.y)).rgb));
-	edge += abs(center - luminance(texture(screen_texture, SCREEN_UV - vec2(0.0, pixel.y)).rgb));
+	// Quantize lightness rather than RGB channels. This preserves the art color
+	// relationships and avoids the noisy, videogame-posterized look.
+	float source_lightness = luminance(source);
+	float banded_lightness = floor(source_lightness * tone_steps + 0.5) / tone_steps;
+	float lightness_gain = banded_lightness / max(source_lightness, 0.001);
+	vec3 banded = clamp(source * lightness_gain, 0.0, 1.0);
+	vec3 toon_color = mix(source, banded, posterize_strength);
+	toon_color = adjust_saturation(toon_color, saturation);
+	toon_color = clamp((toon_color - 0.5) * contrast + 0.5, 0.0, 1.0);
 
-	float outline = smoothstep(edge_threshold, edge_threshold * 2.0, edge);
-	COLOR = vec4(mix(toon_color, ink_color, outline * 0.48), 1.0);
+	if (outlines_enabled) {
+		// This optional pass is intentionally disabled by default: comparing
+		// neighboring screen pixels makes sub-pixel window lines turn into
+		// camera-dependent dotted outlines at a distance.
+		float center = source_lightness;
+		float edge = 0.0;
+		edge = max(edge, abs(center - luminance(texture(screen_texture, uv + vec2(pixel.x, 0.0)).rgb)));
+		edge = max(edge, abs(center - luminance(texture(screen_texture, uv - vec2(pixel.x, 0.0)).rgb)));
+		edge = max(edge, abs(center - luminance(texture(screen_texture, uv + vec2(0.0, pixel.y)).rgb)));
+		edge = max(edge, abs(center - luminance(texture(screen_texture, uv - vec2(0.0, pixel.y)).rgb)));
+
+		float outline = smoothstep(edge_threshold, edge_threshold + edge_softness, edge);
+		toon_color = mix(toon_color, ink_color, outline * edge_strength);
+	}
+
+	COLOR = vec4(toon_color, 1.0);
 }
 """
 
