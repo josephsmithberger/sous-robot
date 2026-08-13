@@ -12,23 +12,8 @@
 [ext_resource type="Script" uid="uid://bmnqhnu4dfc8q" path="res://addons/virtual_joystick/virtual_joystick.gd" id="7_joystick"]
 [ext_resource type="Texture2D" uid="uid://0l1eof2l2kyf" path="res://assets/ui/pizza_joystick_base.svg" id="8_joy_base"]
 [ext_resource type="Texture2D" uid="uid://bp1c1y4lm6bus" path="res://assets/ui/pizza_joystick_tip.svg" id="9_joy_tip"]
-[ext_resource type="Texture2D" path="res://assets/ui/restaurant_clock_face.png" id="10_clock_face"]
-[ext_resource type="Script" path="res://scripts/clock_widget.gd" id="11_clock_widget"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_clock_frame"]
-bg_color = Color(0.152941, 0.145098, 0.121569, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 0.780392, 0.172549, 1)
-corner_radius_top_left = 68
-corner_radius_top_right = 68
-corner_radius_bottom_right = 68
-corner_radius_bottom_left = 68
-shadow_color = Color(0.109804, 0.0941176, 0.0745098, 0.32)
-shadow_size = 5
-shadow_offset = Vector2(0, 4)
+[ext_resource type="Texture2D" uid="uid://mot6mo1ejw6j" path="res://assets/ui/restaurant_clock_face.png" id="10_clock_face"]
+[ext_resource type="Script" uid="uid://bfvtoi7lc50j1" path="res://scripts/clock_widget.gd" id="11_clock_widget"]
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
@@ -44,6 +29,21 @@ shader_parameter/speed = 1.0
 shader_parameter/blur = 0.0
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_u5sy4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_clock_frame"]
+bg_color = Color(0.152941, 0.145098, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 68
+corner_radius_top_right = 68
+corner_radius_bottom_right = 68
+corner_radius_bottom_left = 68
+shadow_color = Color(0.109804, 0.0941176, 0.0745098, 0.32)
+shadow_size = 5
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_receipt"]
 content_margin_left = 2.0
@@ -176,24 +176,7 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_keycap"]
-content_margin_left = 4.0
-content_margin_top = 2.0
-content_margin_right = 4.0
-content_margin_bottom = 2.0
-bg_color = Color(1, 0.780392, 0.172549, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
-shadow_size = 3
-shadow_offset = Vector2(0, 3)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
 
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
@@ -251,43 +234,43 @@ theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
 [node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer/HSplitContainer/stats" unique_id=436325506]
 layout_mode = 2
 
-[node name="ClockShelf" type="CenterContainer" parent="MarginContainer/HSplitContainer/stats"]
+[node name="ClockShelf" type="CenterContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1779623811]
 custom_minimum_size = Vector2(0, 148)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ClockFrame" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf"]
+[node name="ClockFrame" type="PanelContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf" unique_id=629739694]
 custom_minimum_size = Vector2(136, 136)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBox_clock_frame")
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_clock_frame")
 
-[node name="ClockPadding" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame"]
+[node name="ClockPadding" type="MarginContainer" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame" unique_id=2036664075]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 6
-mouse_filter = 2
 
-[node name="ClockLayer" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding"]
+[node name="ClockLayer" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding" unique_id=50000551]
 custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Face" type="TextureRect" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer"]
+[node name="Face" type="TextureRect" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer" unique_id=759004380]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("10_clock_face")
 expand_mode = 1
 stretch_mode = 5
-mouse_filter = 2
 
-[node name="Hands" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer"]
+[node name="Hands" type="Control" parent="MarginContainer/HSplitContainer/stats/ClockShelf/ClockFrame/ClockPadding/ClockLayer" unique_id=585424470]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -550,6 +533,7 @@ theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 16
 
 [node name="JoystickRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin" unique_id=1616708155]
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 
 [node name="MoveJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=336258728]
@@ -710,94 +694,38 @@ horizontal_alignment = 1
 
 [node name="KeyboardHint" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck" unique_id=159299406]
 visible = false
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
 
-[node name="HintRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint" unique_id=645115019]
-layout_mode = 2
-theme_override_constants/separation = 22
-
-[node name="Keys" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow" unique_id=2104296775]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="TopRow" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1874121233]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint" unique_id=1657175970]
 layout_mode = 2
 
-[node name="W" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/TopRow" unique_id=771931085]
-custom_minimum_size = Vector2(38, 38)
+[node name="Instruction" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/VBoxContainer" unique_id=1474526214]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBox_keycap")
-
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/TopRow/W" unique_id=716513077]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_font_sizes/font_size = 20
-text = "W"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="BottomRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys" unique_id=1230714517]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="A" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=641147685]
-custom_minimum_size = Vector2(38, 38)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBox_keycap")
-
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/A" unique_id=1353051329]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_font_sizes/font_size = 20
-text = "A"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="S" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=1871704619]
-custom_minimum_size = Vector2(38, 38)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBox_keycap")
-
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/S" unique_id=541975446]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_font_sizes/font_size = 20
-text = "S"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="D" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow" unique_id=839905606]
-custom_minimum_size = Vector2(38, 38)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBox_keycap")
-
-[node name="Label" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Keys/BottomRow/D" unique_id=1158194141]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_font_sizes/font_size = 20
-text = "D"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Instruction" type="VBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow" unique_id=345707575]
-layout_mode = 2
+theme_override_constants/separation = 5
 alignment = 1
 
-[node name="Mode" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=675892935]
+[node name="Mode" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/VBoxContainer/Instruction" unique_id=675892935]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.78)
-theme_override_font_sizes/font_size = 14
-text = "KEYBOARD MODE"
+theme_override_font_sizes/font_size = 20
+text = "KEYBOARD MODE: "
 
-[node name="Prompt" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/HintRow/Instruction" unique_id=225026694]
+[node name="Prompt" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/VBoxContainer/Instruction" unique_id=225026694]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_p57ef")
-theme_override_font_sizes/font_size = 27
-text = "USE WASD TO MOVE"
+theme_override_font_sizes/font_size = 20
+text = "USE WASD + MOUSE · ESC UI / PLAY"
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint/VBoxContainer" unique_id=1660428769]
+layout_mode = 2
+theme_override_constants/separation = 25
+theme_override_styles/separator = SubResource("StyleBoxEmpty_trtic")
 
 [node name="Store" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=1583282709 instance=ExtResource("1_uwrxv")]
 visible = false

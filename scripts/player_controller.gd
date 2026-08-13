@@ -19,13 +19,9 @@ func _physics_process(delta: float) -> void:
 
 	if can_move:
 		_apply_look(GameControl.look_input * look_speed * delta)
+		_apply_look(GameControl.consume_mouse_look_delta() * mouse_sensitivity)
 
 	move_and_slide()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if GameControl.has_player_control() and event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		_apply_look(event.relative * mouse_sensitivity)
 
 
 func _apply_look(amount: Vector2) -> void:
