@@ -20,10 +20,15 @@ config/icon="res://icon.svg"
 SceneLoader="*res://scripts/scene_loader.gd"
 GameControl="*res://scripts/game_control.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+TouchUI="*res://scripts/touch_ui.gd"
 
 [dialogue_manager]
 
-runtime/balloon_path="res://addons/dialogue_manager/example_balloon/small_example_balloon.tscn"
+runtime/balloon_path="res://scenes/dialogue_balloon.tscn"
+
+[display]
+
+window/stretch/mode="viewport"
 
 [editor_plugins]
 
@@ -36,7 +41,7 @@ pointing/emulate_mouse_from_touch=false
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://dialogue/intro.dialogue")
+locale/translations_pot_files=PackedStringArray("res://dialogue/master.dialogue")
 
 [rendering]
 

@@ -1,5 +1,6 @@
 extends Control
 
+const MASTER_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
 const KITCHEN_TAB := 0
 const TRAY_HEIGHT := 132.0
 const SLIDE_DURATION := 0.28
@@ -7,7 +8,6 @@ const SLIDE_DURATION := 0.28
 @onready var _tabs: TabContainer = $MarginContainer/HSplitContainer/TabContainer
 @onready var _game_viewport_container: SubViewportContainer = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer
 @onready var _dialogue_slot: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot
-@onready var _dialogue_viewport: SubViewport = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot/DialogueViewport
 @onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck
 @onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow
 @onready var _keyboard_hint: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint
@@ -22,7 +22,7 @@ var _control_deck_is_open := false
 
 
 func _ready() -> void:
-	_prepare_panel(_dialogue_slot, -TRAY_HEIGHT)
+	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
 
 	_tabs.tab_changed.connect(_on_tab_changed)
@@ -40,6 +40,13 @@ func _ready() -> void:
 	_on_camera_mode_changed(GameControl.camera_mode)
 	_on_tab_changed(_tabs.current_tab)
 
+	start_dialogue(MASTER_DIALOGUE, "intro")
+
+
+## Helper method to launch dialogue in the interaction dialogue tray.
+func start_dialogue(resource: DialogueResource, title: String = "") -> Node:
+	return DialogueManager.show_dialogue_balloon(resource, title)
+
 
 func _process(_delta: float) -> void:
 	GameControl.set_virtual_input(_move_joystick.output, _look_joystick.output)
@@ -52,8 +59,9 @@ func _exit_tree() -> void:
 
 
 func _on_game_viewport_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if TouchUI.is_primary_press(event):
 		GameControl.give_player_control()
+
 
 
 func _on_tab_changed(tab_index: int) -> void:
@@ -105,7 +113,7 @@ func _animate_interaction_ui(show_dialogue: bool, show_controls: bool) -> void:
 	_interaction_tween.tween_property(
 		_dialogue_slot,
 		^"position:y",
-		0.0 if show_dialogue else -TRAY_HEIGHT,
+		0.0 if show_dialogue else TRAY_HEIGHT,
 		SLIDE_DURATION
 	)
 	_interaction_tween.tween_property(
@@ -138,7 +146,7 @@ func _on_interaction_tween_finished() -> void:
 
 
 func _get_dialogue_host() -> Node:
-	return _dialogue_viewport
+	return _dialogue_slot
 
 
 func _on_camera_mode_changed(mode: GameControl.CameraMode) -> void:

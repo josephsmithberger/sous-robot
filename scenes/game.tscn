@@ -483,13 +483,16 @@ z_index = 2
 clip_contents = true
 custom_minimum_size = Vector2(0, 132)
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
-offset_bottom = 132.0
+anchor_bottom = 1.0
+offset_top = -132.0
 grow_horizontal = 2
+grow_vertical = 0
 mouse_filter = 2
 
-[node name="DialogueSlot" type="SubViewportContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray" unique_id=1174409458]
+[node name="DialogueSlot" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray" unique_id=1174409458]
 custom_minimum_size = Vector2(0, 132)
 layout_mode = 1
 anchors_preset = 15
@@ -497,12 +500,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
-
-[node name="DialogueViewport" type="SubViewport" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot" unique_id=1735045424]
-handle_input_locally = false
-size = Vector2i(850, 132)
-render_target_update_mode = 4
 
 [node name="ControlTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=557323058]
 z_index = 3
