@@ -52,14 +52,14 @@ textures/vram_compression/import_etc2_astc=true
 
 project/editorState=[{
 "column": 0,
-"line": 0,
-"path": "res://scripts/kitchen_floor_multimesh.gd",
-"type": "file"
-}, {
-"column": 0,
 "current": true,
 "line": 0,
 "path": "res://scripts/game_ui.gd",
+"type": "file"
+}, {
+"column": 0,
+"line": 0,
+"path": "res://scripts/player_controller.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

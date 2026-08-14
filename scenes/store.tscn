@@ -1,5 +1,20 @@
 [gd_scene format=3 uid="uid://cl50h4s8igla8"]
 
+[ext_resource type="Script" uid="uid://i151o0757r8h" path="res://scripts/store_ui.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://r4vkvunfjt86" path="res://assets/appliances/thumbnails/crate_buns.png" id="3_buns"]
+[ext_resource type="Texture2D" uid="uid://v42oghy7mrxe" path="res://assets/appliances/thumbnails/crate_carrots.png" id="4_carrots"]
+[ext_resource type="Texture2D" uid="uid://cc5ui125sq3q3" path="res://assets/appliances/thumbnails/crate_cheese.png" id="5_cheese"]
+[ext_resource type="Texture2D" uid="uid://7gsnqqv74ru7" path="res://assets/appliances/thumbnails/crate_ham.png" id="6_ham"]
+[ext_resource type="Texture2D" uid="uid://i80wuairkwou" path="res://assets/appliances/thumbnails/crate_lettuce.png" id="7_lettuce"]
+[ext_resource type="Texture2D" uid="uid://djan5ugxhsnx0" path="res://assets/appliances/thumbnails/crate_onions.png" id="9_onions"]
+[ext_resource type="Texture2D" uid="uid://bl710rjcbhmow" path="res://assets/appliances/thumbnails/crate_potatoes.png" id="10_potatoes"]
+[ext_resource type="Texture2D" uid="uid://81dvrlq88bcy" path="res://assets/appliances/thumbnails/crate_steak.png" id="11_steak"]
+[ext_resource type="Texture2D" uid="uid://dj13rfjr8v1v" path="res://assets/appliances/thumbnails/crate_tomatoes.png" id="12_tomatoes"]
+[ext_resource type="Texture2D" uid="uid://bols4ckjd0n4t" path="res://assets/appliances/thumbnails/fridge.png" id="13_fridge"]
+[ext_resource type="Texture2D" uid="uid://vndntl2q6ut0" path="res://assets/appliances/thumbnails/oven.png" id="14_oven"]
+[ext_resource type="Texture2D" uid="uid://dn63pyhehuqd" path="res://assets/appliances/thumbnails/sink.png" id="15_sink"]
+[ext_resource type="Texture2D" uid="uid://bvct37ubj1mus" path="res://assets/appliances/thumbnails/wall_decorated.png" id="16_wall"]
+
 [node name="store" type="Control" unique_id=1583282709]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +22,561 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Scroll" type="ScrollContainer" parent="." unique_id=501462562]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Grid" type="GridContainer" parent="Scroll" unique_id=1021042104]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="DecoratedWall" type="Button" parent="Scroll/Grid" unique_id=153801755 groups=["store_cards"]]
+modulate = Color(0.5, 0.5, 0.5, 1)
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+disabled = true
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/DecoratedWall" unique_id=742322658]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/DecoratedWall/Content" unique_id=1738610967]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("16_wall")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/DecoratedWall/Content" unique_id=1897703845]
+layout_mode = 2
+text = "Decorated Wall"
+
+[node name="Price" type="Label" parent="Scroll/Grid/DecoratedWall/Content" unique_id=647517149]
+layout_mode = 2
+text = "Owned (Starter item)"
+
+[node name="Description" type="Label" parent="Scroll/Grid/DecoratedWall/Content" unique_id=230256741]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A finished kitchen wall with useful character."
+autowrap_mode = 2
+
+[node name="BunCrate" type="Button" parent="Scroll/Grid" unique_id=1278457462 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/BunCrate" unique_id=1078420073]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/BunCrate/Content" unique_id=2004667529]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_buns")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/BunCrate/Content" unique_id=947795964]
+layout_mode = 2
+text = "Bun Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/BunCrate/Content" unique_id=1219993467]
+layout_mode = 2
+text = "$35"
+
+[node name="Description" type="Label" parent="Scroll/Grid/BunCrate/Content" unique_id=398712910]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate stocked with fresh burger buns."
+autowrap_mode = 2
+
+[node name="CarrotCrate" type="Button" parent="Scroll/Grid" unique_id=1463386114 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/CarrotCrate" unique_id=1737625437]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1784030822]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_carrots")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1480207980]
+layout_mode = 2
+text = "Carrot Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1948255367]
+layout_mode = 2
+text = "$30"
+
+[node name="Description" type="Label" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1601403616]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of crisp carrots for prep."
+autowrap_mode = 2
+
+[node name="CheeseCrate" type="Button" parent="Scroll/Grid" unique_id=1923826992 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/CheeseCrate" unique_id=304142532]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/CheeseCrate/Content" unique_id=2053302387]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_cheese")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/CheeseCrate/Content" unique_id=1325096758]
+layout_mode = 2
+text = "Cheese Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/CheeseCrate/Content" unique_id=1190475180]
+layout_mode = 2
+text = "$45"
+
+[node name="Description" type="Label" parent="Scroll/Grid/CheeseCrate/Content" unique_id=1475301506]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate stocked with sliced cheese."
+autowrap_mode = 2
+
+[node name="HamCrate" type="Button" parent="Scroll/Grid" unique_id=1488267731 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/HamCrate" unique_id=1527552343]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/HamCrate/Content" unique_id=80737459]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_ham")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/HamCrate/Content" unique_id=586281445]
+layout_mode = 2
+text = "Ham Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/HamCrate/Content" unique_id=687152118]
+layout_mode = 2
+text = "$55"
+
+[node name="Description" type="Label" parent="Scroll/Grid/HamCrate/Content" unique_id=550200334]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of ham for sandwiches and breakfasts."
+autowrap_mode = 2
+
+[node name="LettuceCrate" type="Button" parent="Scroll/Grid" unique_id=1504653893 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/LettuceCrate" unique_id=2018019038]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/LettuceCrate/Content" unique_id=1515807774]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_lettuce")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/LettuceCrate/Content" unique_id=1278474777]
+layout_mode = 2
+text = "Lettuce Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/LettuceCrate/Content" unique_id=354738512]
+layout_mode = 2
+text = "$30"
+
+[node name="Description" type="Label" parent="Scroll/Grid/LettuceCrate/Content" unique_id=912982574]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of fresh leafy greens."
+autowrap_mode = 2
+
+[node name="OnionCrate" type="Button" parent="Scroll/Grid" unique_id=1867617632 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/OnionCrate" unique_id=1076503837]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/OnionCrate/Content" unique_id=340643206]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("9_onions")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/OnionCrate/Content" unique_id=1942501966]
+layout_mode = 2
+text = "Onion Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/OnionCrate/Content" unique_id=865927038]
+layout_mode = 2
+text = "$30"
+
+[node name="Description" type="Label" parent="Scroll/Grid/OnionCrate/Content" unique_id=142446965]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of onions for everyday cooking."
+autowrap_mode = 2
+
+[node name="PotatoCrate" type="Button" parent="Scroll/Grid" unique_id=393657189 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/PotatoCrate" unique_id=260968081]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/PotatoCrate/Content" unique_id=1401623689]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_potatoes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/PotatoCrate/Content" unique_id=585176706]
+layout_mode = 2
+text = "Potato Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/PotatoCrate/Content" unique_id=1050040978]
+layout_mode = 2
+text = "$30"
+
+[node name="Description" type="Label" parent="Scroll/Grid/PotatoCrate/Content" unique_id=428642566]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of versatile potatoes."
+autowrap_mode = 2
+
+[node name="SteakCrate" type="Button" parent="Scroll/Grid" unique_id=104872727 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/SteakCrate" unique_id=1845697782]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/SteakCrate/Content" unique_id=1874670766]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("11_steak")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/SteakCrate/Content" unique_id=1557539197]
+layout_mode = 2
+text = "Steak Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/SteakCrate/Content" unique_id=982024430]
+layout_mode = 2
+text = "$75"
+
+[node name="Description" type="Label" parent="Scroll/Grid/SteakCrate/Content" unique_id=1239511577]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A premium crate of steak cuts."
+autowrap_mode = 2
+
+[node name="TomatoCrate" type="Button" parent="Scroll/Grid" unique_id=1380508984 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/TomatoCrate" unique_id=2119365663]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1320960620]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("12_tomatoes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1119797490]
+layout_mode = 2
+text = "Tomato Crate"
+
+[node name="Price" type="Label" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1412319078]
+layout_mode = 2
+text = "$30"
+
+[node name="Description" type="Label" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1471008259]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A crate of ripe tomatoes."
+autowrap_mode = 2
+
+[node name="Fridge" type="Button" parent="Scroll/Grid" unique_id=139692434 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/Fridge" unique_id=1997132335]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/Fridge/Content" unique_id=1221607645]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("13_fridge")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/Fridge/Content" unique_id=1727848349]
+layout_mode = 2
+text = "Fridge"
+
+[node name="Price" type="Label" parent="Scroll/Grid/Fridge/Content" unique_id=1610662869]
+layout_mode = 2
+text = "$500"
+
+[node name="Description" type="Label" parent="Scroll/Grid/Fridge/Content" unique_id=562580248]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "Cold storage for ingredients that need to stay fresh."
+autowrap_mode = 2
+
+[node name="Oven" type="Button" parent="Scroll/Grid" unique_id=455039027 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/Oven" unique_id=1578007656]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/Oven/Content" unique_id=1915714471]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("14_oven")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/Oven/Content" unique_id=1066724948]
+layout_mode = 2
+text = "Oven"
+
+[node name="Price" type="Label" parent="Scroll/Grid/Oven/Content" unique_id=734669265]
+layout_mode = 2
+text = "$650"
+
+[node name="Description" type="Label" parent="Scroll/Grid/Oven/Content" unique_id=645780188]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A dependable oven for baking and roasting."
+autowrap_mode = 2
+
+[node name="Sink" type="Button" parent="Scroll/Grid" unique_id=1344475628 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/Sink" unique_id=1968769512]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/Sink/Content" unique_id=804750771]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("15_sink")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/Sink/Content" unique_id=1022741734]
+layout_mode = 2
+text = "Sink"
+
+[node name="Price" type="Label" parent="Scroll/Grid/Sink/Content" unique_id=1120759420]
+layout_mode = 2
+text = "$250"
+
+[node name="Description" type="Label" parent="Scroll/Grid/Sink/Content" unique_id=1364851793]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A kitchen sink for washing ingredients and dishes."
+autowrap_mode = 2
+
+[node name="PurchaseDialog" type="ConfirmationDialog" parent="." unique_id=585447083]
+title = "Buy?"
+ok_button_text = "Yes"
+dialog_text = "Buy?"
+cancel_button_text = "No"
+
+[connection signal="canceled" from="PurchaseDialog" to="." method="_on_purchase_canceled"]
+[connection signal="confirmed" from="PurchaseDialog" to="." method="_on_purchase_confirmed"]

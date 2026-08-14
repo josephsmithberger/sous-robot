@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://nq5457svdt3r"]
+
+[ext_resource type="PackedScene" uid="uid://b8sifsigweji4" path="res://assets/kitchen-pack/oven.gltf" id="1_ye01y"]
+
+[node name="oven2" unique_id=669809382 instance=ExtResource("1_ye01y")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=608573975]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=444177767]

@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/crate_lid.gltf" id="1_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_static"]
+size = Vector3(2.0, 0.2, 2.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_interact"]
+size = Vector3(2.4, 0.6, 2.4)
+
+[node name="crate_lid" instance=ExtResource("1_model")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+position = Vector3(0, 0.1, 0)
+shape = SubResource("BoxShape3D_static")
+
+[node name="lid" type="Area3D" parent="."]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="lid"]
+position = Vector3(0, 0.1, 0)
+shape = SubResource("BoxShape3D_interact")

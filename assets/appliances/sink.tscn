@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://cdmvokp3ut2y6"]
+
+[ext_resource type="PackedScene" uid="uid://diuso6txs3146" path="res://assets/kitchen-pack/kitchencounter_sink.gltf" id="1_373hy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_373hy"]
+size = Vector3(2.159912, 1.4091797, 1.9709473)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k3n4h"]
+size = Vector3(2.6210327, 1.5419922, 1.8624268)
+
+[node name="kitchencounter_sink2" unique_id=1939240228 instance=ExtResource("1_373hy")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=1504506030]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=1998837982]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0657959, 0.20458984, -0.05895996)
+shape = SubResource("BoxShape3D_373hy")
+
+[node name="sink" type="Area3D" parent="." index="2" unique_id=1111977114]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="sink" index="0" unique_id=1972755150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.023529053, 0.2709961, 0.43121338)
+shape = SubResource("BoxShape3D_k3n4h")

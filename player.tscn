@@ -10,5 +10,5 @@ script = ExtResource("1_4flbx")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1654567888]
 shape = SubResource("CapsuleShape3D_eo31t")
 
-[node name="Head" type="Node3D" parent="." unique_id=1464889178]
+[node name="Head" type="Marker3D" parent="." unique_id=759785028]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)

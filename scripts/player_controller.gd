@@ -4,7 +4,7 @@ extends CharacterBody3D
 @export var look_speed := 2.2
 @export var mouse_sensitivity := 0.003
 
-@onready var head: Node3D = $Head
+@onready var head: Marker3D = $Head
 
 
 func _physics_process(delta: float) -> void:
