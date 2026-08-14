@@ -31,6 +31,8 @@ func _ready() -> void:
 	GameControl.dialogue_activity_changed.connect(_on_dialogue_activity_changed)
 	GameControl.camera_mode_changed.connect(_on_camera_mode_changed)
 	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
+	_move_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
+	_look_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
 	_game_viewport_container.gui_input.connect(_on_game_viewport_gui_input)
 
 	_previous_dialogue_host_resolver = DialogueManager.get_current_scene
@@ -62,6 +64,10 @@ func _on_game_viewport_gui_input(event: InputEvent) -> void:
 	if TouchUI.is_primary_press(event):
 		GameControl.give_player_control()
 
+
+
+func _on_virtual_joystick_touch_started() -> void:
+	GameControl.give_player_control()
 
 
 func _on_tab_changed(tab_index: int) -> void:

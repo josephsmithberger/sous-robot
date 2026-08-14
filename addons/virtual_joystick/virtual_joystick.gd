@@ -50,6 +50,9 @@ var is_pressed := false
 # The joystick output.
 var output := Vector2.ZERO
 
+## Emitted when this joystick accepts a new touch.
+signal touch_started
+
 # PRIVATE VARIABLES
 
 var _touch_index : int = -1
@@ -88,6 +91,7 @@ func _input(event: InputEvent) -> void:
 					if visibility_mode == Visibility_mode.WHEN_TOUCHED:
 						show()
 					_touch_index = event.index
+					touch_started.emit()
 					_tip.modulate = pressed_color
 					_update_joystick(event.position)
 					get_viewport().set_input_as_handled()
