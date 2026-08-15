@@ -5,6 +5,14 @@ extends CharacterBody3D
 @export var mouse_sensitivity := 0.003
 
 @onready var head: Marker3D = $Head
+@onready var interaction_area: Area3D = $InteractionArea
+
+var _overlapping_areas := 0
+
+
+func _ready() -> void:
+	interaction_area.area_entered.connect(_on_area_entered)
+	interaction_area.area_exited.connect(_on_area_exited)
 
 
 func _physics_process(delta: float) -> void:
@@ -27,3 +35,17 @@ func _physics_process(delta: float) -> void:
 func _apply_look(amount: Vector2) -> void:
 	rotate_y(-amount.x)
 	head.rotation.x = clamp(head.rotation.x - amount.y, -PI * 0.45, PI * 0.45)
+
+
+func _on_area_entered(_area: Area3D) -> void:
+	_overlapping_areas += 1
+	GameControl.can_interact = true
+
+
+func _on_area_exited(_area: Area3D) -> void:
+	_overlapping_areas = maxi(_overlapping_areas - 1, 0)
+	GameControl.can_interact = _overlapping_areas > 0
+
+
+func _exit_tree() -> void:
+	GameControl.can_interact = false

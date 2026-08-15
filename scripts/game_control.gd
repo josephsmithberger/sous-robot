@@ -6,6 +6,7 @@ signal input_mode_changed(input_mode: InputMode)
 signal dialogue_activity_changed(is_active: bool)
 signal camera_mode_changed(camera_mode: CameraMode)
 signal ui_mode_changed(is_ui_mode: bool)
+signal interact_available_changed(is_available: bool)
 
 enum InputMode {
 	KEYBOARD,
@@ -47,6 +48,13 @@ var is_ui_mode := false:
 		is_ui_mode = value
 		_sync_mouse_mode()
 		ui_mode_changed.emit(is_ui_mode)
+
+var can_interact := false:
+	set(value):
+		if can_interact == value:
+			return
+		can_interact = value
+		interact_available_changed.emit(can_interact)
 
 var move_input := Vector2.ZERO
 var look_input := Vector2.ZERO

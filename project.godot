@@ -52,9 +52,14 @@ textures/vram_compression/import_etc2_astc=true
 
 project/editorState=[{
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/game_ui.gd",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://scripts/security_camera.gd",
 "type": "file"
 }, {
 "column": 0,

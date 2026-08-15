@@ -14,6 +14,7 @@ const SLIDE_DURATION := 0.28
 @onready var _move_joystick: VirtualJoystick = %MoveJoystick
 @onready var _look_joystick: VirtualJoystick = %LookJoystick
 @onready var _hand_off_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/HandOffButton
+@onready var _interact_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton
 
 var _previous_dialogue_host_resolver: Callable
 var _interaction_tween: Tween
@@ -30,6 +31,8 @@ func _ready() -> void:
 	GameControl.input_mode_changed.connect(_on_input_mode_changed)
 	GameControl.dialogue_activity_changed.connect(_on_dialogue_activity_changed)
 	GameControl.camera_mode_changed.connect(_on_camera_mode_changed)
+	GameControl.interact_available_changed.connect(_on_interact_available_changed)
+	_on_interact_available_changed(GameControl.can_interact)
 	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
 	_move_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
 	_look_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
@@ -165,3 +168,8 @@ func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:
 	_move_joystick.visible = using_touch
 	_look_joystick.visible = using_touch
 	_keyboard_hint.visible = not using_touch
+
+
+func _on_interact_available_changed(is_available: bool) -> void:
+	_interact_button.visible = is_available
+
