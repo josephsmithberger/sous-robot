@@ -3,8 +3,8 @@ extends CharacterBody3D
 @export var move_speed := 5.0
 @export var look_speed := 2.2
 @export var mouse_sensitivity := 0.003
-@export var idle_bob_speed := 1.0
-@export var walk_bob_speed := 2.4
+@export var idle_bob_speed := 0.5
+@export var walk_bob_speed := 1.0
 
 @onready var head: Marker3D = $Head
 @onready var hand: Marker3D = $Head/Hand
@@ -124,16 +124,6 @@ func _on_area_exited(area: Area3D) -> void:
 
 
 func _update_interaction_target(force_update := false) -> void:
-	# Keep a valid hold locked to its original appliance. Area overlap events can
-	# jitter at collision boundaries, but they must not restart the action.
-	if (
-		_interaction_is_held
-		and is_instance_valid(_active_interaction)
-		and _overlapping_areas.has(_active_interaction)
-		and _active_interaction.can_interact(self)
-	):
-		return
-
 	var nearest: InteractionArea
 	var nearest_distance := INF
 	for area in _overlapping_areas.duplicate():
@@ -166,6 +156,8 @@ func _update_interaction_target(force_update := false) -> void:
 
 
 func _on_interaction_pressed() -> void:
+	if _interaction_is_held:
+		return
 	_update_interaction_target()
 	if _active_interaction == null or not _active_interaction.can_interact(self):
 		return

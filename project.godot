@@ -57,12 +57,12 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
+"current": true,
 "line": 0,
 "path": "res://scripts/player_controller.gd",
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/store_ui.gd",
 "type": "file"

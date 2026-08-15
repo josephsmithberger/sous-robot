@@ -116,7 +116,7 @@ func _input(event: InputEvent) -> void:
 				set_ui_mode(true)
 			get_viewport().set_input_as_handled()
 
-	if event.is_action_pressed(&"interact", false):
+	if event.is_action_pressed(&"interact", false) and not event.is_echo():
 		request_interaction()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_released(&"interact"):

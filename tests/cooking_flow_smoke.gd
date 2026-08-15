@@ -40,6 +40,7 @@ func _ready() -> void:
 	await get_tree().create_timer(0.35).timeout
 	var progress_before_refresh := GameControl.interaction_progress
 	assert(progress_before_refresh > 0.0, "Hold progress did not start")
+
 	# Simulate the forced target refresh caused by a noisy Area3D boundary.
 	player._update_interaction_target(true)
 	await get_tree().create_timer(0.2).timeout
@@ -47,7 +48,22 @@ func _ready() -> void:
 		GameControl.interaction_progress > progress_before_refresh,
 		"Hold progress restarted when the same target refreshed"
 	)
-	await get_tree().create_timer(0.9).timeout
+
+	# Simulate OS key repeats (echo events) and repeated interaction requests while holding
+	var echo_event := InputEventKey.new()
+	echo_event.physical_keycode = KEY_SPACE
+	echo_event.pressed = true
+	echo_event.echo = true
+	GameControl._input(echo_event)
+	GameControl.request_interaction()
+
+	var progress_after_echo := GameControl.interaction_progress
+	assert(
+		progress_after_echo >= progress_before_refresh,
+		"Hold progress reset on key repeat or repeated interaction request"
+	)
+
+	await get_tree().create_timer(0.8).timeout
 	assert(player.is_holding(&"sliced_bread"), "Cutting board did not produce sliced bread")
 	player._on_area_exited(cutting_board)
 

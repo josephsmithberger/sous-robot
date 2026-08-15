@@ -177,9 +177,9 @@ shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_interact_button_normal"]
-content_margin_left = 10.0
+content_margin_left = 22.0
 content_margin_top = 2.0
-content_margin_right = 10.0
+content_margin_right = 22.0
 content_margin_bottom = 2.0
 bg_color = Color(0.32549, 0.721569, 0.227451, 1)
 border_width_left = 3
@@ -196,9 +196,9 @@ shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_interact_button_pressed"]
-content_margin_left = 10.0
+content_margin_left = 22.0
 content_margin_top = 5.0
-content_margin_right = 10.0
+content_margin_right = 22.0
 content_margin_bottom = 0.0
 bg_color = Color(0.243137, 0.584314, 0.164706, 1)
 border_width_left = 3
@@ -212,9 +212,9 @@ corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_interact_button_hover"]
-content_margin_left = 10.0
+content_margin_left = 22.0
 content_margin_top = 2.0
-content_margin_right = 10.0
+content_margin_right = 22.0
 content_margin_bottom = 2.0
 bg_color = Color(0.423529, 0.819608, 0.321569, 1)
 border_width_left = 3
@@ -231,6 +231,15 @@ shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hold_fill_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hold_fill"]
+bg_color = Color(0.243137, 0.584314, 0.164706, 0.92)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
@@ -676,17 +685,52 @@ text = "HAND OFF"
 
 [node name="InteractButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=322001702]
 visible = false
-custom_minimum_size = Vector2(84, 44)
+clip_contents = true
+custom_minimum_size = Vector2(96, 44)
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 0)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBox_interact_button_normal")
 theme_override_styles/pressed = SubResource("StyleBox_interact_button_pressed")
 theme_override_styles/hover = SubResource("StyleBox_interact_button_hover")
 text = "INTERACT"
+
+[node name="HoldFill" type="ProgressBar" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton" unique_id=322001703]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxEmpty_hold_fill_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hold_fill")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="InteractionLabel" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton" unique_id=322001704]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+text = "INTERACT"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ResetButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=497690131]
 custom_minimum_size = Vector2(84, 44)
