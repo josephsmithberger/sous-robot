@@ -33,7 +33,7 @@ var input_mode: InputMode = InputMode.KEYBOARD:
 		input_mode_changed.emit(input_mode)
 		_sync_mouse_mode()
 
-var camera_mode := CameraMode.FIRST_PERSON:
+var camera_mode := CameraMode.MARKER:
 	set(value):
 		if camera_mode == value:
 			return
@@ -41,7 +41,7 @@ var camera_mode := CameraMode.FIRST_PERSON:
 		camera_mode_changed.emit(camera_mode)
 		_sync_mouse_mode()
 
-var is_ui_mode := false:
+var is_ui_mode := true:
 	set(value):
 		if is_ui_mode == value:
 			return
@@ -62,12 +62,14 @@ var look_input := Vector2.ZERO
 var _controllability_requested := false
 var _active_dialogues := 0
 var _mouse_look_delta := Vector2.ZERO
+var _camera_mode_before_dialogue: CameraMode = CameraMode.FIRST_PERSON
+var _ui_mode_before_dialogue := false
 
 
 func _ready() -> void:
 	input_mode = InputMode.TOUCH if DisplayServer.is_touchscreen_available() else InputMode.KEYBOARD
 	_sync_mouse_mode()
-	_connect_dialogue_manager.call_deferred()
+	_connect_dialogue_manager()
 
 
 func _input(event: InputEvent) -> void:
@@ -108,20 +110,32 @@ func set_camera_mode(value: CameraMode) -> void:
 
 
 func give_player_control() -> void:
+	if is_dialogue_active():
+		return
 	set_camera_mode(CameraMode.FIRST_PERSON)
 	set_ui_mode(false)
+	_camera_mode_before_dialogue = camera_mode
+	_ui_mode_before_dialogue = is_ui_mode
 
 
 func hand_off_control() -> void:
+	if is_dialogue_active():
+		return
 	set_camera_mode(CameraMode.MARKER)
+	_camera_mode_before_dialogue = camera_mode
+	_ui_mode_before_dialogue = is_ui_mode
 
 
 func toggle_camera_mode() -> void:
+	if is_dialogue_active():
+		return
 	if camera_mode == CameraMode.FIRST_PERSON:
 		set_camera_mode(CameraMode.MARKER)
 		set_ui_mode(true)
 	else:
 		give_player_control()
+	_camera_mode_before_dialogue = camera_mode
+	_ui_mode_before_dialogue = is_ui_mode
 
 
 func has_player_control() -> bool:
@@ -158,16 +172,22 @@ func is_dialogue_active() -> bool:
 func _connect_dialogue_manager() -> void:
 	var dialogue_manager := get_node_or_null("/root/DialogueManager")
 	if dialogue_manager == null:
-		push_error("DialogueManager autoload is missing")
+		call_deferred(&"_connect_dialogue_manager")
 		return
 
-	dialogue_manager.connect(&"dialogue_started", _on_dialogue_started)
-	dialogue_manager.connect(&"dialogue_ended", _on_dialogue_ended)
+	if not dialogue_manager.dialogue_started.is_connected(_on_dialogue_started):
+		dialogue_manager.dialogue_started.connect(_on_dialogue_started)
+	if not dialogue_manager.dialogue_ended.is_connected(_on_dialogue_ended):
+		dialogue_manager.dialogue_ended.connect(_on_dialogue_ended)
 
 
 func _on_dialogue_started(_resource: Resource) -> void:
 	_active_dialogues += 1
 	if _active_dialogues == 1:
+		if camera_mode == CameraMode.FIRST_PERSON:
+			_camera_mode_before_dialogue = camera_mode
+			_ui_mode_before_dialogue = is_ui_mode
+		set_camera_mode(CameraMode.MARKER)
 		dialogue_activity_changed.emit(true)
 	_refresh_controllability()
 
@@ -175,8 +195,11 @@ func _on_dialogue_started(_resource: Resource) -> void:
 func _on_dialogue_ended(_resource: Resource) -> void:
 	_active_dialogues = maxi(_active_dialogues - 1, 0)
 	if _active_dialogues == 0:
+		set_camera_mode(_camera_mode_before_dialogue)
 		dialogue_activity_changed.emit(false)
 	_refresh_controllability()
+	if _active_dialogues == 0 and _controllability_requested:
+		set_ui_mode(_ui_mode_before_dialogue)
 
 
 func _refresh_controllability() -> void:

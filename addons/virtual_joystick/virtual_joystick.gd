@@ -1,5 +1,3 @@
-class_name VirtualJoystick
-
 extends Control
 
 ## A simple virtual joystick for touchscreens, with useful options.

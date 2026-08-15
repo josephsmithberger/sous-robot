@@ -11,8 +11,8 @@ const SLIDE_DURATION := 0.28
 @onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck
 @onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow
 @onready var _keyboard_hint: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/KeyboardHint
-@onready var _move_joystick: VirtualJoystick = %MoveJoystick
-@onready var _look_joystick: VirtualJoystick = %LookJoystick
+@onready var _move_joystick: Control = %MoveJoystick
+@onready var _look_joystick: Control = %LookJoystick
 @onready var _hand_off_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/HandOffButton
 @onready var _interact_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton
 
@@ -54,7 +54,8 @@ func start_dialogue(resource: DialogueResource, title: String = "") -> Node:
 
 
 func _process(_delta: float) -> void:
-	GameControl.set_virtual_input(_move_joystick.output, _look_joystick.output)
+	if _move_joystick != null and _look_joystick != null:
+		GameControl.set_virtual_input(_move_joystick.output, _look_joystick.output)
 
 
 func _exit_tree() -> void:

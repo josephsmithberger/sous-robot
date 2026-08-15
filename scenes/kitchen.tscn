@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cosre32qjbpd2" path="res://scripts/game_scene.gd" id="1_58u3k"]
 [ext_resource type="Script" uid="uid://rr43vymo32yc" path="res://scripts/kitchen_floor_multimesh.gd" id="2_ibrlr"]
-[ext_resource type="PackedScene" uid="uid://br5fl3ivmcbmd" path="res://player.tscn" id="2_mwmjw"]
+[ext_resource type="PackedScene" uid="uid://br5fl3ivmcbmd" path="res://scenes/player.tscn" id="2_mwmjw"]
 [ext_resource type="Texture2D" uid="uid://qehj6aq85bc" path="res://assets/kitchen-pack/restaurantbits_texture.png" id="3_mwmjw"]
 [ext_resource type="PackedScene" uid="uid://cd5e5w4ybul3g" path="res://assets/kitchen-pack/wall_window_closed.gltf" id="4_cwf2y"]
 [ext_resource type="PackedScene" uid="uid://bmxodky3gmro3" path="res://assets/kitchen-pack/wall_orderwindow_decorated.gltf" id="5_vpxcu"]
@@ -366,7 +366,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24334717, 1.8023682, 8.3078
 shape = SubResource("BoxShape3D_cwf2y")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=2016316519]
-fov = 80.0
+transform = Transform3D(-4.371139e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 1.9106855e-15, 0, 15, -2)
+fov = 60.0
 script = ExtResource("9_mwmjw")
 
 [node name="Marker3D" type="Marker3D" parent="." unique_id=1431528033]

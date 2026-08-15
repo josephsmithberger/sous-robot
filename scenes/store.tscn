@@ -81,9 +81,11 @@ text = "A finished kitchen wall with useful character."
 autowrap_mode = 2
 
 [node name="BunCrate" type="Button" parent="Scroll/Grid" unique_id=1278457462 groups=["store_cards"]]
+modulate = Color(0.5, 0.5, 0.5, 1)
 clip_contents = true
 custom_minimum_size = Vector2(280, 340)
 layout_mode = 2
+disabled = true
 
 [node name="Content" type="VBoxContainer" parent="Scroll/Grid/BunCrate" unique_id=1078420073]
 layout_mode = 1
@@ -112,7 +114,7 @@ text = "Bun Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/BunCrate/Content" unique_id=1219993467]
 layout_mode = 2
-text = "$35"
+text = "Owned (Starter item)"
 
 [node name="Description" type="Label" parent="Scroll/Grid/BunCrate/Content" unique_id=398712910]
 custom_minimum_size = Vector2(0, 66)

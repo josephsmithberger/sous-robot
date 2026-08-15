@@ -27,7 +27,7 @@ func _move_to_mode(mode: GameControl.CameraMode) -> void:
 		_transition.kill()
 
 	var start_transform := global_transform
-	var target_transform := _target_for(mode).global_transform
+	var target_node := _target_for(mode)
 	var target_fov := FIRST_PERSON_FOV if mode == GameControl.CameraMode.FIRST_PERSON else MARKER_FOV
 
 	_transition = create_tween().set_parallel(true)
@@ -35,7 +35,7 @@ func _move_to_mode(mode: GameControl.CameraMode) -> void:
 	_transition.set_ease(Tween.EASE_IN_OUT)
 	_transition.tween_method(
 		func(weight: float) -> void:
-			global_transform = start_transform.interpolate_with(target_transform, weight),
+			global_transform = start_transform.interpolate_with(target_node.global_transform, weight),
 		0.0,
 		1.0,
 		transition_duration

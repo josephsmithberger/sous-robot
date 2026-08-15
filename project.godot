@@ -12,7 +12,7 @@ config_version=5
 
 config/name="sous-robot"
 run/main_scene="uid://ct7d4u74y3oht"
-config/features=PackedStringArray("4.6", "Mobile")
+config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -57,14 +57,14 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
-"path": "res://scripts/security_camera.gd",
+"path": "res://scripts/player_controller.gd",
 "type": "file"
 }, {
 "column": 0,
+"current": true,
 "line": 0,
-"path": "res://scripts/player_controller.gd",
+"path": "res://scripts/store_ui.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

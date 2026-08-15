@@ -1,0 +1,36 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bread_slice.glb" id="1_bread"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_static"]
+size = Vector3(0.78, 0.18, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_interact"]
+size = Vector3(0.88, 0.28, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crumb"]
+albedo_color = Color(0.96, 0.66, 0.34, 1)
+cull_mode = 0
+roughness = 0.95
+
+[node name="bread_slice" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_bread")]
+editable_children = true
+
+[node name="food_ingredient_bread_slice" parent="Model" index="0"]
+surface_material_override/1 = SubResource("StandardMaterial3D_crumb")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+position = Vector3(0, 0.09, 0)
+shape = SubResource("BoxShape3D_static")
+
+[node name="bread_slice" type="Area3D" parent="."]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="bread_slice"]
+position = Vector3(0, 0.09, 0)
+shape = SubResource("BoxShape3D_interact")
