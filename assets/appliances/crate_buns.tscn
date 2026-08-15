@@ -1,6 +1,8 @@
-[gd_scene format=3 uid="uid://bkq40h6kvxj5m"]
+[gd_scene load_steps=5 format=3 uid="uid://bkq40h6kvxj5m"]
 
 [ext_resource type="PackedScene" uid="uid://blqt6ehm81vys" path="res://assets/kitchen-pack/crate_buns.gltf" id="1_model"]
+[ext_resource type="Script" path="res://scripts/item_source.gd" id="2_source"]
+[ext_resource type="Resource" path="res://resources/items/bread.tres" id="3_bread"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_static"]
 size = Vector3(2, 0.8024, 2)
@@ -19,6 +21,8 @@ shape = SubResource("BoxShape3D_static")
 
 [node name="buns" type="Area3D" parent="." index="2" unique_id=1932666812]
 visible = false
+script = ExtResource("2_source")
+item = ExtResource("3_bread")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="buns" index="0" unique_id=2130236185]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4012, 0)

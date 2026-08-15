@@ -1,6 +1,9 @@
-[gd_scene load_steps=5 format=4 uid="uid://dyfkgx0cu5pkm"]
+[gd_scene load_steps=8 format=4 uid="uid://dyfkgx0cu5pkm"]
 
 [ext_resource type="PackedScene" uid="uid://cbrvfinxajjne" path="res://assets/appliances/wall_decorated_no_pan.glb" id="1_no_pan"]
+[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Resource" path="res://resources/items/bread.tres" id="3_bread"]
+[ext_resource type="Resource" path="res://resources/items/sliced_bread.tres" id="4_sliced"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_87bic"]
 size = Vector3(4.1069946, 4.345215, 2.9916992)
@@ -28,6 +31,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1845093, 0.3060913, 1.1746
 shape = SubResource("BoxShape3D_vpxcu")
 
 [node name="cutboard" type="Area3D" parent="." unique_id=1419940019]
+script = ExtResource("2_processor")
+hold_duration = 1.25
+input_item = ExtResource("3_bread")
+output_item = ExtResource("4_sliced")
+action_verb = "SLICE BREAD"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="cutboard" unique_id=575721903]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0630646, 0.45648193, 1.1335754)

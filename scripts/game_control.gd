@@ -7,6 +7,14 @@ signal dialogue_activity_changed(is_active: bool)
 signal camera_mode_changed(camera_mode: CameraMode)
 signal ui_mode_changed(is_ui_mode: bool)
 signal interact_available_changed(is_available: bool)
+signal interaction_pressed
+signal interaction_released
+signal interaction_prompt_changed(prompt: String, hold_duration: float)
+signal interaction_progress_changed(progress: float)
+@warning_ignore("unused_signal")
+signal held_item_changed(item: KitchenItem)
+@warning_ignore("unused_signal")
+signal item_delivered(item: KitchenItem)
 
 enum InputMode {
 	KEYBOARD,
@@ -58,6 +66,9 @@ var can_interact := false:
 
 var move_input := Vector2.ZERO
 var look_input := Vector2.ZERO
+var interaction_prompt := ""
+var interaction_hold_duration := 0.0
+var interaction_progress := 0.0
 
 var _controllability_requested := false
 var _active_dialogues := 0
@@ -67,9 +78,24 @@ var _ui_mode_before_dialogue := false
 
 
 func _ready() -> void:
+	_ensure_interact_action()
 	input_mode = InputMode.TOUCH if DisplayServer.is_touchscreen_available() else InputMode.KEYBOARD
 	_sync_mouse_mode()
 	_connect_dialogue_manager()
+
+
+func _ensure_interact_action() -> void:
+	if not InputMap.has_action(&"interact"):
+		InputMap.add_action(&"interact")
+	for event in InputMap.action_get_events(&"interact"):
+		if event is InputEventKey and (
+			(event as InputEventKey).physical_keycode == KEY_SPACE
+			or (event as InputEventKey).keycode == KEY_SPACE
+		):
+			return
+	var space_event := InputEventKey.new()
+	space_event.physical_keycode = KEY_SPACE
+	InputMap.action_add_event(&"interact", space_event)
 
 
 func _input(event: InputEvent) -> void:
@@ -90,10 +116,50 @@ func _input(event: InputEvent) -> void:
 				set_ui_mode(true)
 			get_viewport().set_input_as_handled()
 
+	if event.is_action_pressed(&"interact", false):
+		request_interaction()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_released(&"interact"):
+		cancel_interaction()
+		get_viewport().set_input_as_handled()
+
+
+func request_interaction() -> void:
+	if has_player_control() and can_interact:
+		interaction_pressed.emit()
+
+
+func cancel_interaction() -> void:
+	interaction_released.emit()
+	set_interaction_progress(0.0)
+
+
+func set_interaction_context(next_prompt: String, next_hold_duration: float = 0.0) -> void:
+	var changed := interaction_prompt != next_prompt or not is_equal_approx(interaction_hold_duration, next_hold_duration)
+	interaction_prompt = next_prompt
+	interaction_hold_duration = next_hold_duration
+	can_interact = not interaction_prompt.is_empty()
+	if changed:
+		interaction_prompt_changed.emit(interaction_prompt, interaction_hold_duration)
+
+
+func clear_interaction_context() -> void:
+	set_interaction_context("")
+	set_interaction_progress(0.0)
+
+
+func set_interaction_progress(progress: float) -> void:
+	var next_progress := clampf(progress, 0.0, 1.0)
+	if is_equal_approx(interaction_progress, next_progress):
+		return
+	interaction_progress = next_progress
+	interaction_progress_changed.emit(interaction_progress)
+
 
 func set_controllable(value: bool) -> void:
 	_controllability_requested = value
 	if not value:
+		cancel_interaction()
 		set_ui_mode(true)
 	_refresh_controllability()
 

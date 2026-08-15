@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crust"]
+albedo_color = Color(0.78, 0.42, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_loaf"]
+material = SubResource("StandardMaterial3D_crust")
+radius = 0.34
+height = 0.72
+radial_segments = 16
+rings = 8
+
+[node name="bread" type="Node3D"]
+
+[node name="Loaf" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, -3.059797e-08, -0.7, 0, 1.1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_loaf")

@@ -20,11 +20,16 @@ var _previous_dialogue_host_resolver: Callable
 var _interaction_tween: Tween
 var _dialogue_slot_is_open := false
 var _control_deck_is_open := false
+var _interaction_prompt := "INTERACT"
+var _interaction_is_hold := false
+var _interaction_fill: ProgressBar
+var _interaction_label: Label
 
 
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
+	_setup_interact_button()
 
 	_tabs.tab_changed.connect(_on_tab_changed)
 	GameControl.controllability_changed.connect(_on_controllability_changed)
@@ -32,8 +37,13 @@ func _ready() -> void:
 	GameControl.dialogue_activity_changed.connect(_on_dialogue_activity_changed)
 	GameControl.camera_mode_changed.connect(_on_camera_mode_changed)
 	GameControl.interact_available_changed.connect(_on_interact_available_changed)
+	GameControl.interaction_prompt_changed.connect(_on_interaction_prompt_changed)
+	GameControl.interaction_progress_changed.connect(_on_interaction_progress_changed)
 	_on_interact_available_changed(GameControl.can_interact)
+	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
 	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
+	_interact_button.button_down.connect(GameControl.request_interaction)
+	_interact_button.button_up.connect(GameControl.cancel_interaction)
 	_move_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
 	_look_joystick.touch_started.connect(_on_virtual_joystick_touch_started)
 	_game_viewport_container.gui_input.connect(_on_game_viewport_gui_input)
@@ -174,3 +184,68 @@ func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:
 func _on_interact_available_changed(is_available: bool) -> void:
 	_interact_button.visible = is_available
 
+
+func _setup_interact_button() -> void:
+	_interact_button.clip_contents = true
+	_interact_button.text = ""
+
+	_interaction_fill = ProgressBar.new()
+	_interaction_fill.name = "HoldFill"
+	_interaction_fill.min_value = 0.0
+	_interaction_fill.max_value = 1.0
+	_interaction_fill.step = 0.001
+	_interaction_fill.show_percentage = false
+	_interaction_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var empty_style := StyleBoxEmpty.new()
+	var fill_style := StyleBoxFlat.new()
+	fill_style.bg_color = Color(0.243137, 0.584314, 0.164706, 0.92)
+	fill_style.corner_radius_top_left = 16
+	fill_style.corner_radius_top_right = 16
+	fill_style.corner_radius_bottom_right = 16
+	fill_style.corner_radius_bottom_left = 16
+	_interaction_fill.add_theme_stylebox_override(&"background", empty_style)
+	_interaction_fill.add_theme_stylebox_override(&"fill", fill_style)
+
+	_interact_button.add_child(_interaction_fill)
+	_interaction_fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_interaction_fill.offset_left = 3.0
+	_interaction_fill.offset_top = 3.0
+	_interaction_fill.offset_right = -3.0
+	_interaction_fill.offset_bottom = -3.0
+	_interaction_fill.visible = false
+
+	_interaction_label = Label.new()
+	_interaction_label.name = "InteractionLabel"
+	_interaction_label.text = _interaction_prompt
+	_interaction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_interaction_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_interaction_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_interaction_label.add_theme_color_override(
+		&"font_color", _interact_button.get_theme_color(&"font_color")
+	)
+	_interaction_label.add_theme_font_override(
+		&"font", _interact_button.get_theme_font(&"font")
+	)
+	_interaction_label.add_theme_font_size_override(
+		&"font_size", _interact_button.get_theme_font_size(&"font_size")
+	)
+	_interact_button.add_child(_interaction_label)
+	_interaction_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+
+func _on_interaction_prompt_changed(prompt: String, hold_duration: float) -> void:
+	_interaction_prompt = prompt if not prompt.is_empty() else "INTERACT"
+	_interaction_is_hold = hold_duration > 0.0
+	_interaction_label.text = _interaction_prompt
+	_set_interaction_fill(0.0)
+
+
+func _on_interaction_progress_changed(progress: float) -> void:
+	_set_interaction_fill(progress if _interaction_is_hold else 0.0)
+
+
+func _set_interaction_fill(progress: float) -> void:
+	var fill_amount := clampf(progress, 0.0, 1.0)
+	_interaction_fill.value = fill_amount
+	_interaction_fill.visible = _interaction_is_hold and fill_amount > 0.0
