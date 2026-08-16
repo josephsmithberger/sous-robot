@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/bun.tres" id="2_bun"]
+[ext_resource type="Resource" path="res://resources/items/lettuce.tres" id="3_lettuce"]
+[ext_resource type="Resource" path="res://resources/items/tomato.tres" id="4_tomato"]
+[ext_resource type="Resource" path="res://resources/items/two_buns.tres" id="5_output"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"veggie_burger"
+display_name = "Veggie Burger"
+output_item = ExtResource("5_output")
+ingredient_sequence = Array[Resource]([ExtResource("2_bun"), ExtResource("3_lettuce"), ExtResource("4_tomato"), ExtResource("2_bun")])
+assembly_duration = 0.0

@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cad7d1k4gd2gk" path="res://assets/kitchen-pack/kitchencounter_straight_B_backsplash.gltf" id="1_tdl6w"]
 [ext_resource type="Texture2D" uid="uid://qehj6aq85bc" path="res://assets/kitchen-pack/restaurantbits_texture.png" id="5_fjdgj"]
+[ext_resource type="Script" path="res://scripts/assembly_counter.gd" id="2_assembly"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_at8n7"]
 resource_name = "restaurant"
@@ -46,7 +47,7 @@ shadow_mesh = SubResource("ArrayMesh_un1io")
 size = Vector3(3.9516602, 1.8989868, 2.0751953)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kpf3s"]
-size = Vector3(4.3514404, 1.3613281, 1.847168)
+size = Vector3(2.1166382, 1.3613281, 1.847168)
 
 [node name="kitchencounter_straight_B_backsplash2" unique_id=341753289 instance=ExtResource("1_tdl6w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0592973, 0, 0)
@@ -65,8 +66,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0314941, 0.9187927, 0.0034
 shape = SubResource("BoxShape3D_mqss6")
 
 [node name="counter" type="Area3D" parent="." index="3" unique_id=1914888512]
-visible = false
+script = ExtResource("2_assembly")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="counter" index="0" unique_id=2118438109]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0177612, 0.63378906, 0.42358398)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1351624, 0.63378906, 0.42358398)
 shape = SubResource("BoxShape3D_kpf3s")
+
+[node name="AssemblyPlate" type="Marker3D" parent="counter" index="1" unique_id=1914888513]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1351624, 0.9, 0)
+
+[node name="counter2" type="Area3D" parent="." index="4" unique_id=2130890108]
+script = ExtResource("2_assembly")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="counter2" index="0" unique_id=668332256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.056274176, 0.63378906, 0.42358398)
+shape = SubResource("BoxShape3D_kpf3s")
+
+[node name="AssemblyPlate" type="Marker3D" parent="counter2" index="1" unique_id=2130890109]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.056274176, 0.9, 0)

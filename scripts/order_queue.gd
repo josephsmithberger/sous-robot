@@ -14,6 +14,7 @@ const ONION: KitchenItem = preload("res://resources/items/onion.tres")
 const POTATO: KitchenItem = preload("res://resources/items/potato.tres")
 const STEAK: KitchenItem = preload("res://resources/items/steak.tres")
 const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
+const TWO_BUNS: KitchenItem = preload("res://resources/items/two_buns.tres")
 
 @export_category("Visible Queue")
 @export_range(1, 8, 1) var visible_waiter_count := 3
@@ -34,6 +35,7 @@ const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 	POTATO,
 	STEAK,
 	TOMATO,
+	TWO_BUNS,
 ]
 
 @export_category("Order Cycle")

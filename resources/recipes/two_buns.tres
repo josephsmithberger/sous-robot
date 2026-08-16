@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/bun.tres" id="2_bun"]
+[ext_resource type="Resource" path="res://resources/items/two_buns.tres" id="3_two_buns"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"two_buns"
+display_name = "Two Buns"
+output_item = ExtResource("3_two_buns")
+ingredient_sequence = Array[Resource]([ExtResource("2_bun"), ExtResource("2_bun")])
+assembly_duration = 0.0

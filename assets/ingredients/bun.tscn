@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bun.gltf" id="1_bun"]
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bun_bottom.gltf" id="1_bun"]
 
 [node name="bun" type="Node3D"]
 
