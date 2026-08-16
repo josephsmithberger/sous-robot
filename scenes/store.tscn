@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://vndntl2q6ut0" path="res://assets/appliances/thumbnails/oven.png" id="14_oven"]
 [ext_resource type="Texture2D" uid="uid://dn63pyhehuqd" path="res://assets/appliances/thumbnails/sink.png" id="15_sink"]
 [ext_resource type="Texture2D" uid="uid://bvct37ubj1mus" path="res://assets/appliances/thumbnails/wall_decorated.png" id="16_wall"]
+[ext_resource type="Texture2D" uid="uid://853cg6y88qxp" path="res://assets/appliances/thumbnails/counter.png" id="17_counter"]
 
 [node name="store" type="Control" unique_id=1583282709]
 layout_mode = 3
@@ -573,6 +574,48 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "A kitchen sink for washing ingredients and dishes."
 autowrap_mode = 2
+
+[node name="Counter" type="Button" parent="Scroll/Grid" unique_id=2081192834 groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/Counter" unique_id=1418729381]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/Counter/Content" unique_id=1849182390]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("17_counter")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/Counter/Content" unique_id=1992837410]
+layout_mode = 2
+text = "Counter"
+
+[node name="Price" type="Label" parent="Scroll/Grid/Counter/Content" unique_id=1284910283]
+layout_mode = 2
+text = "$50"
+
+[node name="Description" type="Label" parent="Scroll/Grid/Counter/Content" unique_id=1582910394]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A food prep counter for assembling and combining ingredients."
+autowrap_mode = 2
+
 
 [node name="PurchaseDialog" type="ConfirmationDialog" parent="." unique_id=585447083]
 title = "Buy?"

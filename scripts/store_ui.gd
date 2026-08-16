@@ -15,6 +15,7 @@ const DEFAULT_PRICES: Dictionary = {
 	&"Fridge": 150.0,
 	&"Oven": 180.0,
 	&"Sink": 100.0,
+	&"Counter": 50.0,
 }
 
 @onready var purchase_dialog: ConfirmationDialog = $PurchaseDialog
