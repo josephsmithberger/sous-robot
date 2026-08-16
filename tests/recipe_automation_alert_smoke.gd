@@ -28,6 +28,8 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_test_game_ui_alert_banner_lifecycle()
 	await get_tree().process_frame
+	_test_game_ui_alert_banner_spam_restarts_timer()
+	await get_tree().process_frame
 	print("RECIPE_AUTOMATION_ALERT_SMOKE_PASS")
 	get_tree().quit(0)
 
@@ -165,3 +167,34 @@ func _test_game_ui_alert_banner_lifecycle() -> void:
 	assert(alert_label.text == "new automation available: Classic Cheeseburger", "AlertLabel text should show centered 'new automation available: [recipe]'")
 
 	game_node.queue_free()
+
+
+func _test_game_ui_alert_banner_spam_restarts_timer() -> void:
+	RecipeTracker.reset_tracker()
+	var game_node := GAME_SCENE.instantiate()
+	add_child(game_node)
+
+	var alert_panel := game_node.find_child("AlertBanner", true, false) as PanelContainer
+	assert(alert_panel != null, "AlertBanner panel must exist")
+	var alert_label := alert_panel.find_child("AlertLabel", true, false) as Label
+	assert(alert_label != null, "AlertLabel must exist")
+
+	var hand_off_btn := game_node.find_child("HandOffButton", true, false) as Button
+	assert(hand_off_btn != null, "HandOffButton must exist")
+
+	# First press with no active order
+	hand_off_btn.emit_signal("pressed")
+	assert(alert_panel.visible, "AlertBanner should be visible")
+	assert(alert_label.text == "No active order to hand off!", "Alert should indicate no active order")
+	assert(game_node.get("_alert_queue").size() == 0, "Alert queue should be empty after popping initial alert")
+
+	# Spam press multiple times
+	for _i in range(10):
+		hand_off_btn.emit_signal("pressed")
+
+	# Alert queue must NOT grow when spammed
+	assert(game_node.get("_alert_queue").size() == 0, "Spamming the button should NOT queue multiple alerts")
+	assert(alert_panel.visible, "AlertBanner should remain visible and restart timer")
+
+	game_node.queue_free()
+

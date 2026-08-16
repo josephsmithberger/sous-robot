@@ -154,14 +154,63 @@ func _create_alert_banner() -> void:
 	_alert_banner_panel.add_child(_alert_banner_label)
 
 
+func _resolve_alert_message(recipe_id: StringName, recipe_name: String, message: String) -> String:
+	if not message.is_empty():
+		return message
+	if not recipe_name.is_empty():
+		return "new automation available: %s" % recipe_name
+	if not recipe_id.is_empty():
+		return "new automation available: %s" % str(recipe_id)
+	return ""
+
+
 func _on_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
+	var final_message := _resolve_alert_message(recipe_id, recipe_name, message)
+	if final_message.is_empty():
+		return
+
+	# If this exact alert is already showing, restart its visible duration instead of queuing duplicate
+	if _is_showing_alert and _alert_banner_label != null and _alert_banner_label.text == final_message:
+		_restart_alert_timer()
+		return
+
+	# If this exact alert is already in the queue, don't queue duplicate
+	for item in _alert_queue:
+		if item.get("resolved_message", "") == final_message:
+			return
+
 	_alert_queue.append({
 		"recipe_id": recipe_id,
 		"name": recipe_name,
 		"message": message,
+		"resolved_message": final_message,
 	})
 	if not _is_showing_alert:
 		_process_next_alert()
+
+
+func _restart_alert_timer() -> void:
+	if _alert_banner_panel == null:
+		return
+
+	var parent_ctrl := _alert_banner_panel.get_parent() as Control
+	var stage_width := parent_ctrl.size.x if parent_ctrl != null and parent_ctrl.size.x > 0 else 850.0
+	var banner_w := _alert_banner_panel.size.x if _alert_banner_panel.size.x > 0 else 440.0
+	var center_x := (stage_width - banner_w) * 0.5
+	_alert_banner_panel.position = Vector2(center_x, 16.0)
+	_alert_banner_panel.modulate.a = 1.0
+	_alert_banner_panel.visible = true
+
+	if is_instance_valid(_alert_tween):
+		_alert_tween.kill()
+
+	_alert_tween = create_tween()
+	_alert_tween.tween_property(_alert_banner_panel, ^"position:y", 16.0, 0.08).from(12.0)
+	_alert_tween.parallel().tween_property(_alert_banner_panel, ^"modulate:a", 1.0, 0.08)
+	_alert_tween.tween_interval(3.0)
+	_alert_tween.tween_property(_alert_banner_panel, ^"position:y", -60.0, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_alert_tween.parallel().tween_property(_alert_banner_panel, ^"modulate:a", 0.0, 0.2)
+	_alert_tween.finished.connect(_on_alert_tween_finished)
 
 
 func _process_next_alert() -> void:
@@ -172,7 +221,11 @@ func _process_next_alert() -> void:
 	_is_showing_alert = true
 	var alert_data: Dictionary = _alert_queue.pop_front()
 	var recipe_name: String = alert_data.get("name", "")
-	var message: String = alert_data.get("message", "new automation available: %s" % recipe_name)
+	var recipe_id: StringName = alert_data.get("recipe_id", &"")
+	var raw_message: String = alert_data.get("message", "")
+	var message: String = alert_data.get("resolved_message", "")
+	if message.is_empty():
+		message = _resolve_alert_message(recipe_id, recipe_name, raw_message)
 
 	if _alert_banner_label != null:
 		_alert_banner_label.text = message
