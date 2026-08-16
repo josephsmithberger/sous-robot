@@ -15,4 +15,18 @@ export_credentials.cfg
 data_*/
 mono_crash.*.json
 /assets/kitchen-pack
-.agents/skills/xogot/SKILL.md
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor & AI tool metadata
+.agents/
+.cursor/
+.gemini/
+
