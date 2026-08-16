@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/store_money_smoke.gd" id="1_test"]
+
+[node name="StoreMoneySmoke" type="Node"]
+script = ExtResource("1_test")

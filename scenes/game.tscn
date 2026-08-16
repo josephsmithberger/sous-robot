@@ -71,6 +71,45 @@ bg_color = Color(0.94902, 0.905882, 0.764706, 1)
 border_width_top = 1
 border_color = Color(0.176471, 0.160784, 0.137255, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_vscroll_grabber"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+bg_color = Color(0.380392, 0.34902, 0.298039, 0.501961)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_vscroll_grabber_hl"]
+bg_color = Color(0.25098, 0.219608, 0.180392, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_vscroll_grabber_pressed"]
+bg_color = Color(0.180392, 0.160784, 0.141176, 0.94902)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_vscroll_bg"]
+content_margin_left = 1.0
+content_margin_right = 1.0
+bg_color = Color(0.180392, 0.160784, 0.141176, 0.0784314)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="Theme" id="Theme_receipt_scroll"]
+VScrollBar/styles/grabber = SubResource("StyleBox_receipt_vscroll_grabber")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBox_receipt_vscroll_grabber_hl")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBox_receipt_vscroll_grabber_pressed")
+VScrollBar/styles/scroll = SubResource("StyleBox_receipt_vscroll_bg")
+VScrollBar/styles/scroll_focus = SubResource("StyleBox_receipt_vscroll_bg")
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_tab_unselected"]
 content_margin_left = 16.0
 content_margin_top = 6.0
@@ -427,8 +466,10 @@ text = "······························"
 horizontal_alignment = 1
 
 [node name="OrdersScroll" type="ScrollContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout" unique_id=1111493689]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme = SubResource("Theme_receipt_scroll")
 horizontal_scroll_mode = 0
 
 [node name="OrdersList" type="VBoxContainer" parent="MarginContainer/HSplitContainer/stats/orders/ReceiptPadding/ReceiptLayout/OrdersScroll" unique_id=376025336]

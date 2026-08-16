@@ -52,25 +52,9 @@ textures/vram_compression/import_etc2_astc=true
 
 project/editorState=[{
 "column": 0,
-"line": 0,
-"path": "res://scripts/game_ui.gd",
-"type": "file"
-}, {
-"column": 0,
-"line": 0,
-"path": "res://scripts/player_controller.gd",
-"type": "file"
-}, {
-"column": 0,
-"line": 0,
-"path": "res://scripts/store_ui.gd",
-"type": "file"
-}, {
-"column": 0,
 "current": true,
 "line": 0,
-"path": "res://tests/order_queue_smoke.gd",
-"transient": true,
+"path": "res://scripts/game_ui.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

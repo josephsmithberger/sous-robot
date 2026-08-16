@@ -32,6 +32,8 @@ signal order_penalized(order_id: int, remaining_tip: float, penalty: float, item
 signal order_completed(order_id: int, payout: float, final_tip: float)
 @warning_ignore("unused_signal")
 signal money_changed(balance: float, delta: float, reason: String)
+@warning_ignore("unused_signal")
+signal item_unlocked(item_id: StringName)
 
 enum InputMode {
 	KEYBOARD,
@@ -89,6 +91,7 @@ var interaction_hold_duration := 0.0
 var interaction_progress := 0.0
 var money := 0.0
 var active_order_id := 0
+var owned_items: Array[StringName] = [&"DecoratedWall", &"BunCrate"]
 
 var _controllability_requested := false
 var _active_dialogues := 0
@@ -121,6 +124,7 @@ func _ensure_interact_action() -> void:
 
 func reset_session(starting_money: float = 0.0) -> void:
 	active_order_id = 0
+	owned_items = [&"DecoratedWall", &"BunCrate"]
 	var delta := starting_money - money
 	money = starting_money
 	money_changed.emit(money, delta, "SESSION START")
@@ -137,6 +141,27 @@ func end_order(order_id: int) -> void:
 
 func has_active_order() -> bool:
 	return active_order_id > 0
+
+
+func can_afford(cost: float) -> bool:
+	return money + 0.0001 >= cost
+
+
+func spend_money(cost: float, reason: String = "") -> bool:
+	if cost <= 0.0 or not can_afford(cost):
+		return false
+	change_money(-cost, reason)
+	return true
+
+
+func is_item_owned(item_id: StringName) -> bool:
+	return owned_items.has(item_id)
+
+
+func unlock_item(item_id: StringName) -> void:
+	if not owned_items.has(item_id):
+		owned_items.append(item_id)
+		item_unlocked.emit(item_id)
 
 
 func change_money(delta: float, reason: String = "") -> void:

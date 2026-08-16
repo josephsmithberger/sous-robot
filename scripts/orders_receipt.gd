@@ -3,6 +3,7 @@ extends PanelContainer
 
 const MAX_VISIBLE_ORDERS := 8
 
+@onready var orders_scroll: ScrollContainer = %OrdersScroll
 @onready var orders_list: VBoxContainer = %OrdersList
 @onready var empty_state: Label = %EmptyState
 @onready var order_count: Label = %OrderCount
@@ -10,6 +11,7 @@ const MAX_VISIBLE_ORDERS := 8
 
 var _orders: Dictionary = {}
 var _completed_order_ids: Array[int] = []
+var _scroll_tween: Tween
 
 
 func _ready() -> void:
@@ -23,6 +25,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if _scroll_tween and _scroll_tween.is_valid():
+		_scroll_tween.kill()
 	if GameControl.order_started.is_connected(_on_order_started):
 		GameControl.order_started.disconnect(_on_order_started)
 	if GameControl.order_item_fulfilled.is_connected(_on_order_item_fulfilled):
@@ -104,6 +108,7 @@ func add_order(order_id: int, order: Dictionary) -> void:
 	}
 	empty_state.visible = false
 	_refresh_count()
+	_scroll_to_bottom(true)
 
 
 func set_order_item_completed(order_id: int, item_id: StringName, fulfilled: int, required: int) -> void:
@@ -118,6 +123,7 @@ func set_order_item_completed(order_id: int, item_id: StringName, fulfilled: int
 	var item_row := item_data["row"] as Control
 	item_row.get_node("StrikeThrough").visible = fulfilled >= required
 	item_row.modulate = Color(0.52, 0.49, 0.44, 1.0) if fulfilled >= required else Color.WHITE
+	_ensure_order_visible(order_id)
 
 
 func set_order_completed(order_id: int, completed: bool = true) -> void:
@@ -132,9 +138,14 @@ func set_order_completed(order_id: int, completed: bool = true) -> void:
 	for item_data: Dictionary in (order["item_rows"] as Dictionary).values():
 		(item_data["row"] as Control).get_node("StrikeThrough").visible = completed
 	_refresh_count()
+	_ensure_order_visible(order_id)
 
 
 func clear_orders() -> void:
+	if _scroll_tween and _scroll_tween.is_valid():
+		_scroll_tween.kill()
+	if is_instance_valid(orders_scroll):
+		orders_scroll.scroll_vertical = 0
 	for child in orders_list.get_children():
 		child.queue_free()
 	_orders.clear()
@@ -161,6 +172,7 @@ func _on_order_penalized(order_id: int, remaining_tip: float, _penalty: float, _
 	tip_label.modulate = Color("d62318")
 	var total_label := order["total_label"] as Label
 	total_label.text = "$%.2f" % (float(order["base_reward"]) + remaining_tip)
+	_ensure_order_visible(order_id)
 
 
 func _on_order_completed(order_id: int, _payout: float, final_tip: float) -> void:
@@ -176,6 +188,53 @@ func _on_order_completed(order_id: int, _payout: float, final_tip: float) -> voi
 
 func _on_money_changed(balance: float, _delta: float, _reason: String) -> void:
 	total_earnings.text = "$%.2f" % balance
+
+
+func _scroll_to_bottom(animated: bool = true) -> void:
+	if not is_instance_valid(orders_scroll):
+		return
+	await get_tree().process_frame
+	if not is_instance_valid(orders_scroll) or not is_inside_tree():
+		return
+	var v_bar := orders_scroll.get_v_scroll_bar()
+	var target: float = maxf(v_bar.max_value - v_bar.page, 0.0)
+	if _scroll_tween and _scroll_tween.is_valid():
+		_scroll_tween.kill()
+	if animated:
+		_scroll_tween = create_tween()
+		_scroll_tween.tween_property(orders_scroll, "scroll_vertical", int(target), 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		orders_scroll.scroll_vertical = int(target)
+
+
+func _ensure_order_visible(order_id: int) -> void:
+	if not _orders.has(order_id) or not is_instance_valid(orders_scroll):
+		return
+	await get_tree().process_frame
+	if not _orders.has(order_id) or not is_instance_valid(orders_scroll) or not is_inside_tree():
+		return
+	var row := _orders[order_id]["row"] as Control
+	if not is_instance_valid(row):
+		return
+	var order_top := row.position.y
+	var order_bottom := row.position.y + row.size.y
+	var current_scroll := float(orders_scroll.scroll_vertical)
+	var view_height := orders_scroll.size.y
+	var target := current_scroll
+	if order_bottom > current_scroll + view_height:
+		target = order_bottom - view_height
+	elif order_top < current_scroll:
+		target = order_top
+
+	var v_bar := orders_scroll.get_v_scroll_bar()
+	var max_scroll := maxf(v_bar.max_value - v_bar.page, 0.0)
+	target = clampf(target, 0.0, max_scroll)
+
+	if not is_equal_approx(target, current_scroll):
+		if _scroll_tween and _scroll_tween.is_valid():
+			_scroll_tween.kill()
+		_scroll_tween = create_tween()
+		_scroll_tween.tween_property(orders_scroll, "scroll_vertical", int(target), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 func _make_line_control(height: float) -> Control:
@@ -233,3 +292,4 @@ func _prune_old_orders() -> void:
 		old_row.queue_free()
 		_orders.erase(old_id)
 	_refresh_count()
+
