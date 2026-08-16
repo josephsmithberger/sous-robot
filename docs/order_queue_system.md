@@ -40,7 +40,7 @@ The dialogue text and receipt label use the catalog's display name automatically
 ## Runtime flow
 
 1. `WaiterRobot` exposes interaction only when it is at slot zero.
-2. `OrderQueue` assigns the next order number and generates its item text from that waiter's dictionary. Every dialogue balloon is labeled **Robot Waiter**.
+2. `OrderQueue` assigns the next order number, directs the camera to look at the front robot waiter, and generates its item text from that waiter's dictionary. Every dialogue balloon is labeled **Robot Waiter**.
 3. `dialogue/orders.dialogue` uses the inline mutation `[do GameControl.emit_signal("order_dialogue_confirmed")]` while the robot speaks.
 4. `OrderQueue` receives the signal, opens the active order, and emits `order_started`.
 5. `OrderWindow` accepts one held item only while an order is active and emits `item_delivered`.

@@ -93,6 +93,7 @@ func request_front_dialogue(waiter: WaiterRobot) -> void:
 	else:
 		dialogue_order_text = "I'm still waiting for %s, please." % _format_remaining_items()
 
+	GameControl.look_at_target(waiter.get_look_target())
 	DialogueManager.show_dialogue_balloon(ORDER_DIALOGUE, "take_order", [self])
 
 

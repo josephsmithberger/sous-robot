@@ -8,11 +8,17 @@ const WINDOW_FACING := PI * 0.5
 
 @onready var animation_player: AnimationPlayer = $Robot/AnimationPlayer
 
+@export var look_target_offset := Vector3(0.0, 1.35, 0.0)
+
 var queue_controller: Variant
 var order_data: Dictionary = {}
 var slot_index := -1
 var order_is_accepted := false
 var is_moving := false
+
+
+func get_look_target() -> Vector3:
+	return global_position + look_target_offset
 
 
 func _ready() -> void:

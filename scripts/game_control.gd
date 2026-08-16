@@ -2,11 +2,13 @@ extends Node
 ## Global source of truth for whether the 3D game viewport is currently controllable.
 
 const SENOR_FOOD_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
+const ORDER_DIALOGUE: DialogueResource = preload("res://dialogue/orders.dialogue")
 
 signal controllability_changed(is_controllable: bool)
 signal input_mode_changed(input_mode: InputMode)
 signal dialogue_activity_changed(is_active: bool)
 signal camera_mode_changed(camera_mode: CameraMode)
+signal look_at_requested(target_position: Vector3, duration: float)
 signal ui_mode_changed(is_ui_mode: bool)
 signal interact_available_changed(is_available: bool)
 signal interaction_pressed
@@ -39,6 +41,7 @@ enum InputMode {
 enum CameraMode {
 	FIRST_PERSON,
 	MARKER,
+	WAITER,
 }
 
 var is_controllable := false:
@@ -220,6 +223,12 @@ func set_camera_mode(value: CameraMode) -> void:
 	_sync_mouse_mode()
 
 
+func look_at_target(target_position: Vector3, duration: float = 0.35) -> void:
+	if camera_mode != CameraMode.FIRST_PERSON:
+		set_camera_mode(CameraMode.FIRST_PERSON)
+	look_at_requested.emit(target_position, duration)
+
+
 func give_player_control() -> void:
 	if is_dialogue_active():
 		return
@@ -297,9 +306,14 @@ func _on_dialogue_started(resource: Resource) -> void:
 	if _active_dialogues == 1:
 		_camera_mode_before_dialogue = camera_mode
 		_ui_mode_before_dialogue = is_ui_mode
-		_dialogue_changed_camera = resource == SENOR_FOOD_DIALOGUE
-		if _dialogue_changed_camera:
+		if resource == SENOR_FOOD_DIALOGUE:
+			_dialogue_changed_camera = true
 			set_camera_mode(CameraMode.MARKER)
+		elif resource == ORDER_DIALOGUE:
+			_dialogue_changed_camera = true
+			set_camera_mode(CameraMode.WAITER)
+		else:
+			_dialogue_changed_camera = false
 		dialogue_activity_changed.emit(true)
 	_refresh_controllability()
 

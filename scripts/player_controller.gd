@@ -17,6 +17,7 @@ var _overlapping_areas: Array[InteractionArea] = []
 var _active_interaction: InteractionArea
 var _interaction_is_held := false
 var _interaction_elapsed := 0.0
+var _look_tween: Tween
 
 
 func _ready() -> void:
@@ -24,6 +25,7 @@ func _ready() -> void:
 	interaction_area.area_exited.connect(_on_area_exited)
 	GameControl.interaction_pressed.connect(_on_interaction_pressed)
 	GameControl.interaction_released.connect(_on_interaction_released)
+	GameControl.look_at_requested.connect(_on_look_at_requested)
 	if animation_player != null and animation_player.has_animation(&"bob"):
 		animation_player.play(&"bob")
 		animation_player.speed_scale = idle_bob_speed
@@ -61,8 +63,50 @@ func _update_hand_bob(delta: float) -> void:
 
 
 func _apply_look(amount: Vector2) -> void:
+	if _look_tween and _look_tween.is_valid():
+		_look_tween.kill()
 	rotate_y(-amount.x)
 	head.rotation.x = clamp(head.rotation.x - amount.y, -PI * 0.45, PI * 0.45)
+
+
+func _on_look_at_requested(target_position: Vector3, duration: float) -> void:
+	look_at_target(target_position, duration)
+
+
+func look_at_target(target_position: Vector3, duration: float = 0.35) -> void:
+	if head == null:
+		return
+	if _look_tween and _look_tween.is_valid():
+		_look_tween.kill()
+
+	var diff := target_position - head.global_position
+	var flat_dist := Vector2(diff.x, diff.z).length()
+
+	var current_yaw := rotation.y
+	var target_yaw := current_yaw
+	var target_pitch := 0.0
+
+	if flat_dist > 0.0001:
+		var look_transform := Transform3D.IDENTITY.looking_at(diff, Vector3.UP)
+		var euler := look_transform.basis.get_euler(EULER_ORDER_YXZ)
+		var delta_yaw := wrapf(euler.y - current_yaw, -PI, PI)
+		target_yaw = current_yaw + delta_yaw
+		target_pitch = clampf(euler.x, -PI * 0.45, PI * 0.45)
+	elif not is_zero_approx(diff.y):
+		target_pitch = PI * 0.45 if diff.y > 0.0 else -PI * 0.45
+	else:
+		return
+
+	if duration <= 0.0:
+		rotation.y = target_yaw
+		head.rotation.x = target_pitch
+		return
+
+	_look_tween = create_tween().set_parallel(true)
+	_look_tween.set_trans(Tween.TRANS_CUBIC)
+	_look_tween.set_ease(Tween.EASE_OUT)
+	_look_tween.tween_property(self, ^"rotation:y", target_yaw, duration)
+	_look_tween.tween_property(head, ^"rotation:x", target_pitch, duration)
 
 
 func has_held_item() -> bool:
@@ -204,4 +248,8 @@ func _cancel_held_interaction() -> void:
 
 
 func _exit_tree() -> void:
+	if GameControl.look_at_requested.is_connected(_on_look_at_requested):
+		GameControl.look_at_requested.disconnect(_on_look_at_requested)
+	if _look_tween and _look_tween.is_valid():
+		_look_tween.kill()
 	GameControl.clear_interaction_context()
