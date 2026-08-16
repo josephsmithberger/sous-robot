@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://6drof03lyr6n"]
 
 [ext_resource type="Shader" uid="uid://dx7n6wksdw6qf" path="res://shaders/bg.gdshader" id="1_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://c8n4y2m6pk1qw" path="res://scenes/recipes.tscn" id="1_recipes"]
 [ext_resource type="PackedScene" uid="uid://cl50h4s8igla8" path="res://scenes/store.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://ceb63r5puxbhk" path="res://scenes/kitchen.tscn" id="1_yqjtg"]
 [ext_resource type="Shader" uid="uid://dguhn0gn6nyii" path="res://shaders/rounded_subviewport.gdshader" id="2_rounded"]
@@ -61,15 +62,7 @@ shadow_size = 5
 shadow_offset = Vector2(0, 3)
 
 [sub_resource type="SystemFont" id="SystemFont_u5sy4"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_footer"]
-content_margin_left = 7.0
-content_margin_top = 7.0
-content_margin_right = 7.0
-content_margin_bottom = 7.0
-bg_color = Color(0.94902, 0.905882, 0.764706, 1)
-border_width_top = 1
-border_color = Color(0.176471, 0.160784, 0.137255, 1)
+subpixel_positioning = 0
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_receipt_vscroll_grabber"]
 content_margin_left = 2.0
@@ -109,6 +102,15 @@ VScrollBar/styles/grabber_highlight = SubResource("StyleBox_receipt_vscroll_grab
 VScrollBar/styles/grabber_pressed = SubResource("StyleBox_receipt_vscroll_grabber_pressed")
 VScrollBar/styles/scroll = SubResource("StyleBox_receipt_vscroll_bg")
 VScrollBar/styles/scroll_focus = SubResource("StyleBox_receipt_vscroll_bg")
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_receipt_footer"]
+content_margin_left = 7.0
+content_margin_top = 7.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
+bg_color = Color(0.94902, 0.905882, 0.764706, 1)
+border_width_top = 1
+border_color = Color(0.176471, 0.160784, 0.137255, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_tab_unselected"]
 content_margin_left = 16.0
@@ -150,16 +152,24 @@ shadow_offset = Vector2(0, 5)
 shader = ExtResource("2_rounded")
 shader_parameter/corner_radius = 20.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_control_deck"]
-content_margin_left = 10.0
-content_margin_top = 0.0
-content_margin_right = 10.0
-content_margin_bottom = 4.0
-bg_color = Color(0.854902, 0.160784, 0.109804, 1)
-border_width_top = 4
+[sub_resource type="StyleBoxFlat" id="StyleBox_placement_banner"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.94)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
 border_color = Color(1, 0.780392, 0.172549, 1)
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_action_button_normal"]
 content_margin_left = 10.0
@@ -269,36 +279,6 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hold_fill_bg"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hold_fill"]
-bg_color = Color(0.243137, 0.584314, 0.164706, 0.92)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_placement_banner"]
-content_margin_left = 16.0
-content_margin_top = 6.0
-content_margin_right = 16.0
-content_margin_bottom = 6.0
-bg_color = Color(0.152941, 0.145098, 0.121569, 0.94)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 0.780392, 0.172549, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
-shadow_size = 4
-shadow_offset = Vector2(0, 3)
-
 [sub_resource type="StyleBoxFlat" id="StyleBox_cancel_button_normal"]
 content_margin_left = 10.0
 content_margin_top = 2.0
@@ -353,6 +333,28 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_control_deck"]
+content_margin_left = 10.0
+content_margin_top = 0.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 1)
+border_width_top = 4
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hold_fill_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hold_fill"]
+bg_color = Color(0.243137, 0.584314, 0.164706, 0.92)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
+
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
 anchors_preset = 15
@@ -406,10 +408,6 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
 
-[node name="money" type="Label" parent="MarginContainer/HSplitContainer/stats" unique_id=1619888334]
-layout_mode = 2
-text = "$0"
-horizontal_alignment = 1
 
 [node name="ClockShelf" type="CenterContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1779623811]
 custom_minimum_size = Vector2(0, 148)
@@ -620,7 +618,8 @@ theme_override_styles/tab_focus = SubResource("StyleBox_tab_focus")
 current_tab = 0
 use_hidden_tabs_for_min_size = true
 tab_0/title = "KITCHEN"
-tab_1/title = "STORE"
+tab_1/title = "RECIPES"
+tab_2/title = "STORE"
 
 [node name="Kitchen" type="CenterContainer" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=282776521]
 layout_mode = 2
@@ -1045,8 +1044,14 @@ layout_mode = 2
 theme_override_constants/separation = 25
 theme_override_styles/separator = SubResource("StyleBoxEmpty_trtic")
 
-[node name="Store" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=1583282709 instance=ExtResource("1_uwrxv")]
+[node name="Recipes" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=2048571932 instance=ExtResource("1_recipes")]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+metadata/_tab_name = "RECIPES"
+
+[node name="Store" parent="MarginContainer/HSplitContainer/TabContainer" unique_id=1583282709 instance=ExtResource("1_uwrxv")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 metadata/_tab_name = "STORE"

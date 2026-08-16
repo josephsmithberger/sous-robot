@@ -736,7 +736,7 @@ static func evaluate_producible_items(tree: SceneTree, catalog_by_id: Dictionary
 
 
 static func _is_workstation_active(node: Node) -> bool:
-	if node == null or not is_instance_valid(node) or not node.is_inside_tree():
+	if node == null or not is_instance_valid(node) or not node.is_inside_tree() or node.is_queued_for_deletion():
 		return false
 
 	# If the top-level placed appliance or node is hidden (e.g. while being moved in placement mode), it is inactive
@@ -759,6 +759,8 @@ static func _is_workstation_active(node: Node) -> bool:
 
 	var curr: Node = node
 	while curr != null:
+		if curr.is_queued_for_deletion():
+			return false
 		if curr.name.containsn("ghost") or (curr.name.containsn("PlacementManager") and curr.get_parent() != null and curr.name != "PlacementManager"):
 			return false
 		curr = curr.get_parent()

@@ -1,6 +1,7 @@
 extends Control
 
 const MASTER_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
+const FONT_LILITA: FontFile = preload("res://assets/fonts/LilitaOne-Regular.ttf")
 const KITCHEN_TAB := 0
 const TRAY_HEIGHT := 132.0
 const SLIDE_DURATION := 0.28
@@ -18,7 +19,6 @@ const SLIDE_DURATION := 0.28
 @onready var _interact_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton
 @onready var _interaction_fill: ProgressBar = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton/HoldFill
 @onready var _interaction_label: Label = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton/InteractionLabel
-@onready var _money_label: Label = $MarginContainer/HSplitContainer/stats/money
 @onready var _placement_tray: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray
 @onready var _placement_title: Label = %PlacementTitle
 @onready var _rotate_button: Button = %RotateButton
@@ -36,11 +36,18 @@ var _process_picker_options_box: VBoxContainer
 var _process_picker_cancel_button: Button
 var _process_picker_target: Node
 
+var _alert_banner_panel: PanelContainer
+var _alert_banner_label: Label
+var _alert_queue: Array[Dictionary] = []
+var _is_showing_alert := false
+var _alert_tween: Tween
+
 
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
 	_create_process_picker()
+	_create_alert_banner()
 
 	_tabs.tab_changed.connect(_on_tab_changed)
 	GameControl.controllability_changed.connect(_on_controllability_changed)
@@ -54,12 +61,13 @@ func _ready() -> void:
 	GameControl.process_picker_selected.connect(_on_process_picker_selected)
 	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
 	GameControl.process_picker_refreshed.connect(_on_process_picker_refreshed)
-	GameControl.money_changed.connect(_on_money_changed)
 	GameControl.placement_started.connect(_on_placement_started)
 	GameControl.placement_completed.connect(_on_placement_completed)
 	GameControl.placement_cancelled.connect(_on_placement_cancelled)
 	GameControl.arrange_mode_changed.connect(_on_arrange_mode_changed)
 	GameControl.tab_change_requested.connect(_on_tab_change_requested)
+	if not RecipeTracker.automation_available.is_connected(_on_automation_available):
+		RecipeTracker.automation_available.connect(_on_automation_available)
 	GameControl.reset_session()
 	_on_interact_available_changed(GameControl.can_interact)
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
@@ -89,17 +97,6 @@ func start_dialogue(resource: DialogueResource, title: String = "") -> Node:
 	return DialogueManager.show_dialogue_balloon(resource, title)
 
 
-func _on_money_changed(balance: float, delta: float, reason: String) -> void:
-	_money_label.text = "$%.2f" % balance
-	if is_zero_approx(delta):
-		return
-	_money_label.modulate = Color("55a630") if delta > 0.0 else Color("d62318")
-	var tween := create_tween()
-	tween.tween_property(_money_label, ^"modulate", Color.WHITE, 0.45)
-	if not reason.is_empty():
-		_money_label.tooltip_text = reason
-
-
 func _process(_delta: float) -> void:
 	if _move_joystick != null and _look_joystick != null:
 		GameControl.set_virtual_input(_move_joystick.output, _look_joystick.output)
@@ -109,6 +106,105 @@ func _exit_tree() -> void:
 	DialogueManager.get_current_scene = _previous_dialogue_host_resolver
 	GameControl.set_virtual_input(Vector2.ZERO, Vector2.ZERO)
 	GameControl.set_controllable(false)
+	if RecipeTracker.automation_available.is_connected(_on_automation_available):
+		RecipeTracker.automation_available.disconnect(_on_automation_available)
+	if is_instance_valid(_alert_tween):
+		_alert_tween.kill()
+
+
+func _create_alert_banner() -> void:
+	var interaction_stage := _game_viewport_container.get_parent() as Control
+	if interaction_stage == null:
+		return
+
+	_alert_banner_panel = PanelContainer.new()
+	_alert_banner_panel.name = "AlertBanner"
+	_alert_banner_panel.z_index = 25
+	_alert_banner_panel.visible = false
+	_alert_banner_panel.modulate.a = 0.0
+	_alert_banner_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_alert_banner_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_alert_banner_panel.position = Vector2(-220.0, -60.0)
+	_alert_banner_panel.custom_minimum_size = Vector2(440.0, 42.0)
+
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.07, 0.06, 0.05, 0.95)
+	panel_style.border_color = Color(1.0, 0.78, 0.17, 0.95) # Diner Gold
+	panel_style.set_border_width_all(2)
+	panel_style.set_corner_radius_all(8)
+	panel_style.content_margin_left = 18.0
+	panel_style.content_margin_right = 18.0
+	panel_style.content_margin_top = 8.0
+	panel_style.content_margin_bottom = 8.0
+	panel_style.shadow_color = Color(0.0, 0.0, 0.0, 0.5)
+	panel_style.shadow_size = 6
+	panel_style.shadow_offset = Vector2(0, 2)
+	_alert_banner_panel.add_theme_stylebox_override("panel", panel_style)
+	interaction_stage.add_child(_alert_banner_panel)
+
+	_alert_banner_label = Label.new()
+	_alert_banner_label.name = "AlertLabel"
+	_alert_banner_label.text = ""
+	_alert_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_alert_banner_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_alert_banner_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_alert_banner_label.add_theme_font_override("font", FONT_LILITA)
+	_alert_banner_label.add_theme_font_size_override("font_size", 17)
+	_alert_banner_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.17, 1.0))
+	_alert_banner_panel.add_child(_alert_banner_label)
+
+
+func _on_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
+	_alert_queue.append({
+		"recipe_id": recipe_id,
+		"name": recipe_name,
+		"message": message,
+	})
+	if not _is_showing_alert:
+		_process_next_alert()
+
+
+func _process_next_alert() -> void:
+	if _alert_queue.is_empty():
+		_is_showing_alert = false
+		return
+
+	_is_showing_alert = true
+	var alert_data: Dictionary = _alert_queue.pop_front()
+	var recipe_name: String = alert_data.get("name", "")
+	var message: String = alert_data.get("message", "new automation available: %s" % recipe_name)
+
+	if _alert_banner_label != null:
+		_alert_banner_label.text = message
+
+	if _alert_banner_panel == null:
+		_is_showing_alert = false
+		return
+
+	var parent_ctrl := _alert_banner_panel.get_parent() as Control
+	var stage_width := parent_ctrl.size.x if parent_ctrl != null and parent_ctrl.size.x > 0 else 850.0
+	var banner_w := _alert_banner_panel.size.x if _alert_banner_panel.size.x > 0 else 440.0
+	var center_x := (stage_width - banner_w) * 0.5
+	_alert_banner_panel.position = Vector2(center_x, -60.0)
+	_alert_banner_panel.modulate.a = 0.0
+	_alert_banner_panel.visible = true
+
+	if is_instance_valid(_alert_tween):
+		_alert_tween.kill()
+
+	_alert_tween = create_tween()
+	_alert_tween.tween_property(_alert_banner_panel, ^"position:y", 16.0, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_alert_tween.parallel().tween_property(_alert_banner_panel, ^"modulate:a", 1.0, 0.2)
+	_alert_tween.tween_interval(3.0)
+	_alert_tween.tween_property(_alert_banner_panel, ^"position:y", -60.0, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_alert_tween.parallel().tween_property(_alert_banner_panel, ^"modulate:a", 0.0, 0.2)
+	_alert_tween.finished.connect(_on_alert_tween_finished)
+
+
+func _on_alert_tween_finished() -> void:
+	if _alert_banner_panel != null:
+		_alert_banner_panel.visible = false
+	_process_next_alert()
 
 
 func _create_process_picker() -> void:

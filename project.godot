@@ -21,6 +21,7 @@ SceneLoader="*res://scripts/scene_loader.gd"
 GameControl="*res://scripts/game_control.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 TouchUI="*res://scripts/touch_ui.gd"
+RecipeTracker="*res://scripts/recipe_tracker.gd"
 
 [dialogue_manager]
 

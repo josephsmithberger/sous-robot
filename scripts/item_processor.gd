@@ -133,6 +133,7 @@ func _apply_recipe(player: Node, recipe: ItemProcessRecipe) -> void:
 	_clear_selection()
 	if player.has_method(&"set_held_item"):
 		player.set_held_item(recipe.output_item)
+		RecipeTracker.record_recipe_made(recipe.recipe_id, recipe.output_item)
 
 
 func _on_process_picker_selected(target: Node, recipe: ItemProcessRecipe) -> void:

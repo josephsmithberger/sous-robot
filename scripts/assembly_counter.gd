@@ -183,6 +183,7 @@ func _check_recipes() -> void:
 		if recipe != null and recipe.matches(placed_items):
 			completed_item = recipe.output_item
 			_show_completed_visual(completed_item)
+			RecipeTracker.record_recipe_made(recipe.recipe_id, recipe.output_item)
 			return
 
 

@@ -56,6 +56,8 @@ signal placement_cancelled
 @warning_ignore("unused_signal")
 signal placement_completed(item_id: StringName, position: Vector3, rotation_y: float)
 @warning_ignore("unused_signal")
+signal automation_available(recipe_id: StringName, recipe_name: String, message: String)
+@warning_ignore("unused_signal")
 signal arrange_mode_changed(is_arranging: bool)
 @warning_ignore("unused_signal")
 signal tab_change_requested(tab_index: int)
@@ -218,8 +220,14 @@ func _ready() -> void:
 	_sync_mouse_mode()
 	if not held_item_changed.is_connected(_on_held_item_changed_for_picker):
 		held_item_changed.connect(_on_held_item_changed_for_picker)
+	if not RecipeTracker.automation_available.is_connected(_on_recipe_tracker_automation_available):
+		RecipeTracker.automation_available.connect(_on_recipe_tracker_automation_available)
 	_connect_dialogue_manager()
 	_last_clock_paused = is_order_clock_paused()
+
+
+func _on_recipe_tracker_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
+	automation_available.emit(recipe_id, recipe_name, message)
 
 
 func _ensure_interact_action() -> void:
@@ -240,6 +248,7 @@ func reset_session(starting_money: float = 0.0) -> void:
 	active_order_id = 0
 	current_tab = KITCHEN_TAB
 	owned_items = [&"DecoratedWall", &"BunCrate"]
+	RecipeTracker.reset_tracker()
 	var delta := starting_money - money
 	money = starting_money
 	money_changed.emit(money, delta, "SESSION START")
@@ -440,6 +449,7 @@ func complete_placement(item_id: StringName, pos: Vector3, rot_y: float) -> void
 	placing_item_id = &""
 	placement_completed.emit(item_id, pos, rot_y)
 	_check_clock_pause_changed()
+	RecipeTracker.call_deferred(&"check_all_satisfied_automations")
 
 
 func set_arrange_mode(enabled: bool) -> void:
