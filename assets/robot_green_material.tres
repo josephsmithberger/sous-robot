@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bimf3ppokmls4"]
+
+[ext_resource type="Texture2D" uid="uid://ctr08x3mrl8f8" path="res://assets/robot_texture_green.png" id="1_jbf5a"]
+
+[resource]
+resource_name = "robot_green"
+albedo_texture = ExtResource("1_jbf5a")
+texture_filter = 2

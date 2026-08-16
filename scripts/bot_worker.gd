@@ -16,6 +16,8 @@ signal interaction_completed(target_area: InteractionArea)
 signal item_held_changed(item: KitchenItem)
 signal despawn_completed
 
+const BOT_MATERIAL: Material = preload("res://assets/robot_green_material.tres")
+
 @export var move_speed := 3.5
 @export var rotation_speed := 10.0
 
@@ -37,6 +39,7 @@ var _anim_player: AnimationPlayer
 func _ready() -> void:
 	add_to_group(&"bots")
 	add_to_group(&"worker_robots")
+	_apply_bot_material()
 	_find_animation_player()
 	_play_anim(&"idle")
 	if nav_agent != null:
@@ -44,6 +47,18 @@ func _ready() -> void:
 		nav_agent.target_desired_distance = 0.6
 		nav_agent.path_max_distance = 2.0
 		nav_agent.avoidance_enabled = false
+
+
+func _apply_bot_material() -> void:
+	if BOT_MATERIAL == null:
+		return
+	var robot_node := get_node_or_null("Robot")
+	if robot_node == null:
+		return
+	for child in robot_node.find_children("*", "MeshInstance3D", true, false):
+		var mesh_inst := child as MeshInstance3D
+		if mesh_inst != null:
+			mesh_inst.material_override = BOT_MATERIAL
 
 
 func _find_animation_player() -> void:
@@ -204,6 +219,8 @@ func is_holding(item_id: StringName) -> bool:
 
 func set_held_item(item: KitchenItem) -> void:
 	if is_instance_valid(_held_item_visual):
+		if hand != null and _held_item_visual.get_parent() == hand:
+			hand.remove_child(_held_item_visual)
 		_held_item_visual.queue_free()
 		_held_item_visual = null
 
@@ -258,6 +275,9 @@ func despawn(fade_duration: float = 0.8) -> void:
 	_state = State.DESPAWNING
 	if smoke_particles != null:
 		smoke_particles.emitting = true
+
+	if get_parent() != null:
+		SmokePuff.create_at(global_position + Vector3(0.0, 0.4, 0.0), get_parent())
 
 	var tween := create_tween()
 	tween.set_parallel(true)

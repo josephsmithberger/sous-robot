@@ -19,16 +19,22 @@ const TRASH_CAN_SCENE: PackedScene = preload("res://assets/appliances/trash_can.
 func _ready() -> void:
 	print("Starting BotWorkerNavigationSmoke test...")
 	_test_bot_worker_instantiation_and_properties()
+	print("Step 1 done")
 	await get_tree().process_frame
 	_test_collision_layer_matrix()
+	print("Step 2 done")
 	await get_tree().process_frame
 	_test_appliance_collision_layers()
+	print("Step 3 done")
 	await get_tree().process_frame
 	_test_bot_worker_item_holding()
+	print("Step 4 done")
 	await get_tree().process_frame
 	_test_bot_worker_dispatch_interaction()
+	print("Step 5 done")
 	await get_tree().process_frame
-	_test_bot_worker_despawn()
+	await _test_bot_worker_despawn()
+	print("Step 6 done")
 	await get_tree().process_frame
 	print("BOT_WORKER_NAVIGATION_SMOKE_PASS")
 	get_tree().quit(0)

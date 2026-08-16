@@ -53,9 +53,15 @@ textures/vram_compression/import_etc2_astc=true
 
 project/editorState=[{
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/game_ui.gd",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://tests/bot_worker_navigation_smoke.gd",
+"transient": true,
 "type": "file"
 }]
 project/shaderEditorState=[{
