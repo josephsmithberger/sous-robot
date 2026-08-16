@@ -58,12 +58,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9951795, 0, 0)
 mesh = SubResource("ArrayMesh_5pkv7")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2" unique_id=969287564]
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=2067546533]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0314941, 0.9187927, 0.0034179688)
 shape = SubResource("BoxShape3D_mqss6")
 
 [node name="counter" type="Area3D" parent="." index="3" unique_id=1914888512]
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="counter" index="0" unique_id=2118438109]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0177612, 0.63378906, 0.42358398)

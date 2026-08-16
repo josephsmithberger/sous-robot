@@ -6,6 +6,14 @@ const WAITER_SCENE: PackedScene = preload("res://scenes/waiter_robot.tscn")
 const ORDER_DIALOGUE: DialogueResource = preload("res://dialogue/orders.dialogue")
 const BREAD: KitchenItem = preload("res://resources/items/bread.tres")
 const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tres")
+const CARROT: KitchenItem = preload("res://resources/items/carrot.tres")
+const CHEESE: KitchenItem = preload("res://resources/items/cheese.tres")
+const HAM: KitchenItem = preload("res://resources/items/ham.tres")
+const LETTUCE: KitchenItem = preload("res://resources/items/lettuce.tres")
+const ONION: KitchenItem = preload("res://resources/items/onion.tres")
+const POTATO: KitchenItem = preload("res://resources/items/potato.tres")
+const STEAK: KitchenItem = preload("res://resources/items/steak.tres")
+const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 
 @export_category("Visible Queue")
 @export_range(1, 8, 1) var visible_waiter_count := 3
@@ -15,7 +23,18 @@ const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tr
 @export var departure_offset := Vector3(0.0, 0.0, -3.2)
 
 @export_category("Item Catalog")
-@export var item_catalog: Array[KitchenItem] = [BREAD, SLICED_BREAD]
+@export var item_catalog: Array[KitchenItem] = [
+	BREAD,
+	SLICED_BREAD,
+	CARROT,
+	CHEESE,
+	HAM,
+	LETTUCE,
+	ONION,
+	POTATO,
+	STEAK,
+	TOMATO,
+]
 
 @export_category("Order Cycle")
 ## Each dictionary supports: items, base_reward, tip, wrong_item_penalty, target_time, max_time.

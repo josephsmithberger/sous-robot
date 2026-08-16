@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_steak.gltf" id="1_steak"]
+
+[node name="steak" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_steak")]

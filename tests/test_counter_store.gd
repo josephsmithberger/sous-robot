@@ -3,9 +3,9 @@ extends Node
 const GAME_SCENE: PackedScene = preload("res://scenes/game.tscn")
 
 func _ready() -> void:
-	GameControl.reset_session(100.0)
 	var game = GAME_SCENE.instantiate()
 	add_child(game)
+	GameControl.reset_session(100.0)
 	await get_tree().physics_frame
 	await get_tree().process_frame
 	

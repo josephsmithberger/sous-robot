@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/kitchen-pack/crate_onions.gltf" id="1_model"]
+[ext_resource type="Script" path="res://scripts/item_source.gd" id="2_source"]
+[ext_resource type="Resource" path="res://resources/items/onion.tres" id="3_onion"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_static"]
 size = Vector3(2.0, 0.9234, 2.0)
@@ -10,16 +12,18 @@ size = Vector3(2.4, 1.3234, 2.4)
 
 [node name="crate_onions" instance=ExtResource("1_model")]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="1"]
 visible = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
 position = Vector3(0, 0.4617, 0)
 shape = SubResource("BoxShape3D_static")
 
-[node name="onions" type="Area3D" parent="."]
+[node name="onions" type="Area3D" parent="." index="2"]
 visible = false
+script = ExtResource("2_source")
+item = ExtResource("3_onion")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="onions"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="onions" index="0"]
 position = Vector3(0, 0.4617, 0)
 shape = SubResource("BoxShape3D_interact")
