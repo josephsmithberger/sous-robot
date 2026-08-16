@@ -119,6 +119,20 @@ func get_front_waiter() -> WaiterRobot:
 	return null if _waiters.is_empty() else _waiters[0]
 
 
+func reaction_for_order(order: Dictionary) -> StringName:
+	if bool(order.get("had_wrong_item", false)):
+		return WaiterRobot.REACTION_ANGRY
+
+	var elapsed := float(order.get("elapsed_time", 0.0))
+	var target_time := maxf(float(order.get("target_time", 12.0)), 0.001)
+	var max_time := maxf(float(order.get("max_time", target_time + 15.0)), target_time + 0.001)
+	if elapsed <= target_time:
+		return WaiterRobot.REACTION_HAPPY
+	if elapsed >= max_time:
+		return WaiterRobot.REACTION_ANGRY
+	return WaiterRobot.REACTION_NORMAL
+
+
 func request_front_dialogue(waiter: WaiterRobot) -> void:
 	if not is_front_waiter(waiter) or GameControl.is_dialogue_active():
 		return
@@ -173,6 +187,7 @@ func _accept_front_order(waiter: WaiterRobot) -> void:
 		"tip": base_tip,
 		"penalties": 0.0,
 		"wrong_item_penalty": maxf(float(definition.get("wrong_item_penalty", 1.0)), 0.0),
+		"had_wrong_item": false,
 		"elapsed_time": 0.0,
 		"target_time": target_time,
 		"max_time": max_time,
@@ -206,6 +221,11 @@ func _on_item_delivered(item: KitchenItem) -> void:
 
 
 func _apply_wrong_item_penalty(item: KitchenItem) -> void:
+	_active_order["had_wrong_item"] = true
+	var front_waiter := get_front_waiter()
+	if front_waiter != null:
+		front_waiter.show_reaction(WaiterRobot.REACTION_ANGRY)
+
 	var penalty := float(_active_order["wrong_item_penalty"])
 	var penalties := float(_active_order.get("penalties", 0.0)) + penalty
 	_active_order["penalties"] = penalties
@@ -220,7 +240,8 @@ func _apply_wrong_item_penalty(item: KitchenItem) -> void:
 
 	var remaining_tip := maxf(base_tip * decay_mult - penalties, 0.0)
 	_active_order["tip"] = remaining_tip
-	GameControl.change_money(-penalty, "WRONG %s" % item.display_name.to_upper())
+	# Wrong deliveries are accepted and consumed, but never pay out directly.
+	# They can still reduce the order tip through the existing penalty model.
 	GameControl.order_penalized.emit(
 		int(_active_order["order_id"]),
 		remaining_tip,
@@ -236,6 +257,9 @@ func _finish_active_order() -> void:
 	var finished_order := _active_order.duplicate(true)
 	var order_id := int(finished_order["order_id"])
 	var payout := float(finished_order["base_reward"]) + float(finished_order["tip"])
+	var front_waiter := get_front_waiter()
+	if front_waiter != null:
+		front_waiter.show_reaction(reaction_for_order(finished_order))
 	GameControl.end_order(order_id)
 	GameControl.change_money(payout, "ORDER %d COMPLETE" % order_id)
 	GameControl.order_completed.emit(order_id, payout, float(finished_order["tip"]))

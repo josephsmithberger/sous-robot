@@ -29,6 +29,7 @@ func _ready() -> void:
 	queue.slot_move_duration = 0.1
 	add_child(queue)
 	await get_tree().process_frame
+	assert(queue.reaction_for_order({"elapsed_time": 5.0, "target_time": 4.0, "max_time": 10.0}) == WaiterRobot.REACTION_NORMAL, "A correct order between target and max time should be normal.")
 
 	var player_scene: PackedScene = preload("res://scenes/player.tscn")
 	var player = player_scene.instantiate()
@@ -68,18 +69,22 @@ func _ready() -> void:
 	GameControl.item_delivered.emit(BREAD)
 	await get_tree().process_frame
 	assert(is_equal_approx(GameControl.money, 4.0), "First order should pay $3 base + $1 tip.")
+	assert(front_waiter.last_reaction == WaiterRobot.REACTION_HAPPY, "A quick correct order should make the waiter happy.")
 	assert(not GameControl.has_active_order(), "Completed order should close delivery access.")
 
 	await get_tree().create_timer(0.45).timeout
-	queue._accept_front_order(queue.get_front_waiter())
+	var second_waiter: WaiterRobot = queue.get_front_waiter()
+	queue._accept_front_order(second_waiter)
 	GameControl.item_delivered.emit(BREAD)
 	await get_tree().process_frame
-	assert(is_equal_approx(GameControl.money, 3.25), "Wrong bread should immediately deduct $0.75.")
+	assert(is_equal_approx(GameControl.money, 4.0), "Wrong items should be accepted without an immediate charge.")
+	assert(second_waiter.last_reaction == WaiterRobot.REACTION_ANGRY, "A wrong item should make the waiter angry.")
 
 	GameControl.item_delivered.emit(SLICED_BREAD)
 	GameControl.item_delivered.emit(SLICED_BREAD)
 	await get_tree().process_frame
-	assert(is_equal_approx(GameControl.money, 8.0), "Second payout should include its reduced $0.75 tip.")
+	assert(is_equal_approx(GameControl.money, 8.75), "Second payout should include the base reward and reduced tip, without charging for the wrong item.")
+	assert(second_waiter.last_reaction == WaiterRobot.REACTION_ANGRY, "A wrong item should keep the waiter angry through completion.")
 
 	print("ORDER_QUEUE_SMOKE_PASS balance=$%.2f visible_waiters=%d" % [GameControl.money, queue.get_child_count()])
 	get_tree().quit(0)

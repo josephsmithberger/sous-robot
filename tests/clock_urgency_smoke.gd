@@ -63,6 +63,7 @@ func _ready() -> void:
 	# Since tip is 0.0 at this point, payout is $5.00 base + $0.00 tip
 	assert(is_equal_approx(GameControl.money, 5.0), "Late payout should be base reward ($5.00) with $0 tip.")
 	assert(not clock.is_active, "Clock must become inactive after order completion.")
+	assert(front_waiter.last_reaction == WaiterRobot.REACTION_ANGRY, "An order completed after max_time should make the waiter angry.")
 
 	print("CLOCK_URGENCY_SMOKE_PASS balance=$%.2f urgency=%.2f" % [GameControl.money, clock.urgency])
 	get_tree().quit(0)
