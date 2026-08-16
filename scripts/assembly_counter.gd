@@ -5,6 +5,10 @@ extends InteractionArea
 const DEFAULT_TWO_BUNS_RECIPE: Recipe = preload("res://resources/recipes/two_buns.tres")
 const DEFAULT_CHEESEBURGER_RECIPE: Recipe = preload("res://resources/recipes/cheeseburger.tres")
 const DEFAULT_VEGGIE_BURGER_RECIPE: Recipe = preload("res://resources/recipes/veggie_burger.tres")
+const DEFAULT_VEGETABLEBURGER_UNCOOKED_RECIPE: Recipe = preload("res://resources/recipes/vegetableburger_uncooked.tres")
+const DEFAULT_STEAK_DINNER_RECIPE: Recipe = preload("res://resources/recipes/steak_dinner.tres")
+const DEFAULT_STEAK_DINNER_BROILED_RECIPE: Recipe = preload("res://resources/recipes/steak_dinner_broiled.tres")
+const DEFAULT_STEW_BASE_RECIPE: Recipe = preload("res://resources/recipes/stew_base.tres")
 
 @export var available_recipes: Array[Recipe] = []
 @export var assembly_plate_path: NodePath = NodePath("AssemblyPlate")
@@ -23,6 +27,10 @@ func _ready() -> void:
 			DEFAULT_TWO_BUNS_RECIPE,
 			DEFAULT_CHEESEBURGER_RECIPE,
 			DEFAULT_VEGGIE_BURGER_RECIPE,
+			DEFAULT_VEGETABLEBURGER_UNCOOKED_RECIPE,
+			DEFAULT_STEAK_DINNER_RECIPE,
+			DEFAULT_STEAK_DINNER_BROILED_RECIPE,
+			DEFAULT_STEW_BASE_RECIPE,
 		]
 
 	_init_plate_node()

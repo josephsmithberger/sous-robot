@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/carrot_chopped.tres" id="2_carrot"]
+[ext_resource type="Resource" path="res://resources/items/onion_chopped.tres" id="3_onion"]
+[ext_resource type="Resource" path="res://resources/items/vegetableburger_uncooked.tres" id="4_output"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"vegetableburger_uncooked"
+display_name = "Uncooked Vegetable Burger"
+output_item = ExtResource("4_output")
+ingredient_sequence = Array[Resource]([ExtResource("2_carrot"), ExtResource("3_onion")])
+assembly_duration = 0.0

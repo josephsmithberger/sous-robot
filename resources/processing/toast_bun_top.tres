@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemProcessRecipe" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_process_recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/bread.tres" id="2_input"]
+[ext_resource type="Resource" path="res://resources/items/bun_top.tres" id="3_output"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"toast_bun_top"
+input_item = ExtResource("2_input")
+output_item = ExtResource("3_output")
+action_verb = "TOAST BUN"
+hold_duration = 2.00

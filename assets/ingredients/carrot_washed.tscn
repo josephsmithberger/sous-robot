@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_carrot.gltf" id="1_model"]
+[ext_resource type="Script" path="res://scripts/item_visual_tint.gd" id="2_tint"]
+
+[node name="carrot_washed" type="Node3D"]
+script = ExtResource("2_tint")
+tint = Color(0.78, 0.95, 0.72, 1)
+tint_strength = 0.22
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

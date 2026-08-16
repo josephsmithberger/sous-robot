@@ -1,7 +1,11 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bun.gltf" id="1_two_buns"]
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bun.gltf" id="1_bun"]
 
 [node name="two_buns" type="Node3D"]
 
-[node name="Model" parent="." instance=ExtResource("1_two_buns")]
+[node name="BunLeft" parent="." instance=ExtResource("1_bun")]
+position = Vector3(-0.24, 0, 0)
+
+[node name="BunRight" parent="." instance=ExtResource("1_bun")]
+position = Vector3(0.24, 0, 0)

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="KitchenItem" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/kitchen_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://assets/ingredients/potato_chopped.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_item")
+item_id = &"potato_chopped"
+display_name = "Potato Wedges / Fries"
+held_scene = ExtResource("2_scene")

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/steak_pieces.tres" id="2_steak"]
+[ext_resource type="Resource" path="res://resources/items/carrot_chopped.tres" id="3_carrot"]
+[ext_resource type="Resource" path="res://resources/items/stew_base.tres" id="4_output"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"stew_base"
+display_name = "Stew Base"
+output_item = ExtResource("4_output")
+ingredient_sequence = Array[Resource]([ExtResource("2_steak"), ExtResource("3_carrot")])
+assembly_duration = 0.0

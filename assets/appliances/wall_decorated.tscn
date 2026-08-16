@@ -2,8 +2,25 @@
 
 [ext_resource type="PackedScene" uid="uid://cbrvfinxajjne" path="res://assets/appliances/wall_decorated_no_pan.glb" id="1_no_pan"]
 [ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
-[ext_resource type="Resource" path="res://resources/items/bread.tres" id="3_bread"]
-[ext_resource type="Resource" path="res://resources/items/bun.tres" id="4_bun"]
+[ext_resource type="Resource" path="res://resources/processing/slice_bread.tres" id="3_slice_bread"]
+[ext_resource type="Resource" path="res://resources/processing/chop_carrot.tres" id="4_chop_carrot"]
+[ext_resource type="Resource" path="res://resources/processing/cut_carrot_sticks.tres" id="5_cut_carrot_sticks"]
+[ext_resource type="Resource" path="res://resources/processing/slice_cheese.tres" id="6_slice_cheese"]
+[ext_resource type="Resource" path="res://resources/processing/dice_cheese.tres" id="7_dice_cheese"]
+[ext_resource type="Resource" path="res://resources/processing/tear_lettuce_leaf.tres" id="8_tear_lettuce_leaf"]
+[ext_resource type="Resource" path="res://resources/processing/shred_greens.tres" id="9_shred_greens"]
+[ext_resource type="Resource" path="res://resources/processing/dice_onion.tres" id="10_dice_onion"]
+[ext_resource type="Resource" path="res://resources/processing/ring_slice_onion.tres" id="11_ring_slice_onion"]
+[ext_resource type="Resource" path="res://resources/processing/chop_fries.tres" id="12_chop_fries"]
+[ext_resource type="Resource" path="res://resources/processing/slice_tomato.tres" id="13_slice_tomato"]
+[ext_resource type="Resource" path="res://resources/processing/slice_tomato_batch.tres" id="14_slice_tomato_batch"]
+[ext_resource type="Resource" path="res://resources/processing/sear_ham.tres" id="15_sear_ham"]
+[ext_resource type="Resource" path="res://resources/processing/fry_onion_rings.tres" id="16_fry_onion_rings"]
+[ext_resource type="Resource" path="res://resources/processing/mash_potato.tres" id="17_mash_potato"]
+[ext_resource type="Resource" path="res://resources/processing/sear_steak.tres" id="18_sear_steak"]
+[ext_resource type="Resource" path="res://resources/processing/grill_burger_patty.tres" id="19_grill_burger_patty"]
+[ext_resource type="Resource" path="res://resources/processing/grill_veggie_patty.tres" id="20_grill_veggie_patty"]
+[ext_resource type="Resource" path="res://resources/processing/simmer_stew.tres" id="21_simmer_stew"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_87bic"]
 size = Vector3(4.1069946, 4.345215, 2.9916992)
@@ -25,6 +42,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11734009, 1.6726074, 0.995
 shape = SubResource("BoxShape3D_87bic")
 
 [node name="stove" type="Area3D" parent="." unique_id=557961044]
+script = ExtResource("2_processor")
+recipes = Array[Resource]([ExtResource("15_sear_ham"), ExtResource("16_fry_onion_rings"), ExtResource("17_mash_potato"), ExtResource("18_sear_steak"), ExtResource("19_grill_burger_patty"), ExtResource("20_grill_veggie_patty"), ExtResource("21_simmer_stew")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="stove" unique_id=566283111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1845093, 0.3060913, 1.1746521)
@@ -32,10 +51,7 @@ shape = SubResource("BoxShape3D_vpxcu")
 
 [node name="cutboard" type="Area3D" parent="." unique_id=1419940019]
 script = ExtResource("2_processor")
-hold_duration = 1.25
-input_item = ExtResource("3_bread")
-output_item = ExtResource("4_bun")
-action_verb = "SLICE BREAD"
+recipes = Array[Resource]([ExtResource("3_slice_bread"), ExtResource("4_chop_carrot"), ExtResource("5_cut_carrot_sticks"), ExtResource("6_slice_cheese"), ExtResource("7_dice_cheese"), ExtResource("8_tear_lettuce_leaf"), ExtResource("9_shred_greens"), ExtResource("10_dice_onion"), ExtResource("11_ring_slice_onion"), ExtResource("12_chop_fries"), ExtResource("13_slice_tomato"), ExtResource("14_slice_tomato_batch")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="cutboard" unique_id=575721903]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0630646, 0.45648193, 1.1335754)

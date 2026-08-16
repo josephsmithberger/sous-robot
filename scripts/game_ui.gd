@@ -31,11 +31,16 @@ var _dialogue_slot_is_open := false
 var _control_deck_is_open := false
 var _interaction_prompt := "INTERACT"
 var _interaction_is_hold := false
+var _process_picker_panel: PanelContainer
+var _process_picker_options_box: VBoxContainer
+var _process_picker_cancel_button: Button
+var _process_picker_target: Node
 
 
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
+	_create_process_picker()
 
 	_tabs.tab_changed.connect(_on_tab_changed)
 	GameControl.controllability_changed.connect(_on_controllability_changed)
@@ -45,6 +50,10 @@ func _ready() -> void:
 	GameControl.interact_available_changed.connect(_on_interact_available_changed)
 	GameControl.interaction_prompt_changed.connect(_on_interaction_prompt_changed)
 	GameControl.interaction_progress_changed.connect(_on_interaction_progress_changed)
+	GameControl.process_picker_requested.connect(_on_process_picker_requested)
+	GameControl.process_picker_selected.connect(_on_process_picker_selected)
+	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
+	GameControl.process_picker_refreshed.connect(_on_process_picker_refreshed)
 	GameControl.money_changed.connect(_on_money_changed)
 	GameControl.placement_started.connect(_on_placement_started)
 	GameControl.placement_completed.connect(_on_placement_completed)
@@ -100,6 +109,110 @@ func _exit_tree() -> void:
 	DialogueManager.get_current_scene = _previous_dialogue_host_resolver
 	GameControl.set_virtual_input(Vector2.ZERO, Vector2.ZERO)
 	GameControl.set_controllable(false)
+
+
+func _create_process_picker() -> void:
+	var interaction_stage := _game_viewport_container.get_parent() as Control
+	if interaction_stage == null:
+		return
+	_process_picker_panel = PanelContainer.new()
+	_process_picker_panel.name = "ProcessPicker"
+	_process_picker_panel.z_index = 20
+	_process_picker_panel.visible = false
+	_process_picker_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_process_picker_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_process_picker_panel.position = Vector2(-190.0, -150.0)
+	_process_picker_panel.size = Vector2(380.0, 300.0)
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.07, 0.06, 0.05, 0.97)
+	panel_style.border_color = Color(1.0, 0.78, 0.17, 0.9)
+	panel_style.set_border_width_all(2)
+	panel_style.set_corner_radius_all(10)
+	panel_style.content_margin_left = 18.0
+	panel_style.content_margin_right = 18.0
+	panel_style.content_margin_top = 14.0
+	panel_style.content_margin_bottom = 14.0
+	_process_picker_panel.add_theme_stylebox_override("panel", panel_style)
+	interaction_stage.add_child(_process_picker_panel)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 2)
+	margin.add_theme_constant_override("margin_right", 2)
+	margin.add_theme_constant_override("margin_top", 2)
+	margin.add_theme_constant_override("margin_bottom", 2)
+	_process_picker_panel.add_child(margin)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 8)
+	margin.add_child(column)
+	var title := Label.new()
+	title.name = "Title"
+	title.text = "CHOOSE PREP"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_color_override("font_color", Color(1.0, 0.78, 0.17))
+	title.add_theme_font_size_override("font_size", 22)
+	column.add_child(title)
+	var hint := Label.new()
+	hint.text = "Select a preparation"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.7))
+	column.add_child(hint)
+	_process_picker_options_box = VBoxContainer.new()
+	_process_picker_options_box.name = "Options"
+	_process_picker_options_box.add_theme_constant_override("separation", 6)
+	column.add_child(_process_picker_options_box)
+	_process_picker_cancel_button = Button.new()
+	_process_picker_cancel_button.name = "Cancel"
+	_process_picker_cancel_button.text = "CANCEL (ESC)"
+	_process_picker_cancel_button.custom_minimum_size = Vector2(0, 42)
+	_process_picker_cancel_button.focus_mode = Control.FOCUS_ALL
+	_process_picker_cancel_button.pressed.connect(GameControl.cancel_process_picker)
+	column.add_child(_process_picker_cancel_button)
+
+
+func _on_process_picker_requested(target: Node, options: Array[ItemProcessRecipe]) -> void:
+	_process_picker_target = target
+	if _process_picker_panel == null or _process_picker_options_box == null:
+		return
+	for child in _process_picker_options_box.get_children():
+		child.free()
+	for recipe in options:
+		if recipe == null:
+			continue
+		var option := Button.new()
+		option.custom_minimum_size = Vector2(0, 48)
+		option.focus_mode = Control.FOCUS_ALL
+		option.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		option.text = "%s  ·  %.1fs" % [recipe.get_output_name(), recipe.hold_duration]
+		option.tooltip_text = recipe.get_action_label()
+		option.pressed.connect(_on_process_option_pressed.bind(recipe))
+		_process_picker_options_box.add_child(option)
+	_process_picker_panel.visible = true
+		# Focus makes the same overlay usable without a mouse or touch screen.
+	if _process_picker_options_box.get_child_count() > 0:
+		(_process_picker_options_box.get_child(0) as Button).grab_focus.call_deferred()
+
+
+func _on_process_option_pressed(recipe: ItemProcessRecipe) -> void:
+	GameControl.select_process_recipe(recipe)
+
+
+func _on_process_picker_selected(_target: Node, _recipe: ItemProcessRecipe) -> void:
+	_hide_process_picker()
+
+
+func _on_process_picker_cancelled() -> void:
+	_hide_process_picker()
+
+
+func _on_process_picker_refreshed(target: Node, options: Array[ItemProcessRecipe]) -> void:
+	if GameControl.is_process_picker_open():
+		_on_process_picker_requested(target, options)
+
+
+func _hide_process_picker() -> void:
+	_process_picker_target = null
+	if _process_picker_panel != null:
+		_process_picker_panel.visible = false
 
 
 func _on_game_viewport_gui_input(event: InputEvent) -> void:

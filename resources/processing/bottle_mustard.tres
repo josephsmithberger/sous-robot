@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemProcessRecipe" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_process_recipe.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://resources/items/onion.tres" id="2_input"]
+[ext_resource type="Resource" path="res://resources/items/mustard.tres" id="3_output"]
+
+[resource]
+script = ExtResource("1_recipe")
+recipe_id = &"bottle_mustard"
+input_item = ExtResource("2_input")
+output_item = ExtResource("3_output")
+action_verb = "BOTTLE MUSTARD"
+hold_duration = 1.50

@@ -1,6 +1,13 @@
-[gd_scene format=3 uid="uid://nq5457svdt3r"]
+[gd_scene format=3 uid="uid://bpltnru2l7hpn"]
 
 [ext_resource type="PackedScene" uid="uid://b8sifsigweji4" path="res://assets/kitchen-pack/oven.gltf" id="1_ye01y"]
+[ext_resource type="Script" uid="uid://btp25yg1g5y0m" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://d00jx56u4t2w0" path="res://scripts/item_process_recipe.gd" id="3_e21nd"]
+[ext_resource type="Resource" path="res://resources/processing/toast_bun_top.tres" id="3_toast_bun_top"]
+[ext_resource type="Resource" path="res://resources/processing/toast_bun_bottom.tres" id="4_toast_bun_bottom"]
+[ext_resource type="Resource" path="res://resources/processing/roast_ham.tres" id="5_roast_ham"]
+[ext_resource type="Resource" path="res://resources/processing/mash_potato.tres" id="6_mash_potato"]
+[ext_resource type="Resource" path="res://resources/processing/broil_steak.tres" id="7_broil_steak"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_oven"]
 size = Vector3(2, 1.8, 2)
@@ -10,5 +17,13 @@ size = Vector3(2, 1.8, 2)
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=608573975]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=444177767]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape3D_oven")
+
+[node name="OvenProcessor" type="Area3D" parent="." index="2" unique_id=1429891740]
+script = ExtResource("2_processor")
+recipes = Array[ExtResource("3_e21nd")]([ExtResource("3_toast_bun_top"), ExtResource("4_toast_bun_bottom"), ExtResource("5_roast_ham"), ExtResource("6_mash_potato"), ExtResource("7_broil_steak")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OvenProcessor" index="0" unique_id=242458181]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("BoxShape3D_oven")

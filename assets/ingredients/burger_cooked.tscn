@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_burger_cooked.gltf" id="1_model"]
+[node name="burger_cooked" type="Node3D"]
+[node name="Model" parent="." instance=ExtResource("1_model")]

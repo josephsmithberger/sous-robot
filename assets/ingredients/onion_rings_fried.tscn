@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_onion_rings.gltf" id="1_model"]
+[ext_resource type="Script" path="res://scripts/item_visual_tint.gd" id="2_tint"]
+
+[node name="onion_rings_fried" type="Node3D"]
+script = ExtResource("2_tint")
+tint = Color(0.92, 0.56, 0.18, 1)
+tint_strength = 0.34
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

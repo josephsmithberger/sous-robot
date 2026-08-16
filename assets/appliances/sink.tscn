@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://cdmvokp3ut2y6"]
 
 [ext_resource type="PackedScene" uid="uid://diuso6txs3146" path="res://assets/kitchen-pack/kitchencounter_sink.gltf" id="1_373hy"]
+[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Resource" path="res://resources/processing/wash_carrot.tres" id="3_wash_carrot"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_373hy"]
 size = Vector3(2.159912, 1.4091797, 1.9709473)
@@ -19,6 +21,8 @@ shape = SubResource("BoxShape3D_373hy")
 
 [node name="sink" type="Area3D" parent="." index="2" unique_id=1111977114]
 visible = false
+script = ExtResource("2_processor")
+recipes = Array[Resource]([ExtResource("3_wash_carrot")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="sink" index="0" unique_id=1972755150]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.023529053, 0.2709961, 0.43121338)

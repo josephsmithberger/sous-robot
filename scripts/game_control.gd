@@ -15,6 +15,13 @@ signal interaction_pressed
 signal interaction_released
 signal interaction_prompt_changed(prompt: String, hold_duration: float)
 signal interaction_progress_changed(progress: float)
+## Transient appliance preparation-choice lifecycle. The target is never owned by
+## the picker; it is only valid while the player remains in range and holds the
+## matching input item.
+signal process_picker_requested(target: Node, options: Array[ItemProcessRecipe])
+signal process_picker_selected(target: Node, recipe: ItemProcessRecipe)
+signal process_picker_cancelled
+signal process_picker_refreshed(target: Node, options: Array[ItemProcessRecipe])
 @warning_ignore("unused_signal")
 signal held_item_changed(item: KitchenItem)
 @warning_ignore("unused_signal")
@@ -103,6 +110,10 @@ var look_input := Vector2.ZERO
 var interaction_prompt := ""
 var interaction_hold_duration := 0.0
 var interaction_progress := 0.0
+var process_picker_target: Node
+var process_picker_options: Array[ItemProcessRecipe] = []
+var process_picker_selected_recipe: ItemProcessRecipe
+var process_picker_open := false
 var money := 0.0
 var active_order_id := 0
 var owned_items: Array[StringName] = [&"DecoratedWall", &"BunCrate"]
@@ -119,10 +130,76 @@ var _ui_mode_before_dialogue := false
 var _dialogue_changed_camera := false
 
 
+func is_process_picker_open() -> bool:
+	return process_picker_open and is_instance_valid(process_picker_target) and not process_picker_options.is_empty()
+
+
+func request_process_picker(target: Node, options: Array[ItemProcessRecipe]) -> void:
+	if target == null or options.is_empty():
+		cancel_process_picker()
+		return
+	process_picker_target = target
+	process_picker_options = options.duplicate()
+	process_picker_selected_recipe = null
+	process_picker_open = true
+	process_picker_requested.emit(process_picker_target, process_picker_options)
+
+
+func request_process_choice(target: Node, options: Array[ItemProcessRecipe]) -> void:
+	request_process_picker(target, options)
+
+
+func select_process_recipe(recipe: ItemProcessRecipe) -> bool:
+	if not is_process_picker_open() or recipe == null or not process_picker_options.has(recipe):
+		return false
+	var target := process_picker_target
+	process_picker_selected_recipe = recipe
+	process_picker_open = false
+	process_picker_selected.emit(target, recipe)
+	process_picker_refreshed.emit(target, process_picker_options)
+	return true
+
+
+func select_process_choice(recipe: ItemProcessRecipe) -> bool:
+	return select_process_recipe(recipe)
+
+
+func cancel_process_picker() -> void:
+	var had_picker := process_picker_open or process_picker_target != null or not process_picker_options.is_empty()
+	process_picker_open = false
+	process_picker_target = null
+	process_picker_options.clear()
+	process_picker_selected_recipe = null
+	if had_picker:
+		process_picker_cancelled.emit()
+
+
+func cancel_process_choice() -> void:
+	cancel_process_picker()
+
+
+func refresh_process_picker(target: Node = null, options: Array[ItemProcessRecipe] = []) -> void:
+	var next_target := target if target != null else process_picker_target
+	var next_options := options if not options.is_empty() else process_picker_options
+	if next_target == null or next_options.is_empty():
+		cancel_process_picker()
+		return
+	process_picker_target = next_target
+	process_picker_options = next_options.duplicate()
+	process_picker_open = true
+	process_picker_refreshed.emit(process_picker_target, process_picker_options)
+
+
+func refresh_process_choice(target: Node = null, options: Array[ItemProcessRecipe] = []) -> void:
+	refresh_process_picker(target, options)
+
+
 func _ready() -> void:
 	_ensure_interact_action()
 	input_mode = InputMode.TOUCH if DisplayServer.is_touchscreen_available() else InputMode.KEYBOARD
 	_sync_mouse_mode()
+	if not held_item_changed.is_connected(_on_held_item_changed_for_picker):
+		held_item_changed.connect(_on_held_item_changed_for_picker)
 	_connect_dialogue_manager()
 
 
@@ -201,6 +278,10 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and not event.echo:
 		input_mode = InputMode.KEYBOARD
 		if event.keycode == KEY_ESCAPE and _controllability_requested and not is_dialogue_active():
+			if is_process_picker_open():
+				cancel_process_picker()
+				get_viewport().set_input_as_handled()
+				return
 			if is_ui_mode or camera_mode != CameraMode.FIRST_PERSON:
 				give_player_control()
 			else:
@@ -239,6 +320,12 @@ func clear_interaction_context() -> void:
 	set_interaction_progress(0.0)
 
 
+func _on_held_item_changed_for_picker(_item: KitchenItem) -> void:
+	# A recipe choice is tied to the item currently in the player's hand.
+	if is_process_picker_open() or process_picker_selected_recipe != null:
+		cancel_process_picker()
+
+
 func set_interaction_progress(progress: float) -> void:
 	var next_progress := clampf(progress, 0.0, 1.0)
 	if is_equal_approx(interaction_progress, next_progress):
@@ -250,6 +337,7 @@ func set_interaction_progress(progress: float) -> void:
 func set_controllable(value: bool) -> void:
 	_controllability_requested = value
 	if not value:
+		cancel_process_picker()
 		cancel_interaction()
 		set_ui_mode(true)
 	_refresh_controllability()

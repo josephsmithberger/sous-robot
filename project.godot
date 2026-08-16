@@ -57,9 +57,19 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://tests/order_queue_smoke.gd",
+"type": "file"
+}, {
+"column": 0,
+"line": 157,
+"path": "res://docs/items_and_cooking_recipes.md",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://tests/assembly_counter_smoke.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_ham_cooked.gltf" id="1_model"]
+[ext_resource type="Script" path="res://scripts/item_visual_tint.gd" id="2_tint"]
+
+[node name="ham_roasted" type="Node3D"]
+script = ExtResource("2_tint")
+tint = Color(0.68, 0.27, 0.12, 1)
+tint_strength = 0.24
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

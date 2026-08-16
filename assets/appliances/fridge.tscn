@@ -1,6 +1,13 @@
 [gd_scene format=3 uid="uid://c158dfe7lo30p"]
 
 [ext_resource type="PackedScene" uid="uid://5ctfy8qwdppn" path="res://assets/kitchen-pack/fridge_A.gltf" id="1_vbdww"]
+[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Resource" path="res://resources/processing/chill_ham_cooked.tres" id="3_chill_ham_cooked"]
+[ext_resource type="Resource" path="res://resources/processing/chill_ham_roasted.tres" id="4_chill_ham_roasted"]
+[ext_resource type="Resource" path="res://resources/processing/chill_salad.tres" id="5_chill_salad"]
+[ext_resource type="Resource" path="res://resources/processing/bottle_ketchup.tres" id="6_bottle_ketchup"]
+[ext_resource type="Resource" path="res://resources/processing/bottle_mustard.tres" id="7_bottle_mustard"]
+[ext_resource type="Resource" path="res://resources/processing/jar_pickles.tres" id="8_jar_pickles"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vbdww"]
 size = Vector3(1.9403687, 2.9589844, 1.9587402)
@@ -19,6 +26,8 @@ shape = SubResource("BoxShape3D_vbdww")
 
 [node name="fridge" type="Area3D" parent="." index="2" unique_id=2108691983]
 visible = false
+script = ExtResource("2_processor")
+recipes = Array[Resource]([ExtResource("3_chill_ham_cooked"), ExtResource("4_chill_ham_roasted"), ExtResource("5_chill_salad"), ExtResource("6_bottle_ketchup"), ExtResource("7_bottle_mustard"), ExtResource("8_jar_pickles")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="fridge" index="0" unique_id=444949095]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3187256, 0.8708496, 0.58535933)

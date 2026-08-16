@@ -28,6 +28,8 @@ func _ready() -> void:
 	GameControl.interaction_pressed.connect(_on_interaction_pressed)
 	GameControl.interaction_released.connect(_on_interaction_released)
 	GameControl.look_at_requested.connect(_on_look_at_requested)
+	GameControl.process_picker_selected.connect(_on_process_picker_selected)
+	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
 	if animation_player != null and animation_player.has_animation(&"bob"):
 		animation_player.play(&"bob")
 		animation_player.speed_scale = idle_bob_speed
@@ -165,6 +167,10 @@ func _on_area_entered(area: Area3D) -> void:
 
 func _on_area_exited(area: Area3D) -> void:
 	if area is InteractionArea:
+		if GameControl.process_picker_target == area:
+			GameControl.cancel_process_picker()
+		if area is ItemProcessor:
+			(area as ItemProcessor).clear_process_selection()
 		_overlapping_areas.erase(area)
 		_update_interaction_target(true)
 
@@ -190,6 +196,10 @@ func _update_interaction_target(force_update := false) -> void:
 				nearest.get_interaction_hold_duration(self)
 			)
 		return
+	if _active_interaction is ItemProcessor:
+		(_active_interaction as ItemProcessor).clear_process_selection()
+	if GameControl.process_picker_target == _active_interaction:
+		GameControl.cancel_process_picker()
 	_cancel_held_interaction()
 	_active_interaction = nearest
 	if _active_interaction == null:
@@ -203,6 +213,8 @@ func _update_interaction_target(force_update := false) -> void:
 
 func _on_interaction_pressed() -> void:
 	if _interaction_is_held:
+		return
+	if GameControl.is_process_picker_open():
 		return
 	_update_interaction_target()
 	if _active_interaction == null or not _active_interaction.can_interact(self):
@@ -249,9 +261,21 @@ func _cancel_held_interaction() -> void:
 	GameControl.set_interaction_progress(0.0)
 
 
+func _on_process_picker_selected(_target: Node, _recipe: ItemProcessRecipe) -> void:
+	# ItemProcessor receives the same signal and stores its selected route. Defer
+	# the target refresh until every signal listener has observed that update.
+	call_deferred(&"_update_interaction_target", true)
+
+
+func _on_process_picker_cancelled() -> void:
+	call_deferred(&"_update_interaction_target", true)
+
+
 func _exit_tree() -> void:
 	if GameControl.look_at_requested.is_connected(_on_look_at_requested):
 		GameControl.look_at_requested.disconnect(_on_look_at_requested)
 	if _look_tween and _look_tween.is_valid():
 		_look_tween.kill()
+	if GameControl.process_picker_target == self:
+		GameControl.cancel_process_picker()
 	GameControl.clear_interaction_context()
