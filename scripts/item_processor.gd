@@ -17,6 +17,7 @@ var _selected_recipe: ItemProcessRecipe
 
 
 func _ready() -> void:
+	add_to_group(&"item_processors")
 	if not GameControl.process_picker_selected.is_connected(_on_process_picker_selected):
 		GameControl.process_picker_selected.connect(_on_process_picker_selected)
 	if not GameControl.process_picker_cancelled.is_connected(_on_process_picker_cancelled):

@@ -5,6 +5,11 @@ extends InteractionArea
 @export var item: KitchenItem
 
 
+func _ready() -> void:
+	add_to_group(&"item_sources")
+
+
+
 func can_interact(player: Node) -> bool:
 	return item != null and player.has_method(&"has_held_item") and not player.has_held_item()
 

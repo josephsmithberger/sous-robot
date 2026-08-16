@@ -12,7 +12,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_oven"]
 size = Vector3(2, 1.8, 2)
 
-[node name="oven2" unique_id=669809382 instance=ExtResource("1_ye01y")]
+[node name="oven" unique_id=669809382 instance=ExtResource("1_ye01y")]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=608573975]
 

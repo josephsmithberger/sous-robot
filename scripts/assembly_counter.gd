@@ -22,6 +22,7 @@ var _plate_node: Node3D
 
 
 func _ready() -> void:
+	add_to_group(&"assembly_counters")
 	if available_recipes.is_empty():
 		available_recipes = [
 			DEFAULT_TWO_BUNS_RECIPE,

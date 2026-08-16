@@ -1,5 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://c3te4pt4tay0a"]
 
-[ext_resource type="PackedScene" path="res://assets/kitchen-pack/food_ingredient_bun_top.gltf" id="1_model"]
-[node name="bun_top" type="Node3D"]
-[node name="Model" parent="." instance=ExtResource("1_model")]
+[ext_resource type="PackedScene" uid="uid://epco7o7hub2a" path="res://assets/kitchen-pack/food_ingredient_bun_top.gltf" id="1_model"]
+
+[node name="bun_top" type="Node3D" unique_id=16639000]
+
+[node name="Model" parent="." unique_id=33130934 instance=ExtResource("1_model")]

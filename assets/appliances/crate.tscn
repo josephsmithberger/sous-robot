@@ -17,9 +17,9 @@ visible = false
 position = Vector3(0, 0.4, 0)
 shape = SubResource("BoxShape3D_static")
 
-[node name="crate" type="Area3D" parent="."]
+[node name="crate_source" type="Area3D" parent="."]
 visible = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="crate"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="crate_source"]
 position = Vector3(0, 0.4, 0)
 shape = SubResource("BoxShape3D_interact")

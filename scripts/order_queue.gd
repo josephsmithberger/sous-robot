@@ -38,7 +38,11 @@ const TWO_BUNS: KitchenItem = preload("res://resources/items/two_buns.tres")
 	TWO_BUNS,
 ]
 
+@export_category("Order Generation")
+@export var use_procedural_orders: bool = true
+
 @export_category("Order Cycle")
+## Used when use_procedural_orders is false.
 ## Each dictionary supports: items, base_reward, tip, wrong_item_penalty, target_time, max_time.
 ## Item keys match KitchenItem.item_id values. This array wraps in fixed order.
 @export var order_cycle: Array[Dictionary] = [
@@ -87,6 +91,10 @@ var _next_order_id := 1
 var _active_order: Dictionary = {}
 var _dialogue_waiter: WaiterRobot
 var _is_advancing := false
+
+var _recent_order_signatures: Array[String] = []
+var _recent_primary_items: Array[StringName] = []
+const MAX_RECENT_HISTORY := 6
 
 
 func _ready() -> void:
@@ -319,17 +327,448 @@ func _spawn_visible_queue() -> void:
 		_waiters.append(waiter)
 
 
+const NON_ORDERABLE_ITEMS: Array[StringName] = [
+	&"vegetableburger_uncooked",
+	&"stew_base",
+	&"bun_top",
+	&"bun_bottom",
+]
+
+
 func _next_order_definition() -> Dictionary:
+	if use_procedural_orders:
+		return generate_random_order()
+
 	if order_cycle.is_empty():
 		return {
 			"items": {"bread": 1},
 			"base_reward": 1.0,
 			"tip": 0.0,
 			"wrong_item_penalty": 0.5,
+			"target_time": 10.0,
+			"max_time": 25.0,
 		}
 	var definition: Dictionary = order_cycle[_cycle_index % order_cycle.size()].duplicate(true)
 	_cycle_index = (_cycle_index + 1) % order_cycle.size()
 	return definition
+
+
+static func compute_order_signature(items_dict: Dictionary) -> String:
+	var keys: Array = items_dict.keys()
+	keys.sort()
+	var parts: Array[String] = []
+	for k: Variant in keys:
+		parts.append("%s:%d" % [str(k), int(items_dict[k])])
+	return ",".join(parts)
+
+
+func get_active_waiter_signatures() -> Array[String]:
+	var signatures: Array[String] = []
+	for w: WaiterRobot in _waiters:
+		if w != null and is_instance_valid(w) and w.order_data != null:
+			var items: Variant = w.order_data.get("items", {})
+			if items is Dictionary and not items.is_empty():
+				signatures.append(compute_order_signature(items))
+	return signatures
+
+
+func clear_order_history() -> void:
+	_recent_order_signatures.clear()
+	_recent_primary_items.clear()
+
+
+func _calculate_item_weight(item_id: StringName, queue_item_counts: Dictionary) -> float:
+	var val := estimate_item_value(item_id)
+
+	var base_w := 1.0
+	if val >= 18.0:
+		base_w = 1.8
+	elif val >= 8.0:
+		base_w = 1.4
+	else:
+		base_w = 1.0
+
+	var active_count: int = int(queue_item_counts.get(item_id, 0))
+	if active_count > 0:
+		base_w *= 0.15 / float(active_count)
+
+	var history_len := _recent_primary_items.size()
+	for i in range(history_len):
+		var rec_idx := history_len - 1 - i
+		if _recent_primary_items[rec_idx] == item_id:
+			if i == 0:
+				base_w *= 0.15
+			elif i == 1:
+				base_w *= 0.35
+			elif i == 2:
+				base_w *= 0.60
+			break
+
+	return maxf(base_w, 0.01)
+
+
+func _pick_weighted(items: Array[StringName], weights: Dictionary) -> StringName:
+	var total := 0.0
+	for it: StringName in items:
+		total += float(weights.get(it, 1.0))
+	if total <= 0.0:
+		return items[randi() % items.size()]
+	var roll := randf_range(0.0, total)
+	var accum := 0.0
+	for it: StringName in items:
+		accum += float(weights.get(it, 1.0))
+		if roll <= accum:
+			return it
+	return items.back()
+
+
+func _generate_candidate_items(eligible_ids: Array[StringName], queue_item_counts: Dictionary) -> Dictionary:
+	var items_dict: Dictionary = {}
+	var n_eligible := eligible_ids.size()
+
+	var distinct_count := 1
+	var roll := randf()
+	if n_eligible >= 5:
+		if roll < 0.20:
+			distinct_count = 3
+		elif roll < 0.70:
+			distinct_count = 2
+		else:
+			distinct_count = 1
+	elif n_eligible >= 3:
+		if roll < 0.50:
+			distinct_count = 2
+		else:
+			distinct_count = 1
+	elif n_eligible >= 2:
+		if roll < 0.40:
+			distinct_count = 2
+		else:
+			distinct_count = 1
+
+	distinct_count = mini(distinct_count, n_eligible)
+
+	var weights: Dictionary = {}
+	for it: StringName in eligible_ids:
+		weights[it] = _calculate_item_weight(it, queue_item_counts)
+
+	var pool := eligible_ids.duplicate()
+	for _i in range(distinct_count):
+		if pool.is_empty():
+			break
+		var chosen_id := _pick_weighted(pool, weights)
+		pool.erase(chosen_id)
+
+		var val := estimate_item_value(chosen_id)
+		var qty := 1
+
+		if distinct_count == 1:
+			if val < 6.0:
+				var q_roll := randf()
+				if q_roll < 0.45:
+					qty = 1
+				elif q_roll < 0.85:
+					qty = 2
+				else:
+					qty = 3
+			elif val < 15.0:
+				if randf() < 0.35:
+					qty = 2
+				else:
+					qty = 1
+			else:
+				if randf() < 0.10:
+					qty = 2
+				else:
+					qty = 1
+		else:
+			if val < 6.0 and randf() < 0.25:
+				qty = 2
+			else:
+				qty = 1
+
+		items_dict[chosen_id] = qty
+
+	return items_dict
+
+
+func _record_order_history(signature: String, items_dict: Dictionary) -> void:
+	_recent_order_signatures.append(signature)
+	while _recent_order_signatures.size() > MAX_RECENT_HISTORY:
+		_recent_order_signatures.pop_front()
+
+	for item_id: StringName in items_dict:
+		_recent_primary_items.append(item_id)
+	while _recent_primary_items.size() > MAX_RECENT_HISTORY * 2:
+		_recent_primary_items.pop_front()
+
+
+func generate_random_order() -> Dictionary:
+	var producible: Dictionary = get_producible_items()
+	var eligible_ids: Array[StringName] = []
+	for item_id: StringName in producible:
+		if not NON_ORDERABLE_ITEMS.has(item_id):
+			eligible_ids.append(item_id)
+
+	if eligible_ids.is_empty():
+		if producible.is_empty():
+			eligible_ids.append(&"bread")
+		else:
+			for item_id: StringName in producible:
+				eligible_ids.append(item_id)
+
+	eligible_ids.sort()
+
+	var active_signatures := get_active_waiter_signatures()
+	var queue_item_counts: Dictionary = {}
+	for w: WaiterRobot in _waiters:
+		if w != null and is_instance_valid(w) and w.order_data != null:
+			var items: Variant = w.order_data.get("items", {})
+			if items is Dictionary:
+				for k: Variant in items:
+					var sid := StringName(str(k))
+					queue_item_counts[sid] = int(queue_item_counts.get(sid, 0)) + 1
+
+	var best_items_dict: Dictionary = {}
+	var best_signature := ""
+	var best_score := -999999.0
+
+	for _attempt in range(12):
+		var cand_items := _generate_candidate_items(eligible_ids, queue_item_counts)
+		var cand_sig := compute_order_signature(cand_items)
+
+		var score := 0.0
+		if active_signatures.has(cand_sig):
+			score -= 1000.0
+		if not _recent_order_signatures.is_empty() and _recent_order_signatures.back() == cand_sig:
+			score -= 500.0
+		elif _recent_order_signatures.has(cand_sig):
+			score -= 100.0
+
+		for cand_id: StringName in cand_items:
+			if not queue_item_counts.has(cand_id):
+				score += 50.0
+			if not _recent_primary_items.has(cand_id):
+				score += 30.0
+
+		score += randf() * 10.0
+
+		if score > best_score or best_items_dict.is_empty():
+			best_score = score
+			best_items_dict = cand_items
+			best_signature = cand_sig
+
+		if score >= 50.0:
+			break
+
+	_record_order_history(best_signature, best_items_dict)
+
+	var total_base_reward := 0.0
+	var total_prep_time := 0.0
+
+	for chosen_id: StringName in best_items_dict:
+		var qty := int(best_items_dict[chosen_id])
+		var val := estimate_item_value(chosen_id)
+		var prep := estimate_item_prep_time(chosen_id)
+		total_base_reward += val * float(qty)
+		total_prep_time += prep * float(qty)
+
+	var base_reward := maxf(roundf(total_base_reward), 2.0)
+	var tip := maxf(roundf(base_reward * randf_range(0.25, 0.35)), 1.0)
+	var wrong_penalty := maxf(roundf(base_reward * 0.20), 0.5)
+	var target_time := maxf(10.0, roundf(total_prep_time + 8.0))
+	var max_time := maxf(target_time + 15.0, roundf(target_time * 2.2 + 5.0))
+
+	return {
+		"items": best_items_dict,
+		"base_reward": base_reward,
+		"tip": tip,
+		"wrong_item_penalty": wrong_penalty,
+		"target_time": target_time,
+		"max_time": max_time,
+	}
+
+
+func get_producible_items() -> Dictionary:
+	return OrderQueue.evaluate_producible_items(get_tree(), _catalog_by_id)
+
+
+func is_item_producible(item_id: StringName) -> bool:
+	var producible := get_producible_items()
+	return producible.has(item_id)
+
+
+func estimate_item_value(item_id: StringName) -> float:
+	match item_id:
+		&"bread": return 3.0
+		&"bun": return 4.5
+		&"two_buns": return 8.0
+		&"carrot": return 3.5
+		&"carrot_washed": return 5.5
+		&"carrot_chopped", &"carrot_pieces": return 5.0
+		&"cheese": return 4.5
+		&"cheese_slice", &"cheese_chopped": return 6.0
+		&"ham": return 5.0
+		&"ham_cooked", &"ham_roasted": return 8.5
+		&"ham_chilled": return 10.0
+		&"lettuce": return 3.5
+		&"lettuce_slice", &"lettuce_chopped": return 5.0
+		&"salad_chilled": return 8.0
+		&"onion": return 3.5
+		&"onion_chopped", &"onion_rings": return 5.0
+		&"onion_rings_fried": return 7.5
+		&"potato": return 3.5
+		&"potato_chopped": return 5.0
+		&"potato_mashed": return 7.5
+		&"steak": return 6.5
+		&"steak_pieces": return 9.5
+		&"steak_broiled": return 11.0
+		&"burger_cooked": return 12.5
+		&"vegetableburger_cooked": return 11.5
+		&"cheeseburger": return 22.0
+		&"veggie_burger": return 20.0
+		&"steak_dinner": return 24.0
+		&"beef_stew": return 22.0
+		&"tomato": return 3.5
+		&"tomato_slice", &"tomato_slices": return 5.0
+		&"ketchup", &"mustard", &"pickles": return 7.5
+		_: return 5.0
+
+
+func estimate_item_prep_time(item_id: StringName) -> float:
+	match item_id:
+		&"bread", &"carrot", &"cheese", &"ham", &"lettuce", &"onion", &"potato", &"steak", &"tomato":
+			return 4.0
+		&"bun", &"carrot_washed", &"carrot_chopped", &"carrot_pieces", &"cheese_slice", &"cheese_chopped", &"lettuce_slice", &"lettuce_chopped", &"onion_chopped", &"onion_rings", &"potato_chopped", &"tomato_slice", &"tomato_slices":
+			return 6.0
+		&"two_buns", &"ham_cooked", &"ham_roasted", &"ham_chilled", &"onion_rings_fried", &"potato_mashed", &"steak_pieces", &"steak_broiled", &"salad_chilled", &"ketchup", &"mustard", &"pickles":
+			return 8.0
+		&"burger_cooked", &"vegetableburger_cooked":
+			return 10.0
+		&"cheeseburger", &"veggie_burger", &"steak_dinner", &"beef_stew":
+			return 16.0
+		_:
+			return 6.0
+
+
+static func evaluate_producible_items(tree: SceneTree, catalog_by_id: Dictionary = {}) -> Dictionary:
+	var producible: Dictionary = {}
+
+	if tree == null:
+		if catalog_by_id.has(&"bread"):
+			producible[&"bread"] = catalog_by_id[&"bread"]
+		return producible
+
+	# 1. Collect all active ItemSources
+	var sources: Array[ItemSource] = []
+	for node in tree.get_nodes_in_group(&"item_sources"):
+		if _is_workstation_active(node) and node is ItemSource:
+			sources.append(node)
+
+	if sources.is_empty():
+		_find_nodes_of_type(tree.root, ItemSource, sources)
+
+	for source in sources:
+		if source.item != null and not source.item.item_id.is_empty():
+			producible[source.item.item_id] = source.item
+
+	# If no sources found in tree, fallback to starter bread
+	if producible.is_empty():
+		if catalog_by_id.has(&"bread"):
+			producible[&"bread"] = catalog_by_id[&"bread"]
+		elif not catalog_by_id.is_empty():
+			var first_key: StringName = catalog_by_id.keys()[0]
+			producible[first_key] = catalog_by_id[first_key]
+
+	# 2. Collect all active ItemProcessors and AssemblyCounters
+	var processors: Array[ItemProcessor] = []
+	for node in tree.get_nodes_in_group(&"item_processors"):
+		if _is_workstation_active(node) and node is ItemProcessor:
+			processors.append(node)
+	if processors.is_empty():
+		_find_nodes_of_type(tree.root, ItemProcessor, processors)
+
+	var assembly_counters: Array[AssemblyCounter] = []
+	for node in tree.get_nodes_in_group(&"assembly_counters"):
+		if _is_workstation_active(node) and node is AssemblyCounter:
+			assembly_counters.append(node)
+	if assembly_counters.is_empty():
+		_find_nodes_of_type(tree.root, AssemblyCounter, assembly_counters)
+
+	# 3. Fixed-point reachability propagation
+	var changed := true
+	var iterations := 0
+	const MAX_ITERATIONS := 12
+
+	while changed and iterations < MAX_ITERATIONS:
+		changed = false
+		iterations += 1
+
+		# Single-item transformations
+		for proc in processors:
+			for recipe in proc.get_process_recipes():
+				if recipe != null and recipe.is_valid():
+					var in_id := recipe.input_item.item_id
+					var out_id := recipe.output_item.item_id
+					if producible.has(in_id) and not producible.has(out_id):
+						producible[out_id] = recipe.output_item
+						changed = true
+
+		# Multi-item composite assembly recipes
+		for counter in assembly_counters:
+			for recipe in counter.available_recipes:
+				if recipe != null and recipe.output_item != null:
+					var out_id := recipe.output_item.item_id
+					if not producible.has(out_id) and not recipe.ingredient_sequence.is_empty():
+						var all_available := true
+						for ing in recipe.ingredient_sequence:
+							if ing == null or not producible.has(ing.item_id):
+								all_available = false
+								break
+						if all_available:
+							producible[out_id] = recipe.output_item
+							changed = true
+
+	return producible
+
+
+static func _is_workstation_active(node: Node) -> bool:
+	if node == null or not is_instance_valid(node) or not node.is_inside_tree():
+		return false
+
+	# If the top-level placed appliance or node is hidden (e.g. while being moved in placement mode), it is inactive
+	var top_node: Node = node
+	while top_node.get_parent() != null and top_node.get_parent() != node.get_tree().root:
+		if top_node.get_parent().name == "Architecture" or top_node.get_parent().is_in_group(&"placed_items"):
+			break
+		top_node = top_node.get_parent()
+
+	if top_node is Node3D and not (top_node as Node3D).visible:
+		return false
+	if top_node is CanvasItem and not (top_node as CanvasItem).visible:
+		return false
+
+	# Area3D check - active if monitorable or monitoring
+	if node is Area3D:
+		var area := node as Area3D
+		if not area.monitorable and not area.monitoring:
+			return false
+
+	var curr: Node = node
+	while curr != null:
+		if curr.name.containsn("ghost") or (curr.name.containsn("PlacementManager") and curr.get_parent() != null and curr.name != "PlacementManager"):
+			return false
+		curr = curr.get_parent()
+	return true
+
+
+static func _find_nodes_of_type(root: Node, type_class: Variant, out_array: Array) -> void:
+	if root == null:
+		return
+	if is_instance_of(root, type_class) and _is_workstation_active(root):
+		out_array.append(root)
+	for child in root.get_children():
+		_find_nodes_of_type(child, type_class, out_array)
 
 
 func _required_items(definition: Dictionary) -> Dictionary:
@@ -352,6 +791,21 @@ func _required_items(definition: Dictionary) -> Dictionary:
 func _build_catalog() -> void:
 	_catalog_by_id.clear()
 	_item_names.clear()
+
+	# Auto-discover all KitchenItems in resources/items
+	var items_dir := DirAccess.open("res://resources/items")
+	if items_dir != null:
+		items_dir.list_dir_begin()
+		var file_name := items_dir.get_next()
+		while not file_name.is_empty():
+			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
+				var resource_path := "res://resources/items/".path_join(file_name)
+				var loaded_item := load(resource_path) as KitchenItem
+				if loaded_item != null and not loaded_item.item_id.is_empty():
+					_catalog_by_id[loaded_item.item_id] = loaded_item
+					_item_names[loaded_item.item_id] = loaded_item.display_name
+			file_name = items_dir.get_next()
+
 	for item in item_catalog:
 		if item == null or item.item_id.is_empty():
 			continue

@@ -18,6 +18,7 @@ func _ready() -> void:
 
 	# Instantiate OrderQueue with controlled fast timers
 	var queue := OrderQueue.new()
+	queue.use_procedural_orders = false
 	queue.departure_delay = 0.0
 	queue.slot_move_duration = 0.05
 	queue.order_cycle = [

@@ -25,6 +25,7 @@ func _ready() -> void:
 	assert(GameControl.camera_mode == GameControl.CameraMode.FIRST_PERSON)
 
 	var queue := OrderQueue.new()
+	queue.use_procedural_orders = false
 	queue.departure_delay = 0.0
 	queue.slot_move_duration = 0.1
 	add_child(queue)
