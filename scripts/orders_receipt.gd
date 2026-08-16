@@ -17,6 +17,7 @@ var _scroll_tween: Tween
 func _ready() -> void:
 	clear_orders()
 	GameControl.order_started.connect(_on_order_started)
+	GameControl.order_timer_updated.connect(_on_order_timer_updated)
 	GameControl.order_item_fulfilled.connect(_on_order_item_fulfilled)
 	GameControl.order_penalized.connect(_on_order_penalized)
 	GameControl.order_completed.connect(_on_order_completed)
@@ -29,6 +30,8 @@ func _exit_tree() -> void:
 		_scroll_tween.kill()
 	if GameControl.order_started.is_connected(_on_order_started):
 		GameControl.order_started.disconnect(_on_order_started)
+	if GameControl.order_timer_updated.is_connected(_on_order_timer_updated):
+		GameControl.order_timer_updated.disconnect(_on_order_timer_updated)
 	if GameControl.order_item_fulfilled.is_connected(_on_order_item_fulfilled):
 		GameControl.order_item_fulfilled.disconnect(_on_order_item_fulfilled)
 	if GameControl.order_penalized.is_connected(_on_order_penalized):
@@ -156,6 +159,19 @@ func clear_orders() -> void:
 
 func _on_order_started(order_id: int, order: Dictionary) -> void:
 	add_order(order_id, order)
+
+
+func _on_order_timer_updated(order_id: int, _elapsed: float, _max_time: float, current_tip: float, _urgency: float) -> void:
+	if not _orders.has(order_id):
+		return
+	var order: Dictionary = _orders[order_id]
+	if bool(order.get("completed", false)):
+		return
+	order["tip"] = current_tip
+	var tip_label := order["tip_label"] as Label
+	tip_label.text = "$%.2f" % current_tip
+	var total_label := order["total_label"] as Label
+	total_label.text = "$%.2f" % (float(order["base_reward"]) + current_tip)
 
 
 func _on_order_item_fulfilled(order_id: int, item_id: StringName, fulfilled: int, required: int) -> void:

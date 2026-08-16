@@ -18,7 +18,7 @@ const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tr
 @export var item_catalog: Array[KitchenItem] = [BREAD, SLICED_BREAD]
 
 @export_category("Order Cycle")
-## Each dictionary supports: items, base_reward, tip, wrong_item_penalty.
+## Each dictionary supports: items, base_reward, tip, wrong_item_penalty, target_time, max_time.
 ## Item keys match KitchenItem.item_id values. This array wraps in fixed order.
 @export var order_cycle: Array[Dictionary] = [
 	{
@@ -26,24 +26,32 @@ const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tr
 		"base_reward": 3.0,
 		"tip": 1.0,
 		"wrong_item_penalty": 0.5,
+		"target_time": 10.0,
+		"max_time": 25.0,
 	},
 	{
 		"items": {"sliced_bread": 2},
 		"base_reward": 4.0,
 		"tip": 1.5,
 		"wrong_item_penalty": 0.75,
+		"target_time": 16.0,
+		"max_time": 35.0,
 	},
 	{
 		"items": {"bread": 1, "sliced_bread": 1},
 		"base_reward": 5.0,
 		"tip": 2.0,
 		"wrong_item_penalty": 1.0,
+		"target_time": 18.0,
+		"max_time": 40.0,
 	},
 	{
 		"items": {"bread": 2, "sliced_bread": 2},
 		"base_reward": 7.0,
 		"tip": 2.5,
 		"wrong_item_penalty": 1.0,
+		"target_time": 25.0,
+		"max_time": 50.0,
 	},
 ]
 
@@ -72,6 +80,35 @@ func _exit_tree() -> void:
 		GameControl.order_dialogue_confirmed.disconnect(_on_order_dialogue_confirmed)
 	if GameControl.item_delivered.is_connected(_on_item_delivered):
 		GameControl.item_delivered.disconnect(_on_item_delivered)
+
+
+func _process(delta: float) -> void:
+	if _active_order.is_empty() or _is_advancing:
+		return
+
+	var elapsed := float(_active_order.get("elapsed_time", 0.0)) + delta
+	_active_order["elapsed_time"] = elapsed
+
+	var target_time := float(_active_order.get("target_time", 12.0))
+	var max_time := float(_active_order.get("max_time", 30.0))
+	var base_tip := float(_active_order.get("base_tip", 0.0))
+	var penalties := float(_active_order.get("penalties", 0.0))
+
+	var decay_mult := 1.0
+	if elapsed > target_time:
+		decay_mult = clampf(1.0 - (elapsed - target_time) / maxf(max_time - target_time, 0.001), 0.0, 1.0)
+
+	var current_tip := maxf(base_tip * decay_mult - penalties, 0.0)
+	_active_order["tip"] = current_tip
+	var urgency := clampf(elapsed / maxf(max_time, 0.001), 0.0, 1.0)
+
+	GameControl.order_timer_updated.emit(
+		int(_active_order["order_id"]),
+		elapsed,
+		max_time,
+		current_tip,
+		urgency
+	)
 
 
 func is_front_waiter(waiter: WaiterRobot) -> bool:
@@ -114,8 +151,15 @@ func _accept_front_order(waiter: WaiterRobot) -> void:
 		return
 
 	var fulfilled: Dictionary = {}
+	var total_items := 0
 	for item_id: StringName in required:
+		var qty := int(required[item_id])
 		fulfilled[item_id] = 0
+		total_items += qty
+
+	var target_time := maxf(float(definition.get("target_time", 8.0 + float(total_items) * 4.0)), 0.001)
+	var max_time := maxf(float(definition.get("max_time", target_time + 15.0 + float(total_items) * 6.0)), target_time + 0.001)
+	var base_tip := maxf(float(definition.get("tip", 0.0)), 0.0)
 
 	var order_id := _next_order_id
 	_next_order_id += 1
@@ -125,8 +169,13 @@ func _accept_front_order(waiter: WaiterRobot) -> void:
 		"fulfilled": fulfilled,
 		"item_names": _item_names.duplicate(),
 		"base_reward": maxf(float(definition.get("base_reward", 0.0)), 0.0),
-		"tip": maxf(float(definition.get("tip", 0.0)), 0.0),
+		"base_tip": base_tip,
+		"tip": base_tip,
+		"penalties": 0.0,
 		"wrong_item_penalty": maxf(float(definition.get("wrong_item_penalty", 1.0)), 0.0),
+		"elapsed_time": 0.0,
+		"target_time": target_time,
+		"max_time": max_time,
 	}
 	waiter.set_order_accepted(true)
 	GameControl.begin_order(order_id)
@@ -158,7 +207,18 @@ func _on_item_delivered(item: KitchenItem) -> void:
 
 func _apply_wrong_item_penalty(item: KitchenItem) -> void:
 	var penalty := float(_active_order["wrong_item_penalty"])
-	var remaining_tip := maxf(float(_active_order["tip"]) - penalty, 0.0)
+	var penalties := float(_active_order.get("penalties", 0.0)) + penalty
+	_active_order["penalties"] = penalties
+
+	var elapsed := float(_active_order.get("elapsed_time", 0.0))
+	var target_time := float(_active_order.get("target_time", 12.0))
+	var max_time := float(_active_order.get("max_time", 30.0))
+	var base_tip := float(_active_order.get("base_tip", 0.0))
+	var decay_mult := 1.0
+	if elapsed > target_time:
+		decay_mult = clampf(1.0 - (elapsed - target_time) / maxf(max_time - target_time, 0.001), 0.0, 1.0)
+
+	var remaining_tip := maxf(base_tip * decay_mult - penalties, 0.0)
 	_active_order["tip"] = remaining_tip
 	GameControl.change_money(-penalty, "WRONG %s" % item.display_name.to_upper())
 	GameControl.order_penalized.emit(

@@ -25,6 +25,8 @@ signal order_dialogue_confirmed
 @warning_ignore("unused_signal")
 signal order_started(order_id: int, order: Dictionary)
 @warning_ignore("unused_signal")
+signal order_timer_updated(order_id: int, elapsed_time: float, max_time: float, current_tip: float, urgency: float)
+@warning_ignore("unused_signal")
 signal order_item_fulfilled(order_id: int, item_id: StringName, fulfilled: int, required: int)
 @warning_ignore("unused_signal")
 signal order_penalized(order_id: int, remaining_tip: float, penalty: float, item_name: String)
