@@ -6,6 +6,7 @@ extends Control
 ## with step-by-step creation instructions, made-count tracking, categories, and search.
 
 const FONT_LILITA: FontFile = preload("res://assets/fonts/LilitaOne-Regular.ttf")
+const FONT_TOMATO: FontFile = preload("res://assets/fonts/Sauce Tomato.otf")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var search_input: LineEdit = %SearchInput
@@ -104,24 +105,22 @@ func _create_recipe_card(data: Dictionary) -> Control:
 	panel.name = "RecipeCard_%s" % recipe_id
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-	# Clean Godot UI card: full solid black panel with crisp border
+	# Tactile Diner UI Card: warm dark slate panel with 3px border and 20px rounded corners
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 1) # Full black
+	style.bg_color = Color(0.152941, 0.145098, 0.121569, 0.96)
 	if is_made:
 		style.border_color = Color(0.32549, 0.721569, 0.227451, 1) # Game green border
-		style.set_border_width_all(2)
 	else:
-		style.border_color = Color(0.25, 0.25, 0.25, 1)
-		style.set_border_width_all(2)
-
-	style.set_corner_radius_all(8)
-	style.content_margin_left = 14.0
-	style.content_margin_right = 14.0
-	style.content_margin_top = 10.0
-	style.content_margin_bottom = 10.0
-	style.shadow_color = Color(0, 0, 0, 0.5)
+		style.border_color = Color(0.26, 0.24, 0.21, 1.0)
+	style.set_border_width_all(3)
+	style.set_corner_radius_all(20)
+	style.content_margin_left = 16.0
+	style.content_margin_right = 16.0
+	style.content_margin_top = 12.0
+	style.content_margin_bottom = 12.0
+	style.shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 	style.shadow_size = 4
-	style.shadow_offset = Vector2(0, 2)
+	style.shadow_offset = Vector2(0, 3)
 	panel.add_theme_stylebox_override("panel", style)
 
 	var margin := MarginContainer.new()
@@ -138,17 +137,19 @@ func _create_recipe_card(data: Dictionary) -> Control:
 	header_row.add_theme_constant_override("separation", 10)
 	root_vbox.add_child(header_row)
 
-	# Recipe Name
+	# Recipe Name (Sauce Tomato with dark outline matching the bottom deck labels)
 	var name_label := Label.new()
 	name_label.name = "RecipeTitle"
 	name_label.text = title
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.add_theme_font_override("font", FONT_LILITA)
-	name_label.add_theme_font_size_override("font_size", 18)
+	name_label.add_theme_font_override("font", FONT_TOMATO)
+	name_label.add_theme_font_size_override("font_size", 20)
 	name_label.add_theme_color_override(
 		"font_color",
 		Color(1, 0.780392, 0.172549, 1) if is_made else Color(1, 1, 1, 1)
 	)
+	name_label.add_theme_color_override("font_outline_color", Color(0.152941, 0.145098, 0.121569, 1))
+	name_label.add_theme_constant_override("outline_size", 3)
 	header_row.add_child(name_label)
 
 	# Category Badge (Themed colors)
@@ -170,7 +171,7 @@ func _create_recipe_card(data: Dictionary) -> Control:
 	var price_label := Label.new()
 	price_label.text = "💰 Est. Value: %s" % formatted_price
 	price_label.add_theme_font_override("font", FONT_LILITA)
-	price_label.add_theme_font_size_override("font_size", 14)
+	price_label.add_theme_font_size_override("font_size", 15)
 	price_label.add_theme_color_override("font_color", Color(0.32549, 0.721569, 0.227451, 1)) # Game green
 	meta_row.add_child(price_label)
 
@@ -178,21 +179,22 @@ func _create_recipe_card(data: Dictionary) -> Control:
 		var desc_label := Label.new()
 		desc_label.text = desc
 		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc_label.add_theme_font_override("font", FONT_LILITA)
 		desc_label.add_theme_font_size_override("font_size", 13)
-		desc_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75, 1))
+		desc_label.add_theme_color_override("font_color", Color(0.82, 0.80, 0.76, 1))
 		root_vbox.add_child(desc_label)
 
 	# --- Creation Steps Sub-Panel ---
 	var steps_panel := PanelContainer.new()
 	var steps_style := StyleBoxFlat.new()
-	steps_style.bg_color = Color(0.08, 0.08, 0.08, 1) # Inset dark panel
-	steps_style.border_color = Color(0.2, 0.2, 0.2, 1)
-	steps_style.set_border_width_all(1)
-	steps_style.set_corner_radius_all(6)
-	steps_style.content_margin_left = 12.0
-	steps_style.content_margin_right = 12.0
-	steps_style.content_margin_top = 8.0
-	steps_style.content_margin_bottom = 8.0
+	steps_style.bg_color = Color(0.09, 0.08, 0.07, 0.95) # Inset dark panel
+	steps_style.border_color = Color(0.22, 0.20, 0.18, 1)
+	steps_style.set_border_width_all(2)
+	steps_style.set_corner_radius_all(14)
+	steps_style.content_margin_left = 14.0
+	steps_style.content_margin_right = 14.0
+	steps_style.content_margin_top = 10.0
+	steps_style.content_margin_bottom = 10.0
 	steps_panel.add_theme_stylebox_override("panel", steps_style)
 	root_vbox.add_child(steps_panel)
 
@@ -203,8 +205,8 @@ func _create_recipe_card(data: Dictionary) -> Control:
 	var steps_header := Label.new()
 	steps_header.text = "CREATION STEPS:"
 	steps_header.add_theme_font_override("font", FONT_LILITA)
-	steps_header.add_theme_font_size_override("font_size", 13)
-	steps_header.add_theme_color_override("font_color", Color(0.854902, 0.160784, 0.109804, 1)) # Game Diner Red
+	steps_header.add_theme_font_size_override("font_size", 14)
+	steps_header.add_theme_color_override("font_color", Color(1.0, 0.780392, 0.172549, 1)) # Game Diner Gold
 	steps_vbox.add_child(steps_header)
 
 	for i in steps.size():
@@ -238,15 +240,15 @@ func _create_step_row(step_index: int, step_data: Dictionary) -> Control:
 	row.add_theme_constant_override("separation", 10)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-	# Step Number Badge (Game Diner Red pill with black border)
+	# Step Number Badge (Game Diner Red pill with dark border)
 	var num_badge := PanelContainer.new()
 	var num_style := StyleBoxFlat.new()
 	num_style.bg_color = Color(0.854902, 0.160784, 0.109804, 1)
-	num_style.border_color = Color(0, 0, 0, 1)
-	num_style.set_border_width_all(1)
-	num_style.set_corner_radius_all(4)
-	num_style.content_margin_left = 7.0
-	num_style.content_margin_right = 7.0
+	num_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
+	num_style.set_border_width_all(2)
+	num_style.set_corner_radius_all(10)
+	num_style.content_margin_left = 8.0
+	num_style.content_margin_right = 8.0
 	num_style.content_margin_top = 2.0
 	num_style.content_margin_bottom = 2.0
 	num_badge.add_theme_stylebox_override("panel", num_style)
@@ -272,8 +274,8 @@ func _create_step_row(step_index: int, step_data: Dictionary) -> Control:
 	step_label.text = instruction
 	step_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	step_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	step_label.add_theme_font_size_override("font_size", 13)
-	step_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92, 1)) # Crisp light readable text
+	step_label.add_theme_font_size_override("font_size", 14)
+	step_label.add_theme_color_override("font_color", Color(0.95, 0.93, 0.90, 1)) # Crisp light readable text
 	row.add_child(step_label)
 
 	return row
@@ -283,13 +285,13 @@ func _create_pill_badge(text: String, bg_color: Color) -> PanelContainer:
 	var pill := PanelContainer.new()
 	var pill_style := StyleBoxFlat.new()
 	pill_style.bg_color = bg_color
-	pill_style.border_color = Color(0, 0, 0, 1)
-	pill_style.set_border_width_all(1)
-	pill_style.set_corner_radius_all(4)
-	pill_style.content_margin_left = 8.0
-	pill_style.content_margin_right = 8.0
-	pill_style.content_margin_top = 2.0
-	pill_style.content_margin_bottom = 2.0
+	pill_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
+	pill_style.set_border_width_all(2)
+	pill_style.set_corner_radius_all(12)
+	pill_style.content_margin_left = 10.0
+	pill_style.content_margin_right = 10.0
+	pill_style.content_margin_top = 3.0
+	pill_style.content_margin_bottom = 3.0
 	pill.add_theme_stylebox_override("panel", pill_style)
 
 	var label := Label.new()
@@ -304,11 +306,13 @@ func _create_pill_badge(text: String, bg_color: Color) -> PanelContainer:
 func _create_made_badge(is_made: bool, count: int) -> PanelContainer:
 	var badge := PanelContainer.new()
 	var badge_style := StyleBoxFlat.new()
-	badge_style.set_corner_radius_all(4)
-	badge_style.content_margin_left = 9.0
-	badge_style.content_margin_right = 9.0
-	badge_style.content_margin_top = 2.0
-	badge_style.content_margin_bottom = 2.0
+	badge_style.set_corner_radius_all(12)
+	badge_style.set_border_width_all(2)
+	badge_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
+	badge_style.content_margin_left = 12.0
+	badge_style.content_margin_right = 12.0
+	badge_style.content_margin_top = 3.0
+	badge_style.content_margin_bottom = 3.0
 
 	var label := Label.new()
 	label.name = "Label"
@@ -317,16 +321,12 @@ func _create_made_badge(is_made: bool, count: int) -> PanelContainer:
 
 	if is_made:
 		badge_style.bg_color = Color(0.32549, 0.721569, 0.227451, 1) # Game Green
-		badge_style.border_color = Color(0, 0, 0, 1)
-		badge_style.set_border_width_all(1)
 		label.text = "✓ MADE (%dx)" % count
-		label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		label.add_theme_color_override("font_color", Color(0.152941, 0.145098, 0.121569, 1))
 	else:
-		badge_style.bg_color = Color(0.12, 0.12, 0.12, 1)
-		badge_style.border_color = Color(0.3, 0.3, 0.3, 1)
-		badge_style.set_border_width_all(1)
+		badge_style.bg_color = Color(0.20, 0.18, 0.16, 1)
 		label.text = "NOT MADE YET"
-		label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))
+		label.add_theme_color_override("font_color", Color(0.68, 0.65, 0.62, 1))
 
 	badge.add_theme_stylebox_override("panel", badge_style)
 	badge.add_child(label)
@@ -497,13 +497,13 @@ func _update_card_made_state(recipe_id: StringName, count: int) -> void:
 
 	var style := card.get_theme_stylebox("panel") as StyleBoxFlat
 	if style != null:
-		style.bg_color = Color(0, 0, 0, 1)
+		style.bg_color = Color(0.152941, 0.145098, 0.121569, 0.96)
 		if is_made:
 			style.border_color = Color(0.32549, 0.721569, 0.227451, 1)
-			style.set_border_width_all(2)
 		else:
-			style.border_color = Color(0.25, 0.25, 0.25, 1)
-			style.set_border_width_all(2)
+			style.border_color = Color(0.26, 0.24, 0.21, 1.0)
+		style.set_border_width_all(3)
+		style.set_corner_radius_all(20)
 
 	var title_lbl := card.find_child("RecipeTitle", true, false) as Label
 	if title_lbl != null:
@@ -519,11 +519,11 @@ func _update_card_made_state(recipe_id: StringName, count: int) -> void:
 		if badge_style != null and label != null:
 			if is_made:
 				badge_style.bg_color = Color(0.32549, 0.721569, 0.227451, 1)
-				badge_style.border_color = Color(0, 0, 0, 1)
+				badge_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
 				label.text = "✓ MADE (%dx)" % count
-				label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+				label.add_theme_color_override("font_color", Color(0.152941, 0.145098, 0.121569, 1))
 			else:
-				badge_style.bg_color = Color(0.12, 0.12, 0.12, 1)
-				badge_style.border_color = Color(0.3, 0.3, 0.3, 1)
+				badge_style.bg_color = Color(0.20, 0.18, 0.16, 1)
+				badge_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
 				label.text = "NOT MADE YET"
-				label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))
+				label.add_theme_color_override("font_color", Color(0.68, 0.65, 0.62, 1))

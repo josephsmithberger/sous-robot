@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://bp1c1y4lm6bus" path="res://assets/ui/pizza_joystick_tip.svg" id="9_joy_tip"]
 [ext_resource type="Texture2D" uid="uid://mot6mo1ejw6j" path="res://assets/ui/restaurant_clock_face.png" id="10_clock_face"]
 [ext_resource type="Script" uid="uid://bfvtoi7lc50j1" path="res://scripts/clock_widget.gd" id="11_clock_widget"]
+[ext_resource type="PackedScene" path="res://scenes/bot_handoff.tscn" id="12_bot_handoff"]
 
 [sub_resource type="Theme" id="Theme_game"]
 default_font = ExtResource("3_font")
@@ -655,6 +656,8 @@ size = Vector2i(850, 425)
 render_target_update_mode = 4
 
 [node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
+
+[node name="BotHandoff" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=2024578858 instance=ExtResource("12_bot_handoff")]
 
 [node name="PlacementTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=987654321]
 visible = false

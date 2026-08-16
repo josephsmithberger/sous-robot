@@ -65,6 +65,16 @@ signal tab_change_requested(tab_index: int)
 signal tab_changed(tab_index: int)
 @warning_ignore("unused_signal")
 signal order_clock_paused_changed(is_paused: bool)
+@warning_ignore("unused_signal")
+signal bot_dispatch_requested(order_id: int, order: Dictionary, automatable_items: Dictionary)
+@warning_ignore("unused_signal")
+signal bots_assigned(order_id: int, bot_allocations: Dictionary)
+@warning_ignore("unused_signal")
+signal bot_dispatch_cancelled(order_id: int)
+@warning_ignore("unused_signal")
+signal bot_dispatch_closed
+
+const MAX_BOTS := 3
 
 enum InputMode {
 	KEYBOARD,
@@ -133,6 +143,9 @@ var process_picker_target: Node
 var process_picker_options: Array[ItemProcessRecipe] = []
 var process_picker_selected_recipe: ItemProcessRecipe
 var process_picker_open := false
+var bot_dispatch_open := false
+var active_bot_allocations: Dictionary = {}
+var active_order_data: Dictionary = {}
 var money := 0.0
 var active_order_id := 0
 var owned_items: Array[StringName] = [&"DecoratedWall", &"BunCrate"]
@@ -148,6 +161,55 @@ var _camera_mode_before_dialogue: CameraMode = CameraMode.FIRST_PERSON
 var _ui_mode_before_dialogue := false
 var _dialogue_changed_camera := false
 var _last_clock_paused := true
+var _pending_bot_dispatch: Dictionary = {}
+
+
+func is_bot_dispatch_open() -> bool:
+	return bot_dispatch_open
+
+
+func get_active_bot_allocations() -> Dictionary:
+	return active_bot_allocations.duplicate()
+
+
+func is_item_automated(item_id: StringName) -> bool:
+	return RecipeTracker.is_item_automated(item_id)
+
+
+func request_bot_dispatch(order_id: int = 0, order_data: Dictionary = {}) -> void:
+	var target_order_id := order_id if order_id > 0 else active_order_id
+	var target_order := order_data.duplicate(true) if not order_data.is_empty() else active_order_data.duplicate(true)
+	if target_order.is_empty():
+		return
+
+	if is_dialogue_active():
+		_pending_bot_dispatch = {
+			"order_id": target_order_id,
+			"order_data": target_order,
+		}
+		return
+
+	_pending_bot_dispatch.clear()
+	var items: Dictionary = target_order.get("items", {})
+	var automatable_items := RecipeTracker.get_automatable_items_for_order(items)
+	bot_dispatch_open = true
+	bot_dispatch_requested.emit(target_order_id, target_order, automatable_items)
+
+
+func confirm_bot_dispatch(order_id: int, allocations: Dictionary) -> void:
+	active_bot_allocations = allocations.duplicate()
+	bot_dispatch_open = false
+	_pending_bot_dispatch.clear()
+	bots_assigned.emit(order_id, active_bot_allocations)
+	bot_dispatch_closed.emit()
+
+
+func cancel_bot_dispatch(order_id: int = 0) -> void:
+	var target_order_id := order_id if order_id > 0 else active_order_id
+	bot_dispatch_open = false
+	_pending_bot_dispatch.clear()
+	bot_dispatch_cancelled.emit(target_order_id)
+	bot_dispatch_closed.emit()
 
 
 func is_process_picker_open() -> bool:
@@ -246,6 +308,12 @@ func _ensure_interact_action() -> void:
 
 func reset_session(starting_money: float = 0.0) -> void:
 	active_order_id = 0
+	active_order_data.clear()
+	active_bot_allocations.clear()
+	_pending_bot_dispatch.clear()
+	_active_dialogues = 0
+	_dialogue_changed_camera = false
+	bot_dispatch_open = false
 	current_tab = KITCHEN_TAB
 	owned_items = [&"DecoratedWall", &"BunCrate"]
 	RecipeTracker.reset_tracker()
@@ -255,13 +323,19 @@ func reset_session(starting_money: float = 0.0) -> void:
 	_check_clock_pause_changed()
 
 
-func begin_order(order_id: int) -> void:
+func begin_order(order_id: int, order_data: Dictionary = {}) -> void:
 	active_order_id = order_id
+	active_order_data = order_data.duplicate(true)
 
 
 func end_order(order_id: int) -> void:
 	if active_order_id == order_id:
 		active_order_id = 0
+		active_order_data.clear()
+		active_bot_allocations.clear()
+		_pending_bot_dispatch.clear()
+		if bot_dispatch_open:
+			cancel_bot_dispatch(order_id)
 
 
 func has_active_order() -> bool:
@@ -308,6 +382,10 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and not event.echo:
 		input_mode = InputMode.KEYBOARD
 		if event.keycode == KEY_ESCAPE and _controllability_requested and not is_dialogue_active():
+			if is_bot_dispatch_open():
+				cancel_bot_dispatch()
+				get_viewport().set_input_as_handled()
+				return
 			if is_process_picker_open():
 				cancel_process_picker()
 				get_viewport().set_input_as_handled()
@@ -367,6 +445,7 @@ func set_interaction_progress(progress: float) -> void:
 func set_controllable(value: bool) -> void:
 	_controllability_requested = value
 	if not value:
+		cancel_bot_dispatch()
 		cancel_process_picker()
 		cancel_interaction()
 		set_ui_mode(true)
@@ -402,19 +481,13 @@ func give_player_control() -> void:
 func hand_off_control() -> void:
 	if is_dialogue_active():
 		return
-	set_camera_mode(CameraMode.MARKER)
-	_camera_mode_before_dialogue = camera_mode
-	_ui_mode_before_dialogue = is_ui_mode
+	if has_active_order():
+		request_bot_dispatch(active_order_id, active_order_data)
 
 
 func toggle_camera_mode() -> void:
-	if is_dialogue_active():
-		return
-	if camera_mode == CameraMode.FIRST_PERSON:
-		set_camera_mode(CameraMode.MARKER)
-		set_ui_mode(true)
-	else:
-		give_player_control()
+	# Repurposed for Handoff theme: trigger bot handoff
+	hand_off_control()
 	_camera_mode_before_dialogue = camera_mode
 	_ui_mode_before_dialogue = is_ui_mode
 
@@ -551,17 +624,33 @@ func _on_dialogue_started(resource: Resource) -> void:
 	_check_clock_pause_changed()
 
 
-func _on_dialogue_ended(_resource: Resource) -> void:
+func _on_dialogue_ended(resource: Resource) -> void:
 	_active_dialogues = maxi(_active_dialogues - 1, 0)
 	if _active_dialogues == 0:
 		if _dialogue_changed_camera:
-			set_camera_mode(_camera_mode_before_dialogue)
+			if resource == SENOR_FOOD_DIALOGUE:
+				set_camera_mode(CameraMode.FIRST_PERSON)
+				_camera_mode_before_dialogue = CameraMode.FIRST_PERSON
+				_ui_mode_before_dialogue = false
+			else:
+				set_camera_mode(_camera_mode_before_dialogue)
 		_dialogue_changed_camera = false
 		dialogue_activity_changed.emit(false)
 	_refresh_controllability()
 	if _active_dialogues == 0 and _controllability_requested:
-		set_ui_mode(_ui_mode_before_dialogue)
+		if resource == SENOR_FOOD_DIALOGUE:
+			set_ui_mode(false)
+		else:
+			set_ui_mode(_ui_mode_before_dialogue)
 	_check_clock_pause_changed()
+
+	if _active_dialogues == 0 and not _pending_bot_dispatch.is_empty():
+		var pending: Dictionary = _pending_bot_dispatch.duplicate(true)
+		_pending_bot_dispatch.clear()
+		var p_order_id: int = int(pending.get("order_id", 0))
+		var p_order_data: Dictionary = pending.get("order_data", {})
+		if has_active_order() and (p_order_id == 0 or p_order_id == active_order_id):
+			request_bot_dispatch(p_order_id, p_order_data)
 
 
 func _refresh_controllability() -> void:

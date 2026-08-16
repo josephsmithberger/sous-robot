@@ -24,6 +24,16 @@ func _ready() -> void:
 	GameControl._on_dialogue_ended(SENOR_FOOD_DIALOGUE)
 	assert(GameControl.camera_mode == GameControl.CameraMode.FIRST_PERSON)
 
+	# Verify transition from initial overview / startup state
+	GameControl.reset_session()
+	GameControl.set_camera_mode(GameControl.CameraMode.MARKER)
+	GameControl.set_controllable(true)
+	GameControl._on_dialogue_started(SENOR_FOOD_DIALOGUE)
+	assert(GameControl.camera_mode == GameControl.CameraMode.MARKER)
+	GameControl._on_dialogue_ended(SENOR_FOOD_DIALOGUE)
+	assert(GameControl.camera_mode == GameControl.CameraMode.FIRST_PERSON, "Camera must transition to first person after Señor Food dialogue.")
+	assert(not GameControl.is_ui_mode, "UI mode must be disabled (player control active) after Señor Food dialogue on kitchen tab.")
+
 	var queue := OrderQueue.new()
 	queue.use_procedural_orders = false
 	queue.departure_delay = 0.0

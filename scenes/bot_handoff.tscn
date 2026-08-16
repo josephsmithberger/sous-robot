@@ -1,0 +1,247 @@
+[gd_scene format=3 uid="uid://cpakasxqyaieb"]
+
+[ext_resource type="Script" uid="uid://dyubc744ewjyr" path="res://scripts/bot_handoff_ui.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://dd0mykotyonnj" path="res://assets/fonts/LilitaOne-Regular.ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_font_tomato"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_deck"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.5)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pool"]
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_normal"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.854902, 0.2, 0.15, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_pressed"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 0.0
+bg_color = Color(0.7, 0.15, 0.1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_hover"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.95, 0.28, 0.22, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_confirm_normal"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.32549, 0.721569, 0.227451, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_confirm_pressed"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 0.0
+bg_color = Color(0.243137, 0.584314, 0.164706, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_confirm_hover"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.423529, 0.819608, 0.321569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[node name="BotHandoff" type="PanelContainer" unique_id=413750706]
+visible = false
+z_index = 22
+custom_minimum_size = Vector2(480, 360)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -180.0
+offset_right = 240.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_deck")
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=1317851450]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Layout" unique_id=316143039]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 24
+text = "BOT HANDOFF"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Layout" unique_id=1706370249]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.88)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Assign up to 3 bots to prepare order items."
+horizontal_alignment = 1
+
+[node name="PoolPanel" type="PanelContainer" parent="Layout" unique_id=1159390993]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pool")
+
+[node name="PoolLabel" type="Label" parent="Layout/PoolPanel" unique_id=1031110431]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 15
+text = "BOTS ASSIGNED: 0 / 3  (3 Available)"
+horizontal_alignment = 1
+
+[node name="ItemsScroll" type="ScrollContainer" parent="Layout" unique_id=1174271944]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemsList" type="VBoxContainer" parent="Layout/ItemsScroll" unique_id=803697700]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="ActionButtons" type="HBoxContainer" parent="Layout" unique_id=328925810]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CancelButton" type="Button" parent="Layout/ActionButtons" unique_id=1218500759]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_cancel_normal")
+theme_override_styles/pressed = SubResource("StyleBox_cancel_pressed")
+theme_override_styles/hover = SubResource("StyleBox_cancel_hover")
+text = "SKIP (ESC)"
+
+[node name="ConfirmButton" type="Button" parent="Layout/ActionButtons" unique_id=887579647]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_confirm_normal")
+theme_override_styles/pressed = SubResource("StyleBox_confirm_pressed")
+theme_override_styles/hover = SubResource("StyleBox_confirm_hover")
+text = "DISPATCH BOTS"

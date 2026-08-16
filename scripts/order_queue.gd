@@ -151,6 +151,10 @@ func get_front_waiter() -> WaiterRobot:
 	return null if _waiters.is_empty() else _waiters[0]
 
 
+func get_active_order() -> Dictionary:
+	return _active_order.duplicate(true)
+
+
 func reaction_for_order(order: Dictionary) -> StringName:
 	if bool(order.get("had_wrong_item", false)):
 		return WaiterRobot.REACTION_ANGRY
@@ -225,8 +229,12 @@ func _accept_front_order(waiter: WaiterRobot) -> void:
 		"max_time": max_time,
 	}
 	waiter.set_order_accepted(true)
-	GameControl.begin_order(order_id)
+	GameControl.begin_order(order_id, _active_order)
 	GameControl.order_started.emit(order_id, _active_order.duplicate(true))
+
+	# Trigger bot handoff modal if at least one item in the order is automated
+	if RecipeTracker.has_any_automatable_item(required):
+		GameControl.request_bot_dispatch(order_id, _active_order)
 
 
 func _on_item_delivered(item: KitchenItem) -> void:

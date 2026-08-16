@@ -290,6 +290,41 @@ func has_made_item(item_id: StringName) -> bool:
 	return int(_made_items.get(item_id, 0)) > 0
 
 
+## Returns whether an item is automated (crafted/unlocked at least once).
+func is_item_automated(item_id: StringName) -> bool:
+	if item_id.is_empty():
+		return false
+	if has_made_item(item_id) or has_made_recipe(item_id):
+		return true
+	for proc: ItemProcessRecipe in _process_recipes:
+		if proc != null and proc.output_item != null and proc.output_item.item_id == item_id:
+			if has_made_recipe(proc.recipe_id):
+				return true
+	for rec: Recipe in _assembly_recipes:
+		if rec != null and rec.output_item != null and rec.output_item.item_id == item_id:
+			if has_made_recipe(rec.recipe_id):
+				return true
+	return false
+
+
+## Returns a dictionary of item_id -> bool automation status for all items in an order.
+func get_automatable_items_for_order(order_items: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	for raw_id: Variant in order_items:
+		var item_id := StringName(str(raw_id))
+		result[item_id] = is_item_automated(item_id)
+	return result
+
+
+## Returns true if at least one item in the given order items dictionary is automated.
+func has_any_automatable_item(order_items: Dictionary) -> bool:
+	for raw_id: Variant in order_items:
+		var item_id := StringName(str(raw_id))
+		if is_item_automated(item_id):
+			return true
+	return false
+
+
 ## Returns how many times a recipe has been crafted.
 func get_recipe_made_count(recipe_id: StringName) -> int:
 	return int(_made_recipes.get(recipe_id, 0))

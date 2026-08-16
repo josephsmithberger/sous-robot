@@ -2,89 +2,115 @@
 
 [ext_resource type="Script" path="res://scripts/recipes_ui.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://dd0mykotyonnj" path="res://assets/fonts/LilitaOne-Regular.ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_font_tomato"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
-content_margin_left = 16.0
+content_margin_left = 18.0
 content_margin_top = 10.0
-content_margin_right = 16.0
+content_margin_right = 18.0
 content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.854902, 0.160784, 0.109804, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.5)
+bg_color = Color(0.854902, 0.160784, 0.109804, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 4
-shadow_offset = Vector2(0, 2)
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cat_btn_normal"]
 content_margin_left = 14.0
-content_margin_top = 6.0
+content_margin_top = 3.0
 content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.3, 0.3, 0.3, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+content_margin_bottom = 3.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.4)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cat_btn_pressed"]
 content_margin_left = 14.0
 content_margin_top = 6.0
 content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.854902, 0.160784, 0.109804, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+content_margin_bottom = 0.0
+bg_color = Color(1, 0.780392, 0.172549, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cat_btn_hover"]
 content_margin_left = 14.0
-content_margin_top = 6.0
+content_margin_top = 3.0
 content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.15, 0.15, 0.15, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.854902, 0.160784, 0.109804, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+content_margin_bottom = 3.0
+bg_color = Color(0.25, 0.23, 0.2, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.4)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_search"]
-content_margin_left = 12.0
-content_margin_top = 6.0
-content_margin_right = 12.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
+content_margin_left = 14.0
+content_margin_top = 4.0
+content_margin_right = 14.0
+content_margin_bottom = 4.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.35)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_clear_search"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.854902, 0.2, 0.15, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.35, 0.35, 0.35, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="recipes" type="Control" unique_id=2048571932]
 layout_mode = 3
@@ -122,17 +148,21 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="Margin/Layout/HeaderPanel/HeaderContent" unique_id=2048571937]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 24
 text = "RECIPES COOKBOOK"
 
 [node name="StatsLabel" type="Label" parent="Margin/Layout/HeaderPanel/HeaderContent" unique_id=2048571938]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "DISCOVERED: 0 / 37  ·  TOTAL CRAFTED: 0"
 horizontal_alignment = 2
 
@@ -141,7 +171,7 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="CategoryScroll" type="ScrollContainer" parent="Margin/Layout/ControlsRow" unique_id=2048571940]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
 horizontal_scroll_mode = 1
@@ -154,10 +184,12 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
 [node name="ALL" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571942]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -169,10 +201,12 @@ button_pressed = true
 text = "ALL"
 
 [node name="COMPOSITE" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571943]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -184,10 +218,12 @@ text = "MEALS & DISHES"
 metadata/filter_category = "COMPOSITE MEALS"
 
 [node name="CUTBOARD" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571944]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -199,10 +235,12 @@ text = "CUTTING BOARD"
 metadata/filter_category = "CUTTING BOARD"
 
 [node name="STOVE" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571945]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -214,10 +252,12 @@ text = "STOVE / GRILL"
 metadata/filter_category = "STOVE / GRILL"
 
 [node name="OVEN" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571946]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -229,10 +269,12 @@ text = "OVEN"
 metadata/filter_category = "OVEN"
 
 [node name="SINK" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571947]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -244,10 +286,12 @@ text = "SINK"
 metadata/filter_category = "SINK"
 
 [node name="FRIDGE" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571948]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -259,10 +303,12 @@ text = "FRIDGE"
 metadata/filter_category = "FRIDGE"
 
 [node name="MADE" type="Button" parent="Margin/Layout/ControlsRow/CategoryScroll/CategoryBar" unique_id=2048571949]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(1, 0.780392, 0.172549, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
@@ -276,14 +322,14 @@ metadata/filter_category = "MADE ONLY"
 [node name="SearchBox" type="HBoxContainer" parent="Margin/Layout/ControlsRow" unique_id=2048571950]
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
 [node name="SearchInput" type="LineEdit" parent="Margin/Layout/ControlsRow/SearchBox" unique_id=2048571951]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_placeholder_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_colors/font_placeholder_color = Color(0.65, 0.62, 0.58, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_search")
@@ -295,9 +341,11 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_clear_search")
 text = "✕"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Margin/Layout" unique_id=2048571953]
@@ -323,7 +371,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 6
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(0.7, 0.67, 0.64, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 18
 text = "No recipes found matching your search."

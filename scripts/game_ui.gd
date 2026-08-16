@@ -42,7 +42,6 @@ var _alert_queue: Array[Dictionary] = []
 var _is_showing_alert := false
 var _alert_tween: Tween
 
-
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
@@ -71,7 +70,8 @@ func _ready() -> void:
 	GameControl.reset_session()
 	_on_interact_available_changed(GameControl.can_interact)
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
-	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
+	_hand_off_button.text = "HAND OFF"
+	_hand_off_button.pressed.connect(_on_hand_off_button_pressed)
 	_arrange_button.pressed.connect(GameControl.toggle_arrange_mode)
 	_interact_button.button_down.connect(GameControl.request_interaction)
 	_interact_button.button_up.connect(GameControl.cancel_interaction)
@@ -311,6 +311,17 @@ func _hide_process_picker() -> void:
 		_process_picker_panel.visible = false
 
 
+func _on_hand_off_button_pressed() -> void:
+	if GameControl.is_bot_dispatch_open():
+		GameControl.cancel_bot_dispatch()
+		return
+
+	if GameControl.has_active_order():
+		GameControl.request_bot_dispatch()
+	else:
+		_on_automation_available(&"", "", "No active order to hand off!")
+
+
 func _on_game_viewport_gui_input(event: InputEvent) -> void:
 	if GameControl.is_placing or GameControl.is_arranging:
 		return
@@ -412,7 +423,7 @@ func _get_dialogue_host() -> Node:
 
 func _on_camera_mode_changed(mode: GameControl.CameraMode) -> void:
 	var is_first_person := mode == GameControl.CameraMode.FIRST_PERSON
-	_hand_off_button.text = "HAND OFF" if is_first_person else "TAKE CONTROL"
+	_hand_off_button.text = "HAND OFF"
 	_arrange_button.visible = not is_first_person
 	_arrange_button.text = "DONE" if GameControl.is_arranging else "ARRANGE"
 
@@ -465,8 +476,7 @@ func _on_placement_cancelled() -> void:
 
 func _on_arrange_mode_changed(is_arranging: bool) -> void:
 	_arrange_button.text = "DONE" if is_arranging else "ARRANGE"
-	if is_arranging:
-		_hand_off_button.text = "TAKE CONTROL"
+	_hand_off_button.text = "HAND OFF"
 	_update_interaction_ui()
 
 
