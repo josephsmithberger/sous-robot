@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cbrvfinxajjne" path="res://assets/appliances/wall_decorated_no_pan.glb" id="1_no_pan"]
 [ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
 [ext_resource type="Resource" path="res://resources/items/bread.tres" id="3_bread"]
-[ext_resource type="Resource" path="res://resources/items/sliced_bread.tres" id="4_sliced"]
+[ext_resource type="Resource" path="res://resources/items/bun.tres" id="4_bun"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_87bic"]
 size = Vector3(4.1069946, 4.345215, 2.9916992)
@@ -34,7 +34,7 @@ shape = SubResource("BoxShape3D_vpxcu")
 script = ExtResource("2_processor")
 hold_duration = 1.25
 input_item = ExtResource("3_bread")
-output_item = ExtResource("4_sliced")
+output_item = ExtResource("4_bun")
 action_verb = "SLICE BREAD"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="cutboard" unique_id=575721903]

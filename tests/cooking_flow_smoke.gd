@@ -64,17 +64,17 @@ func _ready() -> void:
 	)
 
 	await get_tree().create_timer(0.8).timeout
-	assert(player.is_holding(&"sliced_bread"), "Cutting board did not produce sliced bread")
+	assert(player.is_holding(&"bun"), "Cutting board did not produce bun")
 	player._on_area_exited(cutting_board)
 
 	GameControl.item_delivered.connect(_on_item_delivered, CONNECT_ONE_SHOT)
 	GameControl.begin_order(999)
 	player._on_area_entered(order_window)
-	assert(GameControl.interaction_prompt == "DELIVER SLICED BREAD")
+	assert(GameControl.interaction_prompt == "DELIVER BUN")
 	GameControl.request_interaction()
 	assert(not player.has_held_item(), "Order window did not clear the hand")
 	assert(
-		delivered_item != null and delivered_item.item_id == &"sliced_bread",
+		delivered_item != null and delivered_item.item_id == &"bun",
 		"Order delivery signal was not emitted"
 	)
 	GameControl.end_order(999)

@@ -1,7 +1,7 @@
 extends Node
 
 const BREAD: KitchenItem = preload("res://resources/items/bread.tres")
-const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tres")
+const BUN: KitchenItem = preload("res://resources/items/bun.tres")
 const ORDER_DIALOGUE: DialogueResource = preload("res://dialogue/orders.dialogue")
 const SENOR_FOOD_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
 
@@ -114,8 +114,8 @@ func _ready() -> void:
 	assert(is_equal_approx(GameControl.money, 4.0), "Wrong items should be accepted without an immediate charge.")
 	assert(second_waiter.last_reaction == WaiterRobot.REACTION_ANGRY, "A wrong item should make the waiter angry.")
 
-	GameControl.item_delivered.emit(SLICED_BREAD)
-	GameControl.item_delivered.emit(SLICED_BREAD)
+	GameControl.item_delivered.emit(BUN)
+	GameControl.item_delivered.emit(BUN)
 	await get_tree().process_frame
 	assert(is_equal_approx(GameControl.money, 8.75), "Second payout should include the base reward and reduced tip, without charging for the wrong item.")
 	assert(second_waiter.last_reaction == WaiterRobot.REACTION_ANGRY, "A wrong item should keep the waiter angry through completion.")

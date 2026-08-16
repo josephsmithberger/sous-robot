@@ -19,7 +19,7 @@ Example:
 
 ```gdscript
 {
-    "items": {"bread": 1, "sliced_bread": 2},
+    "items": {"bread": 1, "bun": 2},
     "base_reward": 5.0,
     "tip": 2.0,
     "wrong_item_penalty": 1.0,

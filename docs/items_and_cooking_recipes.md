@@ -44,7 +44,7 @@ These recipes transform crate ingredients using kitchen appliances. Every item i
 
 | Output Item Name | Input Item | Appliance | Action Verb | Hold Time | 3D Model Asset |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Sliced Bread** | Fresh Bread | Cutting Board | `SLICE BREAD` | 1.25s | `assets/kitchen-pack/food_ingredient_bread_slice.glb` |
+| **Bun** | Fresh Bread | Cutting Board | `SLICE BREAD` | 1.25s | `assets/kitchen-pack/food_ingredient_bun.gltf` |
 | **Toasted Bun Top** | Fresh Bread | Oven | `TOAST BUN` | 2.00s | `assets/kitchen-pack/food_ingredient_bun_top.gltf` |
 | **Toasted Bun Bottom** | Fresh Bread | Oven | `TOAST BUN` | 2.00s | `assets/kitchen-pack/food_ingredient_bun_bottom.gltf` |
 | **Chopped Carrots** | Fresh Carrot | Cutting Board | `CHOP CARROT` | 1.50s | `assets/kitchen-pack/food_ingredient_carrot_chopped.gltf` |
@@ -91,7 +91,7 @@ These menu items expand the culinary variety using the 9 store ingredients and a
   * *Recipe:* Raw Potato $\to$ Oven (`BAKE JACKET POTATO`)
   * *Mesh Description:* A split russet potato topped with melted cheddar, butter, and chives.
 * **Toasted Ham & Cheese Melt (Croque Monsieur)**
-  * *Recipe:* Sliced Bread $\to$ Oven (`BAKE MELT`)
+  * *Recipe:* Bun $\to$ Oven (`BAKE MELT`)
   * *Mesh Description:* Golden toasted sandwich with broiled browned cheese and ham layers.
 * **Rustic Tomato & Cheese Flatbread / Mini Pizza**
   * *Recipe:* Fresh Bread $\to$ Oven (`BAKE FLATBREAD`)
@@ -100,7 +100,7 @@ These menu items expand the culinary variety using the 9 store ingredients and a
   * *Recipe:* Chopped Carrot $\to$ Oven (`ROAST MEDLEY`)
   * *Mesh Description:* Ceramic baking dish loaded with caramelized roasted carrot chunks, potatoes, and onions.
 * **Garlic Butter Herb Toast**
-  * *Recipe:* Sliced Bread $\to$ Oven (`BAKE GARLIC TOAST`)
+  * *Recipe:* Bun $\to$ Oven (`BAKE GARLIC TOAST`)
   * *Mesh Description:* Golden baguette slices in a basket with herb butter and parsley.
 
 ### 4.2 Fridge Specialties (Chilling, Setting & Cold Delis)
@@ -108,11 +108,14 @@ These menu items expand the culinary variety using the 9 store ingredients and a
   * *Recipe:* Fresh Tomato $\to$ Fridge (`CHILL GAZPACHO`)
   * *Mesh Description:* Glass bowl of vibrant red cold tomato soup garnished with diced onion and cucumber.
 * **Creamy Potato Salad**
-  * *Recipe:* Mashed / Chopped Potato $\to$ Fridge (`CHILL POTATO SALAD`)
-  * *Mesh Description:* Deli bowl of creamy potato salad dusted with smoked paprika.
-* **Charcuterie Deli Platter**
-  * *Recipe:* Cooked Ham $\to$ Fridge (`CHILL DELI PLATTER`)
-  * *Mesh Description:* Wooden board with folded cold-cut ham ribbons, cheese cubes, and pickled garnishes.
+  * *Recipe:* Raw Potato $\to$ Fridge (`CHILL POTATO SALAD`)
+  * *Mesh Description:* Stoneware bowl of diced potatoes folded with chives, mayonnaise dressing, and paprika.
+* **Chilled Pickles / Preserves**
+  * *Recipe:* Sliced Onion / Veggies $\to$ Fridge (`JAR PRESERVE`)
+  * *Mesh Description:* Mason jars filled with colorful pickling brine, cucumbers, onions, and spices (`jar_A_small.gltf` through `jar_D_large.gltf`).
+* **Classic Cheeseburger Assembly Kit**
+  * *Recipe:* Cooked Burger Patty $\to$ Fridge / Station (`CHILL PATTY`)
+  * *Mesh Description:* Chilled prep components ready for final assembly.
 * **Sweet Pickled Red Onions**
   * *Recipe:* Diced Onion $\to$ Fridge (`PICKLE ONIONS`)
   * *Mesh Description:* Clear glass jar containing bright magenta pickled onion rings in brine.
@@ -148,7 +151,7 @@ These menu items expand the culinary variety using the 9 store ingredients and a
 
 | Tier | Unlocks Required | Typical Customer Orders | Payout Range |
 | :--- | :--- | :--- | :--- |
-| **Tier 1: Starter Bakery** | Bun Crate, Decorated Wall | Whole Bread, Sliced Bread | $3.00 – $7.00 |
+| **Tier 1: Starter Bakery** | Bun Crate, Decorated Wall | Whole Bread, Bun | $3.00 – $7.00 |
 | **Tier 2: Fresh Produce & Salads** | Carrot Crate, Tomato Crate, Lettuce Crate, Sink | Washed Carrots, Tossed Salad, Tomato Slices | $8.00 – $14.00 |
 | **Tier 3: Deli & Cookhouse** | Ham Crate, Cheese Crate, Onion Crate, Potato Crate, Stove | Sliced Ham, Fried Onion Rings, Mashed Potatoes, Cheese Slices | $15.00 – $24.00 |
 | **Tier 4: Fine Dining & Oven Bakes** | Steak Crate, Fridge, Oven | Steak Platter, Beef Stew, Classic Burger, Roast Medley | $25.00 – $45.00+ |

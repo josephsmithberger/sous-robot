@@ -5,7 +5,7 @@ extends Node3D
 const WAITER_SCENE: PackedScene = preload("res://scenes/waiter_robot.tscn")
 const ORDER_DIALOGUE: DialogueResource = preload("res://dialogue/orders.dialogue")
 const BREAD: KitchenItem = preload("res://resources/items/bread.tres")
-const SLICED_BREAD: KitchenItem = preload("res://resources/items/sliced_bread.tres")
+const BUN: KitchenItem = preload("res://resources/items/bun.tres")
 const CARROT: KitchenItem = preload("res://resources/items/carrot.tres")
 const CHEESE: KitchenItem = preload("res://resources/items/cheese.tres")
 const HAM: KitchenItem = preload("res://resources/items/ham.tres")
@@ -25,7 +25,7 @@ const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 @export_category("Item Catalog")
 @export var item_catalog: Array[KitchenItem] = [
 	BREAD,
-	SLICED_BREAD,
+	BUN,
 	CARROT,
 	CHEESE,
 	HAM,
@@ -49,7 +49,7 @@ const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 		"max_time": 25.0,
 	},
 	{
-		"items": {"sliced_bread": 2},
+		"items": {"bun": 2},
 		"base_reward": 4.0,
 		"tip": 1.5,
 		"wrong_item_penalty": 0.75,
@@ -57,7 +57,7 @@ const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 		"max_time": 35.0,
 	},
 	{
-		"items": {"bread": 1, "sliced_bread": 1},
+		"items": {"bread": 1, "bun": 1},
 		"base_reward": 5.0,
 		"tip": 2.0,
 		"wrong_item_penalty": 1.0,
@@ -65,7 +65,7 @@ const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 		"max_time": 40.0,
 	},
 	{
-		"items": {"bread": 2, "sliced_bread": 2},
+		"items": {"bread": 2, "bun": 2},
 		"base_reward": 7.0,
 		"tip": 2.5,
 		"wrong_item_penalty": 1.0,
