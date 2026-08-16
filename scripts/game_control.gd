@@ -26,6 +26,8 @@ signal process_picker_refreshed(target: Node, options: Array[ItemProcessRecipe])
 signal held_item_changed(item: KitchenItem)
 @warning_ignore("unused_signal")
 signal item_delivered(item: KitchenItem)
+@warning_ignore("unused_signal")
+signal item_trashed(item: KitchenItem)
 
 @warning_ignore("unused_signal")
 signal order_dialogue_confirmed

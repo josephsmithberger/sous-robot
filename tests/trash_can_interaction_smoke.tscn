@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c6543b88aa12e"]
+
+[ext_resource type="Script" path="res://tests/trash_can_interaction_smoke.gd" id="1_script"]
+
+[node name="trash_can_interaction_smoke" type="Node"]
+script = ExtResource("1_script")

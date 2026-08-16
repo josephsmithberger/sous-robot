@@ -20,6 +20,7 @@ const ITEM_SCENES: Dictionary = {
 	&"Oven": preload("res://assets/appliances/oven.tscn"),
 	&"Sink": preload("res://assets/appliances/sink.tscn"),
 	&"Counter": preload("res://assets/appliances/counter.tscn"),
+	&"TrashCan": preload("res://assets/appliances/trash_can.tscn"),
 }
 
 const MIN_X := -4.5

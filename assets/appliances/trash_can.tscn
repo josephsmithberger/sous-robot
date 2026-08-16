@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://cp5s2xhnet4en"]
+
+[ext_resource type="PackedScene" uid="uid://ckp0qkgr5q6vr" path="res://assets/appliances/trash_can.glb" id="1_model"]
+[ext_resource type="Script" path="res://scripts/trash_can.gd" id="2_trash"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trash"]
+height = 1.512
+radius = 0.65
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8tnoe"]
+size = Vector3(1.8, 1.6, 1.8)
+
+[node name="trash_can" type="Node3D" unique_id=217849082]
+
+[node name="Model" parent="." unique_id=998396003 instance=ExtResource("1_model")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5463, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=830971913]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=51871650]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.756, 0)
+shape = SubResource("CylinderShape3D_trash")
+
+[node name="trash" type="Area3D" parent="." unique_id=1236031173]
+script = ExtResource("2_trash")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="trash" unique_id=968358568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("BoxShape3D_8tnoe")

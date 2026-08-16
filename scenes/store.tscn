@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dn63pyhehuqd" path="res://assets/appliances/thumbnails/sink.png" id="15_sink"]
 [ext_resource type="Texture2D" uid="uid://bvct37ubj1mus" path="res://assets/appliances/thumbnails/wall_decorated.png" id="16_wall"]
 [ext_resource type="Texture2D" uid="uid://853cg6y88qxp" path="res://assets/appliances/thumbnails/counter.png" id="17_counter"]
+[ext_resource type="Texture2D" uid="uid://beqgnm1vs2abh" path="res://assets/appliances/thumbnails/trash_can.png" id="18_trash_can"]
 
 [node name="store" type="Control" unique_id=1583282709]
 layout_mode = 3
@@ -614,6 +615,47 @@ custom_minimum_size = Vector2(0, 66)
 layout_mode = 2
 size_flags_vertical = 3
 text = "A food prep counter for assembling and combining ingredients."
+autowrap_mode = 2
+
+[node name="TrashCan" type="Button" parent="Scroll/Grid" groups=["store_cards"]]
+clip_contents = true
+custom_minimum_size = Vector2(280, 340)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Scroll/Grid/TrashCan"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Thumbnail" type="TextureRect" parent="Scroll/Grid/TrashCan/Content"]
+custom_minimum_size = Vector2(264, 170)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("18_trash_can")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Scroll/Grid/TrashCan/Content"]
+layout_mode = 2
+text = "Trash Can"
+
+[node name="Price" type="Label" parent="Scroll/Grid/TrashCan/Content"]
+layout_mode = 2
+text = "$5"
+
+[node name="Description" type="Label" parent="Scroll/Grid/TrashCan/Content"]
+custom_minimum_size = Vector2(0, 66)
+layout_mode = 2
+size_flags_vertical = 3
+text = "A trash can for discarding unwanted items and kitchen waste."
 autowrap_mode = 2
 
 
