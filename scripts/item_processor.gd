@@ -1,3 +1,4 @@
+@tool
 class_name ItemProcessor
 extends InteractionArea
 ## Turns one assigned KitchenItem into another after the configured hold time.
@@ -18,12 +19,13 @@ var _selected_recipe: ItemProcessRecipe
 
 func _ready() -> void:
 	add_to_group(&"item_processors")
-	if not GameControl.process_picker_selected.is_connected(_on_process_picker_selected):
-		GameControl.process_picker_selected.connect(_on_process_picker_selected)
-	if not GameControl.process_picker_cancelled.is_connected(_on_process_picker_cancelled):
-		GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
-	if not GameControl.held_item_changed.is_connected(_on_held_item_changed):
-		GameControl.held_item_changed.connect(_on_held_item_changed)
+	if not Engine.is_editor_hint():
+		if not GameControl.process_picker_selected.is_connected(_on_process_picker_selected):
+			GameControl.process_picker_selected.connect(_on_process_picker_selected)
+		if not GameControl.process_picker_cancelled.is_connected(_on_process_picker_cancelled):
+			GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
+		if not GameControl.held_item_changed.is_connected(_on_held_item_changed):
+			GameControl.held_item_changed.connect(_on_held_item_changed)
 
 
 func get_process_recipes() -> Array[ItemProcessRecipe]:
@@ -159,9 +161,10 @@ func _clear_selection() -> void:
 
 
 func _exit_tree() -> void:
-	if GameControl.process_picker_selected.is_connected(_on_process_picker_selected):
-		GameControl.process_picker_selected.disconnect(_on_process_picker_selected)
-	if GameControl.process_picker_cancelled.is_connected(_on_process_picker_cancelled):
-		GameControl.process_picker_cancelled.disconnect(_on_process_picker_cancelled)
-	if GameControl.held_item_changed.is_connected(_on_held_item_changed):
-		GameControl.held_item_changed.disconnect(_on_held_item_changed)
+	if not Engine.is_editor_hint():
+		if GameControl.process_picker_selected.is_connected(_on_process_picker_selected):
+			GameControl.process_picker_selected.disconnect(_on_process_picker_selected)
+		if GameControl.process_picker_cancelled.is_connected(_on_process_picker_cancelled):
+			GameControl.process_picker_cancelled.disconnect(_on_process_picker_cancelled)
+		if GameControl.held_item_changed.is_connected(_on_held_item_changed):
+			GameControl.held_item_changed.disconnect(_on_held_item_changed)

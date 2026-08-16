@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://cdmvokp3ut2y6"]
 
 [ext_resource type="PackedScene" uid="uid://diuso6txs3146" path="res://assets/kitchen-pack/kitchencounter_sink.gltf" id="1_373hy"]
-[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://btp25yg1g5y0m" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://d00jx56u4t2w0" path="res://scripts/item_process_recipe.gd" id="3_8ovy1"]
 [ext_resource type="Resource" path="res://resources/processing/wash_carrot.tres" id="3_wash_carrot"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_373hy"]
@@ -14,6 +15,8 @@ size = Vector3(2.6210327, 1.5419922, 1.8624268)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=1504506030]
 visible = false
+collision_layer = 1
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=1998837982]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0657959, 0.20458984, -0.05895996)
@@ -21,9 +24,14 @@ shape = SubResource("BoxShape3D_373hy")
 
 [node name="sink" type="Area3D" parent="." index="2" unique_id=1111977114]
 visible = false
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_processor")
-recipes = Array[Resource]([ExtResource("3_wash_carrot")])
+recipes = Array[ExtResource("3_8ovy1")]([ExtResource("3_wash_carrot")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="sink" index="0" unique_id=1972755150]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.023529053, 0.2709961, 0.43121338)
 shape = SubResource("BoxShape3D_k3n4h")
+
+[node name="InteractionPoint" type="Marker3D" parent="sink" index="1" unique_id=1630632639]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.3753517)

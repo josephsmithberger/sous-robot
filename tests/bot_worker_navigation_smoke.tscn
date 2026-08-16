@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c8l7k2nwaw5m1"]
+
+[ext_resource type="Script" path="res://tests/bot_worker_navigation_smoke.gd" id="1_smoke"]
+
+[node name="BotWorkerNavigationSmoke" type="Node"]
+script = ExtResource("1_smoke")

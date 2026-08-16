@@ -1,3 +1,4 @@
+@tool
 class_name OrderWindow
 extends InteractionArea
 ## Delivery endpoint for the currently accepted front-of-line order.

@@ -881,20 +881,6 @@ theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
 theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 text = "HAND OFF"
 
-[node name="ArrangeButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=987654328]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(90, 44)
-layout_mode = 2
-focus_mode = 0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
-theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
-theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
-text = "ARRANGE"
-
 [node name="InteractButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=322001702]
 visible = false
 custom_minimum_size = Vector2(96, 44)
@@ -943,8 +929,9 @@ text = "INTERACT"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ResetButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=497690131]
-custom_minimum_size = Vector2(84, 44)
+[node name="ArrangeButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=987654328]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 44)
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
@@ -954,7 +941,7 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
 theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
 theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
-text = "RESET"
+text = "ARRANGE"
 
 [node name="LookJoystick" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow" unique_id=717317424]
 unique_name_in_owner = true

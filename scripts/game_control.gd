@@ -314,6 +314,9 @@ func reset_session(starting_money: float = 0.0) -> void:
 	_active_dialogues = 0
 	_dialogue_changed_camera = false
 	bot_dispatch_open = false
+	if is_arranging:
+		is_arranging = false
+		arrange_mode_changed.emit(false)
 	current_tab = KITCHEN_TAB
 	owned_items = [&"DecoratedWall", &"BunCrate"]
 	RecipeTracker.reset_tracker()
@@ -472,6 +475,9 @@ func look_at_target(target_position: Vector3, duration: float = 0.35) -> void:
 func give_player_control() -> void:
 	if is_dialogue_active():
 		return
+	if is_arranging:
+		set_arrange_mode(false)
+		return
 	set_camera_mode(CameraMode.FIRST_PERSON)
 	set_ui_mode(false)
 	_camera_mode_before_dialogue = camera_mode
@@ -535,6 +541,8 @@ func set_arrange_mode(enabled: bool) -> void:
 	else:
 		if is_placing:
 			cancel_placement()
+		set_camera_mode(CameraMode.FIRST_PERSON)
+		set_ui_mode(false)
 	arrange_mode_changed.emit(is_arranging)
 	_check_clock_pause_changed()
 

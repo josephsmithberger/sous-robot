@@ -72,6 +72,7 @@ func _ready() -> void:
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
 	_hand_off_button.text = "HAND OFF"
 	_hand_off_button.pressed.connect(_on_hand_off_button_pressed)
+	_arrange_button.text = "ARRANGE"
 	_arrange_button.pressed.connect(GameControl.toggle_arrange_mode)
 	_interact_button.button_down.connect(GameControl.request_interaction)
 	_interact_button.button_up.connect(GameControl.cancel_interaction)
@@ -474,11 +475,10 @@ func _get_dialogue_host() -> Node:
 	return _dialogue_slot
 
 
-func _on_camera_mode_changed(mode: GameControl.CameraMode) -> void:
-	var is_first_person := mode == GameControl.CameraMode.FIRST_PERSON
+func _on_camera_mode_changed(_mode: GameControl.CameraMode) -> void:
 	_hand_off_button.text = "HAND OFF"
-	_arrange_button.visible = not is_first_person
-	_arrange_button.text = "DONE" if GameControl.is_arranging else "ARRANGE"
+	_arrange_button.visible = true
+	_arrange_button.text = "CONFIRM" if GameControl.is_arranging else "ARRANGE"
 
 
 func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:
@@ -528,7 +528,8 @@ func _on_placement_cancelled() -> void:
 
 
 func _on_arrange_mode_changed(is_arranging: bool) -> void:
-	_arrange_button.text = "DONE" if is_arranging else "ARRANGE"
+	_arrange_button.visible = true
+	_arrange_button.text = "CONFIRM" if is_arranging else "ARRANGE"
 	_hand_off_button.text = "HAND OFF"
 	_update_interaction_ui()
 

@@ -8,6 +8,8 @@ radius = 1.25
 height = 5.2413087
 
 [node name="WaiterRobot" type="Area3D" unique_id=1752755580]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("1_waiter")
 
 [node name="Robot" parent="." unique_id=1208803652 instance=ExtResource("2_robot")]

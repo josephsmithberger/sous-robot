@@ -15,15 +15,22 @@ size = Vector3(2, 1.8, 2)
 [node name="oven" unique_id=669809382 instance=ExtResource("1_ye01y")]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=608573975]
+collision_layer = 1
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=444177767]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("BoxShape3D_oven")
 
 [node name="OvenProcessor" type="Area3D" parent="." index="2" unique_id=1429891740]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_processor")
 recipes = Array[ExtResource("3_e21nd")]([ExtResource("3_toast_bun_top"), ExtResource("4_toast_bun_bottom"), ExtResource("5_roast_ham"), ExtResource("6_mash_potato"), ExtResource("7_broil_steak")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="OvenProcessor" index="0" unique_id=242458181]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("BoxShape3D_oven")
+
+[node name="InteractionPoint" type="Marker3D" parent="OvenProcessor" index="1" unique_id=1227612633]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5081754)

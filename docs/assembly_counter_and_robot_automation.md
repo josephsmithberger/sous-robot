@@ -11,16 +11,16 @@ The player (and each worker robot) can only hold **one item at a time** in their
 
 ```mermaid
 flowchart TD
-    subgraph Autonomous_Robot_Loop ["Single Robot: Full End-to-End Recipe Execution"]
-        Step1["1. Fetch Bun & Toast in Oven"] --> Step2["2. Place Bun Bottom on Assembly Counter"]
-        Step2 --> Step3["3. Fetch Raw Steak & Sear on Stove"]
-        Step3 --> Step4["4. Place Cooked Patty on Assembly Counter"]
-        Step4 --> Step5["5. Fetch Cheese & Slice at Board"]
-        Step5 --> Step6["6. Place Cheese Slice on Assembly Counter"]
-        Step6 --> Step7["7. Pick Up Finished Cheeseburger (Single Item)"]
-        Step7 --> Step8["8. Deliver to Order Window"]
-        Step8 -->|Loop / Await Next Order| Step1
-    end
+	subgraph Autonomous_Robot_Loop ["Single Robot: Full End-to-End Recipe Execution"]
+		Step1["1. Fetch Bun & Toast in Oven"] --> Step2["2. Place Bun Bottom on Assembly Counter"]
+		Step2 --> Step3["3. Fetch Raw Steak & Sear on Stove"]
+		Step3 --> Step4["4. Place Cooked Patty on Assembly Counter"]
+		Step4 --> Step5["5. Fetch Cheese & Slice at Board"]
+		Step5 --> Step6["6. Place Cheese Slice on Assembly Counter"]
+		Step6 --> Step7["7. Pick Up Finished Cheeseburger (Single Item)"]
+		Step7 --> Step8["8. Deliver to Order Window"]
+		Step8 -->|Loop / Await Next Order| Step1
+	end
 ```
 
 ### 1.2 Scaling Throughput with Multiple Independent Bots
@@ -106,14 +106,14 @@ extends Resource
 
 ```mermaid
 graph TD
-    subgraph Collision_Interactions ["Collision Rules Matrix"]
-        P[Player - Layer 2] <==> |Solid Collision| E[Environment - Layer 1]
-        R1[Robot A - Layer 3] <==> |Solid Collision| E
-        R2[Robot B - Layer 3] <==> |Solid Collision| E
-        P <==> |Solid Collision| R1
-        P <==> |Solid Collision| R2
-        R1 -.-> |Passes Through (Layer 3 Excluded from Mask)| R2
-    end
+	subgraph Collision_Interactions ["Collision Rules Matrix"]
+		P[Player - Layer 2] <==> |Solid Collision| E[Environment - Layer 1]
+		R1[Robot A - Layer 3] <==> |Solid Collision| E
+		R2[Robot B - Layer 3] <==> |Solid Collision| E
+		P <==> |Solid Collision| R1
+		P <==> |Solid Collision| R2
+		R1 -.-> |Passes Through (Layer 3 Excluded from Mask)| R2
+	end
 ```
 
 #### Node Collision Settings:

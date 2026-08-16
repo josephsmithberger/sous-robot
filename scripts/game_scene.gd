@@ -69,9 +69,40 @@ void fragment() {
 }
 """
 
+@onready var navigation_region: NavigationRegion3D = get_node_or_null("NavigationRegion3D")
+
+
 func _ready() -> void:
 	_build_static_batches()
 	_add_toon_filter()
+	if not Engine.is_editor_hint():
+		bake_navmesh.call_deferred()
+		GameControl.placement_completed.connect(_on_placement_completed)
+
+
+func _exit_tree() -> void:
+	if GameControl.placement_completed.is_connected(_on_placement_completed):
+		GameControl.placement_completed.disconnect(_on_placement_completed)
+
+
+func _on_placement_completed(_item_id: StringName, _pos: Vector3, _rot_y: float) -> void:
+	bake_navmesh()
+
+
+func bake_navmesh(on_thread: bool = true) -> void:
+	if navigation_region == null:
+		navigation_region = get_node_or_null("NavigationRegion3D") as NavigationRegion3D
+	if navigation_region != null:
+		if navigation_region.navigation_mesh == null:
+			var nav_mesh := NavigationMesh.new()
+			nav_mesh.agent_radius = 0.35
+			nav_mesh.agent_height = 1.5
+			nav_mesh.agent_max_climb = 0.25
+			nav_mesh.agent_max_slope = 45.0
+			nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_BOTH
+			nav_mesh.geometry_collision_mask = 1
+			navigation_region.navigation_mesh = nav_mesh
+		navigation_region.bake_navigation_mesh(on_thread)
 
 
 func _add_toon_filter() -> void:

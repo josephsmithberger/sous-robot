@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=4 uid="uid://dyfkgx0cu5pkm"]
+[gd_scene format=3 uid="uid://dyfkgx0cu5pkm"]
 
 [ext_resource type="PackedScene" uid="uid://cbrvfinxajjne" path="res://assets/appliances/wall_decorated_no_pan.glb" id="1_no_pan"]
-[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://btp25yg1g5y0m" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://d00jx56u4t2w0" path="res://scripts/item_process_recipe.gd" id="3_s1ee3"]
 [ext_resource type="Resource" path="res://resources/processing/slice_bread.tres" id="3_slice_bread"]
 [ext_resource type="Resource" path="res://resources/processing/chop_carrot.tres" id="4_chop_carrot"]
 [ext_resource type="Resource" path="res://resources/processing/cut_carrot_sticks.tres" id="5_cut_carrot_sticks"]
@@ -36,23 +37,35 @@ size = Vector3(2.105194, 1.9129639, 3.3493)
 [node name="wall_decorated" parent="." unique_id=2000673809 instance=ExtResource("1_no_pan")]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1686103196]
+collision_layer = 1
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=2098634069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11734009, 1.6726074, 0.9958496)
 shape = SubResource("BoxShape3D_87bic")
 
 [node name="stove" type="Area3D" parent="." unique_id=557961044]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_processor")
-recipes = Array[Resource]([ExtResource("15_sear_ham"), ExtResource("16_fry_onion_rings"), ExtResource("17_mash_potato"), ExtResource("18_sear_steak"), ExtResource("19_grill_burger_patty"), ExtResource("20_grill_veggie_patty"), ExtResource("21_simmer_stew")])
+recipes = Array[ExtResource("3_s1ee3")]([ExtResource("15_sear_ham"), ExtResource("16_fry_onion_rings"), ExtResource("17_mash_potato"), ExtResource("18_sear_steak"), ExtResource("19_grill_burger_patty"), ExtResource("20_grill_veggie_patty"), ExtResource("21_simmer_stew")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="stove" unique_id=566283111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1845093, 0.3060913, 1.1746521)
 shape = SubResource("BoxShape3D_vpxcu")
 
+[node name="InteractionPoint" type="Marker3D" parent="stove" unique_id=282838621]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4413587, 0, 2.802166)
+
 [node name="cutboard" type="Area3D" parent="." unique_id=1419940019]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_processor")
-recipes = Array[Resource]([ExtResource("3_slice_bread"), ExtResource("4_chop_carrot"), ExtResource("5_cut_carrot_sticks"), ExtResource("6_slice_cheese"), ExtResource("7_dice_cheese"), ExtResource("8_tear_lettuce_leaf"), ExtResource("9_shred_greens"), ExtResource("10_dice_onion"), ExtResource("11_ring_slice_onion"), ExtResource("12_chop_fries"), ExtResource("13_slice_tomato"), ExtResource("14_slice_tomato_batch")])
+recipes = Array[ExtResource("3_s1ee3")]([ExtResource("3_slice_bread"), ExtResource("4_chop_carrot"), ExtResource("5_cut_carrot_sticks"), ExtResource("6_slice_cheese"), ExtResource("7_dice_cheese"), ExtResource("8_tear_lettuce_leaf"), ExtResource("9_shred_greens"), ExtResource("10_dice_onion"), ExtResource("11_ring_slice_onion"), ExtResource("12_chop_fries"), ExtResource("13_slice_tomato"), ExtResource("14_slice_tomato_batch")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="cutboard" unique_id=575721903]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0630646, 0.45648193, 1.1335754)
 shape = SubResource("BoxShape3D_k1jr4")
+
+[node name="InteractionPoint" type="Marker3D" parent="cutboard" unique_id=1297613644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8315036, 0, 2.9056988)

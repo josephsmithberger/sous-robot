@@ -11,7 +11,15 @@
 [ext_resource type="Script" uid="uid://c67oc5bdvhvll" path="res://scripts/camera_controller.gd" id="9_mwmjw"]
 [ext_resource type="Script" uid="uid://dpb4omcj4gs8n" path="res://scripts/order_window.gd" id="11_order"]
 [ext_resource type="Script" uid="uid://b2j3we3qn42vo" path="res://scripts/order_queue.gd" id="12_queue"]
-[ext_resource type="Script" path="res://scripts/placement_manager.gd" id="13_placement"]
+[ext_resource type="Script" uid="uid://chjr74u7pd81t" path="res://scripts/placement_manager.gd" id="13_placement"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_kitchen"]
+geometry_parsed_geometry_type = 2
+geometry_collision_mask = 1
+agent_radius = 0.35
+agent_height = 1.5
+agent_max_climb = 0.25
+agent_max_slope = 45.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_58u3k"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -376,6 +384,55 @@ instance_count = 100
 mesh = SubResource("ArrayMesh_f125y")
 buffer = PackedFloat32Array(1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 18)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bs8bs"]
+resource_name = "restaurant"
+albedo_texture = ExtResource("3_mwmjw")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n55t6"]
+_surfaces = [{
+"aabb": AABB(-2, 0, -2, 4, 0.5, 4),
+"format": 34359742465,
+"index_count": 144,
+"index_data": PackedByteArray("AAABAAIAAwACAAEAAAAEAAEABQADAAEABQABAAQABgAEAAAABwADAAUABgAIAAQACQAEAAgACQAFAAQACgAFAAkACgAHAAUACwAJAAgACwAIAAYADAAKAAkADAAJAAsADAAHAAoADQALAAYADgAMAAsADgALAA0ADgAPAAwADAAPAAcAEAAOAA0ADgAQAA8ADQAGABEAEQAGAAAADwASAAcABwASAAMAEAATAA8ADwATABIAEAAUABMAEgAVAAMAEgATABUAAwAVAAIAFQAWAAIAEwAXABUAFQAXABYAEwAUABcAGAACABYAGAAAAAIAFwAYABYAEQAAABgAFAAZABcAFwAZABgAGQARABgAFAAQABkAGQANABEAEAANABkA"),
+"name": "restaurant",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 26,
+"vertex_data": PackedByteArray("AAAAAAAAAAAAAACAAAAAQAAAAAAAAADAAAAAAAAAAAAAAADAAAAAQDMz8z4AAADAAAAAQAAAAAAAAACAAAAAQDMz8z4AAACAAAAAAAAAAAAAAABAzcz8PwAAAD8AAACAAAAAQAAAAAAAAABAAAAAQDMz8z4AAABAzcz8PwAAAD/NzPw/AAAAADMz8z4AAABAAAAAAAAAAD/NzPw/AAAAwDMz8z4AAABAzcz8vwAAAD/NzPw/AAAAAAAAAD8AAACAzcz8vwAAAD8AAACAAAAAwAAAAAAAAABAzcz8PwAAAD/NzPy/AAAAAAAAAD/NzPy/zcz8vwAAAD/NzPy/AAAAADMz8z4AAADAAAAAwAAAAAAAAADAAAAAwDMz8z4AAADAAAAAwAAAAAAAAACAAAAAwDMz8z4AAACA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fr5pv"]
+resource_name = "floor_kitchen_Plane_001"
+_surfaces = [{
+"aabb": AABB(-2, 0, -2, 4, 0.5, 4),
+"attribute_data": PackedByteArray("BABAPsx3VD6IDWY+0HdUPgQAQD7Qd1Q+iA1mPsx3VD5+8hk+zHdUPgQAQD7Md1Q+fvIZPsx3VD6gfAY/VPofPqB8Bj+QOkA+oHwGP5g6QD6gfAY/XPofPmKDGT9Q+h8+YoMZP5A6QD5igxk/kDpAPmKDGT9c+h8+iA1mPlT6Hz4EAEA+mDpAPogNZj6YOkA+BABAPlz6Hz5+8hk+UPofPgQAQD6QOkA+fvIZPpA6QD4EAEA+VPofPgEAED+QCgo+8WQZP5QKCj7xZBk/lAoKPgEAED+UCgo+EZsGP5QKCj4BABA/lAoKPhGbBj+UCgo+BABAPpQKCj7Ek2U+lAoKPsSTZT6UCgo+BABAPpQKCj5EbBo+kAoKPkRsGj6UCgo+BABAPpAKCj6gfAY/zHdUPgEAED/Qd1Q+oHwGP9B3VD4BABA/zHdUPgEAED/Md1Q+YoMZP8x3VD5igxk/zHdUPgEAED9U+h8+oHwGP5g6QD4BABA/mDpAPqB8Bj9c+h8+fvIZPlT6Hz5+8hk+kDpAPn7yGT6QOkA+fvIZPlT6Hz6IDWY+VPofPogNZj6YOkA+iA1mPpA6QD6IDWY+XPofPgEAED9Q+h8+YoMZP5A6QD4BABA/kDpAPmKDGT9U+h8+RGwaPrCa6z1+8hk+wP/uPX7yGT7A/+49RGwaPqia6z0BABA/qJrrPWKDGT/A/+49AQAQP7j/7j3xZBk/sJrrPcSTZT6wmus9iA1mPtD/7j2IDWY+wP/uPcSTZT6wmus9AQAQP7Ca6z2gfAY/0P/uPQEAED/A/+49EZsGP7Ca6z1EbBo+qJrrPQQAQD7A/+49fvIZPrj/7j0EAEA+qJrrPcSTZT6wmus9BABAPtD/7j2IDWY+wP/uPQQAQD6wmus9EZsGP7Ca6z2gfAY/0P/uPaB8Bj/A/+49EZsGP7Ca6z3xZBk/sJrrPWKDGT/Q/+49YoMZP7j/7j3xZBk/sJrrPQ=="),
+"format": 34359742487,
+"index_count": 144,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAAABAAAAAYABwAIAAkABwAKAAgACwAMAA0ACwAOAAwADwAQABEADwASABAAEwAUABUAEwAWABQAFwAYABkAFwAaABgAGwAcABoAGwAdABwAHgAfACAAHgAhAB8AIgAjAB4AIgAeACQAJQAmACcAJQAoACYAKQAqACgAKQArACoALAAtAC4ALAAvAC0AMAAxADIAMAAzADEANAA1ADYANAA3ADUAOAA5ADoAOAA7ADkAPAA9AD4APAA/AD0AQABBAEIAQABDAEEARABFAEYARABHAEUASABJAEoASABLAEkATABNAE4ATABPAE0AUABRAFIAUABTAFEAVABVAFYAVABXAFUAWABZAFoAWABbAFkA"),
+"material": SubResource("StandardMaterial3D_bs8bs"),
+"name": "restaurant",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 92,
+"vertex_data": PackedByteArray("AAAAAAAAAAAAAACAAAAAQAAAAAAAAADAAAAAAAAAAAAAAADAAAAAQAAAAAAAAACAAAAAwAAAAAAAAABAAAAAAAAAAAAAAABAAAAAwAAAAAAAAACAAAAAwDMz8z4AAADAAAAAwAAAAAAAAACAAAAAwAAAAAAAAADAAAAAwDMz8z4AAACAAAAAQDMz8z4AAABAAAAAQAAAAAAAAACAAAAAQAAAAAAAAABAAAAAQDMz8z4AAACAAAAAQDMz8z4AAADAAAAAAAAAAAAAAADAAAAAQAAAAAAAAADAAAAAADMz8z4AAADAAAAAwDMz8z4AAABAAAAAAAAAAAAAAABAAAAAwAAAAAAAAABAAAAAADMz8z4AAABAAAAAAAAAAD/NzPw/zcz8PwAAAD8AAACAzcz8PwAAAD/NzPw/AAAAAAAAAD8AAACAzcz8vwAAAD8AAACAAAAAAAAAAD/NzPy/zcz8vwAAAD/NzPy/AAAAAAAAAD8AAACAzcz8PwAAAD/NzPy/zcz8PwAAAD8AAACAAAAAAAAAAD/NzPy/zcz8vwAAAD/NzPw/zcz8vwAAAD8AAACAAAAAAAAAAD/NzPw/AAAAwAAAAAAAAACAAAAAAAAAAAAAAADAAAAAwAAAAAAAAADAAAAAAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAQAAAAAAAAACAAAAAQAAAAAAAAABAAAAAADMz8z4AAADAAAAAwAAAAAAAAADAAAAAAAAAAAAAAADAAAAAwDMz8z4AAADAAAAAwDMz8z4AAACAAAAAwAAAAAAAAABAAAAAwAAAAAAAAACAAAAAwDMz8z4AAABAAAAAQDMz8z4AAACAAAAAQAAAAAAAAADAAAAAQAAAAAAAAACAAAAAQDMz8z4AAADAAAAAADMz8z4AAABAAAAAQAAAAAAAAABAAAAAAAAAAAAAAABAAAAAQDMz8z4AAABAzcz8vwAAAD8AAACAAAAAwDMz8z4AAABAAAAAwDMz8z4AAACAzcz8vwAAAD/NzPw/AAAAAAAAAD/NzPw/AAAAQDMz8z4AAABAAAAAADMz8z4AAABAzcz8PwAAAD/NzPw/zcz8PwAAAD8AAACAAAAAQDMz8z4AAADAAAAAQDMz8z4AAACAzcz8PwAAAD/NzPy/AAAAAAAAAD/NzPy/AAAAwDMz8z4AAADAAAAAADMz8z4AAADAzcz8vwAAAD/NzPy/zcz8vwAAAD/NzPw/AAAAADMz8z4AAABAAAAAwDMz8z4AAABAAAAAAAAAAD/NzPw/zcz8PwAAAD/NzPy/AAAAADMz8z4AAADAAAAAQDMz8z4AAADAAAAAAAAAAD/NzPy/zcz8vwAAAD/NzPy/AAAAwDMz8z4AAACAAAAAwDMz8z4AAADAzcz8vwAAAD8AAACAzcz8PwAAAD/NzPw/AAAAQDMz8z4AAACAAAAAQDMz8z4AAABAzcz8PwAAAD8AAACA/38AAP///7//fwAA////v/9/AAD///+//38AAP///7//fwAA////v/9/AAD///+//38AAP///78AAP9/////vwAA/3////+/AAD/f////78AAP9/////v////3////+/////f////7////9/////v////3////+///////7//z///////v//P/////////8///////7//z//f/9/////v/9//3/+//+//3//f////7//f/9//v//v/9///////8//3///////z//f///////v/9///////+//3///////7//f///////v/9///////+//3///////z//f///////v/9///////+//3///////7//f///////P/9///////8//3///////z//fwAA////v/9/AAD///+//38AAP///7//fwAA////v/9/AAD///+//38AAP///7//fwAA////v//////+//8///////7//z//////////P//////+//8/AAD/f////78AAP9/////vwAA/3////+/AAD/f////7////9/////v////3////+/////f////7////9/////v/9//3////+//3//f/7//7//f/9/////v/9//3/+//+//z//v/7/AAD/P/+//v8AAP8//7////+//z//v/7/AAD/f/+//v//v/9//7/+//+//3//v/7//7//f/+//v//v/+//7//f/8//7//v/9//z//v/+//3//P/+//7////+//7////7//z//v///////P/+////+//8//7///////z//f/+//v//v/9//7////+//3//v/7//7//f/+/////v/+////+//8//7///////z//v////v//P/+///////8//z//v/9//7//P/+//3//v/8//7//f/+//z//v////7//v/+//3//P/+//7//f/8//7//v/9//z//v/+/////vw==")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_n55t6")
+
+[sub_resource type="MultiMesh" id="MultiMesh_k0mf2"]
+transform_format = 1
+instance_count = 100
+mesh = SubResource("ArrayMesh_fr5pv")
+buffer = PackedFloat32Array(1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 18)
+
+[sub_resource type="MultiMesh" id="MultiMesh_1gswy"]
+transform_format = 1
+instance_count = 100
+mesh = SubResource("ArrayMesh_fr5pv")
+buffer = PackedFloat32Array(1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -18, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, -2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 6, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 10, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 14, 1, 0, 0, -18, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, -2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 14, 0, 1, 0, 0, 0, 0, 1, 18, 1, 0, 0, 18, 0, 1, 0, 0, 0, 0, 1, 18)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_q4otl"]
 size = Vector3(3.4098969, 2.7246094, 1.7770996)
 
@@ -390,6 +447,9 @@ size = Vector3(12.159546, 4.6047363, 1)
 
 [node name="kitchen" type="Node3D" unique_id=1560217773]
 script = ExtResource("1_58u3k")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1849201948]
+navigation_mesh = SubResource("NavigationMesh_kitchen")
 
 [node name="player" parent="." unique_id=317762243 instance=ExtResource("2_mwmjw")]
 
@@ -428,6 +488,12 @@ multimesh = SubResource("MultiMesh_e7cmp")
 [node name="@MultiMeshInstance3D@10519" type="MultiMeshInstance3D" parent="Floor" unique_id=1908428280]
 multimesh = SubResource("MultiMesh_n55t6")
 
+[node name="@MultiMeshInstance3D@11275" type="MultiMeshInstance3D" parent="Floor" unique_id=1432700757]
+multimesh = SubResource("MultiMesh_k0mf2")
+
+[node name="@MultiMeshInstance3D@11279" type="MultiMeshInstance3D" parent="Floor" unique_id=1757830982]
+multimesh = SubResource("MultiMesh_1gswy")
+
 [node name="StaticGeometry" type="Node3D" parent="." unique_id=1356837661]
 
 [node name="Architecture" type="Node3D" parent="." unique_id=2000394010]
@@ -439,11 +505,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 0, -2)
 
 [node name="order_window" type="Area3D" parent="Architecture/wall_orderwindow_decorated" unique_id=618089306]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("11_order")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/wall_orderwindow_decorated/order_window" unique_id=146610545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10787201, 0.8623047, 0.3885498)
 shape = SubResource("BoxShape3D_q4otl")
+
+[node name="InteractionPoint" type="Marker3D" parent="Architecture/wall_orderwindow_decorated/order_window" unique_id=67945141]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42075944, 1.3127847)
 
 [node name="wall_decorated" parent="Architecture" unique_id=1127799789 instance=ExtResource("7_ibrlr")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.007507682, 0, 8)
@@ -456,6 +527,8 @@ script = ExtResource("13_placement")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=471685695]
 visible = false
+collision_layer = 1
+collision_mask = 0
 
 [node name="floor" type="CollisionShape3D" parent="StaticBody3D" unique_id=1359641334]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18539429, -0.43726647, -2.1877441)

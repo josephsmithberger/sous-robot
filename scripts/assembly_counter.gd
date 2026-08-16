@@ -1,3 +1,4 @@
+@tool
 class_name AssemblyCounter
 extends InteractionArea
 ## Interactive workstation appliance for assembling composite recipes from individual ingredients.
@@ -35,11 +36,12 @@ func _ready() -> void:
 		]
 
 	_init_plate_node()
-	GameControl.order_started.connect(_on_order_started)
+	if not Engine.is_editor_hint():
+		GameControl.order_started.connect(_on_order_started)
 
 
 func _exit_tree() -> void:
-	if GameControl.order_started.is_connected(_on_order_started):
+	if not Engine.is_editor_hint() and GameControl.order_started.is_connected(_on_order_started):
 		GameControl.order_started.disconnect(_on_order_started)
 	_clear_visuals()
 

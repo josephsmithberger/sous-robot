@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://c158dfe7lo30p"]
 
 [ext_resource type="PackedScene" uid="uid://5ctfy8qwdppn" path="res://assets/kitchen-pack/fridge_A.gltf" id="1_vbdww"]
-[ext_resource type="Script" path="res://scripts/item_processor.gd" id="2_processor"]
+[ext_resource type="Script" uid="uid://btp25yg1g5y0m" path="res://scripts/item_processor.gd" id="2_processor"]
 [ext_resource type="Resource" path="res://resources/processing/chill_ham_cooked.tres" id="3_chill_ham_cooked"]
+[ext_resource type="Script" uid="uid://d00jx56u4t2w0" path="res://scripts/item_process_recipe.gd" id="3_x6nho"]
 [ext_resource type="Resource" path="res://resources/processing/chill_ham_roasted.tres" id="4_chill_ham_roasted"]
 [ext_resource type="Resource" path="res://resources/processing/chill_salad.tres" id="5_chill_salad"]
 [ext_resource type="Resource" path="res://resources/processing/bottle_ketchup.tres" id="6_bottle_ketchup"]
@@ -19,6 +20,8 @@ size = Vector3(1.9763184, 2.7416992, 1.4244385)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=74819447]
 visible = false
+collision_layer = 1
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=902115639]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.033599854, 0.9794922, -0.003540039)
@@ -26,9 +29,14 @@ shape = SubResource("BoxShape3D_vbdww")
 
 [node name="fridge" type="Area3D" parent="." index="2" unique_id=2108691983]
 visible = false
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_processor")
-recipes = Array[Resource]([ExtResource("3_chill_ham_cooked"), ExtResource("4_chill_ham_roasted"), ExtResource("5_chill_salad"), ExtResource("6_bottle_ketchup"), ExtResource("7_bottle_mustard"), ExtResource("8_jar_pickles")])
+recipes = Array[ExtResource("3_x6nho")]([ExtResource("3_chill_ham_cooked"), ExtResource("4_chill_ham_roasted"), ExtResource("5_chill_salad"), ExtResource("6_bottle_ketchup"), ExtResource("7_bottle_mustard"), ExtResource("8_jar_pickles")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="fridge" index="0" unique_id=444949095]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3187256, 0.8708496, 0.58535933)
 shape = SubResource("BoxShape3D_b7wb0")
+
+[node name="InteractionPoint" type="Marker3D" parent="fridge" index="1" unique_id=1488931720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5981815)

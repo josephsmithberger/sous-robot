@@ -17,12 +17,16 @@ transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5463, 0)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=830971913]
 visible = false
+collision_layer = 1
+collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=51871650]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.756, 0)
 shape = SubResource("CylinderShape3D_trash")
 
 [node name="trash" type="Area3D" parent="." unique_id=1236031173]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("2_trash")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="trash" unique_id=968358568]
