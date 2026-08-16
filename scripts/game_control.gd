@@ -36,6 +36,18 @@ signal order_completed(order_id: int, payout: float, final_tip: float)
 signal money_changed(balance: float, delta: float, reason: String)
 @warning_ignore("unused_signal")
 signal item_unlocked(item_id: StringName)
+@warning_ignore("unused_signal")
+signal placement_requested(item_id: StringName)
+@warning_ignore("unused_signal")
+signal placement_started(item_id: StringName)
+@warning_ignore("unused_signal")
+signal placement_cancelled
+@warning_ignore("unused_signal")
+signal placement_completed(item_id: StringName, position: Vector3, rotation_y: float)
+@warning_ignore("unused_signal")
+signal arrange_mode_changed(is_arranging: bool)
+@warning_ignore("unused_signal")
+signal tab_change_requested(tab_index: int)
 
 enum InputMode {
 	KEYBOARD,
@@ -94,6 +106,10 @@ var interaction_progress := 0.0
 var money := 0.0
 var active_order_id := 0
 var owned_items: Array[StringName] = [&"DecoratedWall", &"BunCrate"]
+
+var is_placing := false
+var is_arranging := false
+var placing_item_id: StringName = &""
 
 var _controllability_requested := false
 var _active_dialogues := 0
@@ -286,7 +302,53 @@ func toggle_camera_mode() -> void:
 
 
 func has_player_control() -> bool:
-	return is_controllable and not is_ui_mode and camera_mode == CameraMode.FIRST_PERSON
+	return is_controllable and not is_ui_mode and camera_mode == CameraMode.FIRST_PERSON and not is_placing and not is_arranging
+
+
+func start_placement(item_id: StringName) -> void:
+	if item_id.is_empty():
+		return
+	placing_item_id = item_id
+	is_placing = true
+	set_camera_mode(CameraMode.MARKER)
+	set_ui_mode(true)
+	placement_requested.emit(item_id)
+	placement_started.emit(item_id)
+
+
+func cancel_placement() -> void:
+	if not is_placing:
+		return
+	is_placing = false
+	placing_item_id = &""
+	placement_cancelled.emit()
+
+
+func complete_placement(item_id: StringName, pos: Vector3, rot_y: float) -> void:
+	is_placing = false
+	placing_item_id = &""
+	placement_completed.emit(item_id, pos, rot_y)
+
+
+func set_arrange_mode(enabled: bool) -> void:
+	if is_arranging == enabled:
+		return
+	is_arranging = enabled
+	if is_arranging:
+		set_camera_mode(CameraMode.MARKER)
+		set_ui_mode(true)
+	else:
+		if is_placing:
+			cancel_placement()
+	arrange_mode_changed.emit(is_arranging)
+
+
+func toggle_arrange_mode() -> void:
+	set_arrange_mode(not is_arranging)
+
+
+func request_tab_switch(tab_index: int) -> void:
+	tab_change_requested.emit(tab_index)
 
 
 func set_virtual_input(move: Vector2, look: Vector2) -> void:
@@ -371,6 +433,8 @@ func _sync_mouse_mode() -> void:
 		and is_controllable
 		and not is_ui_mode
 		and camera_mode == CameraMode.FIRST_PERSON
+		and not is_placing
+		and not is_arranging
 	)
 	if not should_capture:
 		_mouse_look_delta = Vector2.ZERO

@@ -280,6 +280,79 @@ corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_placement_banner"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.94)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_button_normal"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.854902, 0.2, 0.15, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_button_pressed"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 0.0
+bg_color = Color(0.7, 0.15, 0.1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.95, 0.28, 0.22, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 3)
+
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
 anchors_preset = 15
@@ -584,6 +657,86 @@ render_target_update_mode = 4
 
 [node name="kitchen" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer/SubViewport" unique_id=1560217773 instance=ExtResource("1_yqjtg")]
 
+[node name="PlacementTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=987654321]
+visible = false
+z_index = 4
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 12.0
+offset_bottom = 72.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="PlacementBanner" type="PanelContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray" unique_id=987654322]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_right = 280.0
+offset_bottom = 52.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBox_placement_banner")
+
+[node name="PlacementRow" type="HBoxContainer" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray/PlacementBanner" unique_id=987654323]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="PlacementTitle" type="Label" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray/PlacementBanner/PlacementRow" unique_id=987654324]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 17
+text = "PLACING: CARROT CRATE"
+vertical_alignment = 1
+
+[node name="RotateButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray/PlacementBanner/PlacementRow" unique_id=987654325]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 36)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
+theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
+text = "ROTATE (R)"
+
+[node name="PlaceButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray/PlacementBanner/PlacementRow" unique_id=987654326]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 36)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBox_interact_button_normal")
+theme_override_styles/pressed = SubResource("StyleBox_interact_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_interact_button_hover")
+text = "PLACE"
+
+[node name="CancelPlacementButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/PlacementTray/PlacementBanner/PlacementRow" unique_id=987654327]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 36)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBox_cancel_button_normal")
+theme_override_styles/pressed = SubResource("StyleBox_cancel_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_cancel_button_hover")
+text = "CANCEL"
+
 [node name="DialogueTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=1121593790]
 z_index = 2
 custom_minimum_size = Vector2(0, 132)
@@ -725,6 +878,20 @@ theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
 theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
 theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
 text = "HAND OFF"
+
+[node name="ArrangeButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=987654328]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 44)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBox_action_button_normal")
+theme_override_styles/pressed = SubResource("StyleBox_action_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_action_button_hover")
+text = "ARRANGE"
 
 [node name="InteractButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=322001702]
 visible = false

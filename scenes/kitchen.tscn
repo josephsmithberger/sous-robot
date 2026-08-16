@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://c67oc5bdvhvll" path="res://scripts/camera_controller.gd" id="9_mwmjw"]
 [ext_resource type="Script" uid="uid://dpb4omcj4gs8n" path="res://scripts/order_window.gd" id="11_order"]
 [ext_resource type="Script" uid="uid://b2j3we3qn42vo" path="res://scripts/order_queue.gd" id="12_queue"]
+[ext_resource type="Script" path="res://scripts/placement_manager.gd" id="13_placement"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_58u3k"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -449,6 +450,9 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.00
 
 [node name="crate_buns" parent="Architecture" unique_id=1075299801 instance=ExtResource("8_mwmjw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.627549, 0.06273544, -10.649024)
+
+[node name="PlacementManager" type="Node3D" parent="." unique_id=773821092]
+script = ExtResource("13_placement")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=471685695]
 visible = false

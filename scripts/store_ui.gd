@@ -171,6 +171,8 @@ func _on_purchase_confirmed() -> void:
 	if GameControl.spend_money(price, "BOUGHT %s" % title.to_upper()):
 		GameControl.unlock_item(item_id)
 		_refresh_all_cards()
+		GameControl.request_tab_switch(0)
+		GameControl.start_placement(item_id)
 	else:
 		_refresh_card_state(_pending_card)
 

@@ -2,8 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://b8sifsigweji4" path="res://assets/kitchen-pack/oven.gltf" id="1_ye01y"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_oven"]
+size = Vector3(2, 1.8, 2)
+
 [node name="oven2" unique_id=669809382 instance=ExtResource("1_ye01y")]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=608573975]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=444177767]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape3D_oven")
