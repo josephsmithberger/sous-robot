@@ -34,12 +34,12 @@ func _ready() -> void:
 	tabs.current_tab = 1 # Store tab
 	await get_tree().process_frame
 
-	# 4. Buy Carrot Crate ($30.00)
+	# 4. Buy Carrot Crate ($15.00)
 	store._on_card_pressed(carrot_card)
 	store._on_purchase_confirmed()
 	await get_tree().process_frame
 
-	assert(is_equal_approx(GameControl.money, 70.0), "Balance must be $70.00 after buying Carrot Crate ($100 - $30).")
+	assert(is_equal_approx(GameControl.money, 85.0), "Balance must be $85.00 after buying Carrot Crate ($100 - $15).")
 	assert(GameControl.is_item_owned(&"CarrotCrate"), "CarrotCrate must now be owned.")
 	assert(tabs.current_tab == 0, "Buying item must switch active tab back to Kitchen (tab 0).")
 	assert(GameControl.camera_mode == GameControl.CameraMode.MARKER, "Buying item must switch camera to overhead MARKER mode.")
@@ -99,7 +99,7 @@ func _ready() -> void:
 	assert(not wall_picked, "Decorated Wall must NOT be movable/pickable in edit mode.")
 	assert(not GameControl.is_placing, "Decorated Wall pick attempt must not enter placement mode.")
 
-	# 10. Buy Cheese Crate ($45) and place it
+	# 10. Buy Cheese Crate ($22.50) and place it
 	tabs.current_tab = 1
 	await get_tree().process_frame
 	var cheese_card: Button = store.get_node("Scroll/Grid/CheeseCrate")
@@ -107,7 +107,7 @@ func _ready() -> void:
 	store._on_purchase_confirmed()
 	await get_tree().process_frame
 
-	assert(is_equal_approx(GameControl.money, 25.0), "Balance must be $25.00 after buying Cheese Crate ($70 - $45).")
+	assert(is_equal_approx(GameControl.money, 62.50), "Balance must be $62.50 after buying Cheese Crate ($85 - $22.50).")
 	assert(GameControl.is_placing, "Must enter placement mode for Cheese Crate.")
 	var cheese_spot := Vector3(0.0, 0.0, -6.0)
 	placement_manager.set_ghost_position(cheese_spot)

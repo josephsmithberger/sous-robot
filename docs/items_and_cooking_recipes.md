@@ -25,14 +25,14 @@ These are baseline items retrieved directly from the 9 store crates (`ItemSource
 | Item ID | Display Name | Source Crate | Store Cost | 3D Model Asset |
 | :--- | :--- | :--- | :--- | :--- |
 | `bread` | Fresh Bread / Bun | `BunCrate` | Owned ($0) | `assets/kitchen-pack/food_ingredient_bun.gltf` |
-| `carrot` | Fresh Carrot | `CarrotCrate` | $30.00 | `assets/kitchen-pack/food_ingredient_carrot.gltf` |
-| `cheese` | Cheese Block | `CheeseCrate` | $45.00 | `assets/kitchen-pack/food_ingredient_cheese.gltf` |
-| `ham` | Raw Ham Cut | `HamCrate` | $55.00 | `assets/kitchen-pack/food_ingredient_ham.gltf` |
-| `lettuce` | Fresh Lettuce Head | `LettuceCrate` | $30.00 | `assets/kitchen-pack/food_ingredient_lettuce.gltf` |
-| `onion` | Fresh Onion | `OnionCrate` | $30.00 | `assets/kitchen-pack/food_ingredient_onion.gltf` |
-| `potato` | Raw Russet Potato | `PotatoCrate` | $30.00 | `assets/kitchen-pack/food_ingredient_potato.gltf` |
-| `steak` | Raw Beef Steak | `SteakCrate` | $75.00 | `assets/kitchen-pack/food_ingredient_steak.gltf` |
-| `tomato` | Fresh Tomato | `TomatoCrate` | $30.00 | `assets/kitchen-pack/food_ingredient_tomato.gltf` |
+| `carrot` | Fresh Carrot | `CarrotCrate` | $15.00 | `assets/kitchen-pack/food_ingredient_carrot.gltf` |
+| `cheese` | Cheese Block | `CheeseCrate` | $22.50 | `assets/kitchen-pack/food_ingredient_cheese.gltf` |
+| `ham` | Raw Ham Cut | `HamCrate` | $27.50 | `assets/kitchen-pack/food_ingredient_ham.gltf` |
+| `lettuce` | Fresh Lettuce Head | `LettuceCrate` | $15.00 | `assets/kitchen-pack/food_ingredient_lettuce.gltf` |
+| `onion` | Fresh Onion | `OnionCrate` | $15.00 | `assets/kitchen-pack/food_ingredient_onion.gltf` |
+| `potato` | Raw Russet Potato | `PotatoCrate` | $15.00 | `assets/kitchen-pack/food_ingredient_potato.gltf` |
+| `steak` | Raw Beef Steak | `SteakCrate` | $37.50 | `assets/kitchen-pack/food_ingredient_steak.gltf` |
+| `tomato` | Fresh Tomato | `TomatoCrate` | $15.00 | `assets/kitchen-pack/food_ingredient_tomato.gltf` |
 
 ---
 

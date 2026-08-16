@@ -4,17 +4,17 @@ extends Control
 const DEFAULT_PRICES: Dictionary = {
 	&"DecoratedWall": 0.0,
 	&"BunCrate": 0.0,
-	&"CarrotCrate": 30.0,
-	&"CheeseCrate": 45.0,
-	&"HamCrate": 55.0,
-	&"LettuceCrate": 30.0,
-	&"OnionCrate": 30.0,
-	&"PotatoCrate": 30.0,
-	&"SteakCrate": 75.0,
-	&"TomatoCrate": 30.0,
-	&"Fridge": 500.0,
-	&"Oven": 650.0,
-	&"Sink": 250.0,
+	&"CarrotCrate": 15.0,
+	&"CheeseCrate": 22.50,
+	&"HamCrate": 27.50,
+	&"LettuceCrate": 15.0,
+	&"OnionCrate": 15.0,
+	&"PotatoCrate": 15.0,
+	&"SteakCrate": 37.50,
+	&"TomatoCrate": 15.0,
+	&"Fridge": 150.0,
+	&"Oven": 180.0,
+	&"Sink": 100.0,
 }
 
 @onready var purchase_dialog: ConfirmationDialog = $PurchaseDialog

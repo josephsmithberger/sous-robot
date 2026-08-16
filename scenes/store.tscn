@@ -155,7 +155,7 @@ text = "Carrot Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1948255367]
 layout_mode = 2
-text = "$30"
+text = "$15"
 
 [node name="Description" type="Label" parent="Scroll/Grid/CarrotCrate/Content" unique_id=1601403616]
 custom_minimum_size = Vector2(0, 66)
@@ -196,7 +196,7 @@ text = "Cheese Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/CheeseCrate/Content" unique_id=1190475180]
 layout_mode = 2
-text = "$45"
+text = "$22.50"
 
 [node name="Description" type="Label" parent="Scroll/Grid/CheeseCrate/Content" unique_id=1475301506]
 custom_minimum_size = Vector2(0, 66)
@@ -237,7 +237,7 @@ text = "Ham Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/HamCrate/Content" unique_id=687152118]
 layout_mode = 2
-text = "$55"
+text = "$27.50"
 
 [node name="Description" type="Label" parent="Scroll/Grid/HamCrate/Content" unique_id=550200334]
 custom_minimum_size = Vector2(0, 66)
@@ -278,7 +278,7 @@ text = "Lettuce Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/LettuceCrate/Content" unique_id=354738512]
 layout_mode = 2
-text = "$30"
+text = "$15"
 
 [node name="Description" type="Label" parent="Scroll/Grid/LettuceCrate/Content" unique_id=912982574]
 custom_minimum_size = Vector2(0, 66)
@@ -319,7 +319,7 @@ text = "Onion Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/OnionCrate/Content" unique_id=865927038]
 layout_mode = 2
-text = "$30"
+text = "$15"
 
 [node name="Description" type="Label" parent="Scroll/Grid/OnionCrate/Content" unique_id=142446965]
 custom_minimum_size = Vector2(0, 66)
@@ -360,7 +360,7 @@ text = "Potato Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/PotatoCrate/Content" unique_id=1050040978]
 layout_mode = 2
-text = "$30"
+text = "$15"
 
 [node name="Description" type="Label" parent="Scroll/Grid/PotatoCrate/Content" unique_id=428642566]
 custom_minimum_size = Vector2(0, 66)
@@ -401,7 +401,7 @@ text = "Steak Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/SteakCrate/Content" unique_id=982024430]
 layout_mode = 2
-text = "$75"
+text = "$37.50"
 
 [node name="Description" type="Label" parent="Scroll/Grid/SteakCrate/Content" unique_id=1239511577]
 custom_minimum_size = Vector2(0, 66)
@@ -442,7 +442,7 @@ text = "Tomato Crate"
 
 [node name="Price" type="Label" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1412319078]
 layout_mode = 2
-text = "$30"
+text = "$15"
 
 [node name="Description" type="Label" parent="Scroll/Grid/TomatoCrate/Content" unique_id=1471008259]
 custom_minimum_size = Vector2(0, 66)
@@ -483,7 +483,7 @@ text = "Fridge"
 
 [node name="Price" type="Label" parent="Scroll/Grid/Fridge/Content" unique_id=1610662869]
 layout_mode = 2
-text = "$500"
+text = "$150"
 
 [node name="Description" type="Label" parent="Scroll/Grid/Fridge/Content" unique_id=562580248]
 custom_minimum_size = Vector2(0, 66)
@@ -524,7 +524,7 @@ text = "Oven"
 
 [node name="Price" type="Label" parent="Scroll/Grid/Oven/Content" unique_id=734669265]
 layout_mode = 2
-text = "$650"
+text = "$180"
 
 [node name="Description" type="Label" parent="Scroll/Grid/Oven/Content" unique_id=645780188]
 custom_minimum_size = Vector2(0, 66)
@@ -565,7 +565,7 @@ text = "Sink"
 
 [node name="Price" type="Label" parent="Scroll/Grid/Sink/Content" unique_id=1120759420]
 layout_mode = 2
-text = "$250"
+text = "$100"
 
 [node name="Description" type="Label" parent="Scroll/Grid/Sink/Content" unique_id=1364851793]
 custom_minimum_size = Vector2(0, 66)
