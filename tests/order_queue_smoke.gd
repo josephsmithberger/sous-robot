@@ -56,6 +56,40 @@ func _ready() -> void:
 		head_forward.is_equal_approx(diff),
 		"Player head forward vector must point at the waiter robot target position."
 	)
+
+	# Verify front waiter turns to watch the player
+	front_waiter.turn_speed = 100.0 # Instant turn for test
+	for _frame in 5:
+		await get_tree().process_frame
+	var to_player: Vector3 = player.global_position - front_waiter.global_position
+	var expected_yaw: float = atan2(to_player.x, to_player.z)
+	var front_robot_node: Node3D = front_waiter.get_node("Robot")
+	assert(
+		is_equal_approx(front_robot_node.rotation.y, expected_yaw),
+		"Front waiter robot should rotate to watch the player."
+	)
+
+	# Verify non-front waiters remain facing the window
+	for i in range(1, queue._waiters.size()):
+		var rear_waiter: WaiterRobot = queue._waiters[i]
+		var rear_robot_node: Node3D = rear_waiter.get_node("Robot")
+		assert(
+			is_equal_approx(rear_robot_node.rotation.y, WaiterRobot.WINDOW_FACING),
+			"Waiters behind the front robot should remain facing WINDOW_FACING in line."
+		)
+
+	# Move player to another position and verify front waiter updates look direction
+	player.position = Vector3(2.0, 1.0, -3.0)
+	for _frame in 5:
+		await get_tree().process_frame
+	to_player = player.global_position - front_waiter.global_position
+	expected_yaw = atan2(to_player.x, to_player.z)
+	assert(
+		is_equal_approx(front_robot_node.rotation.y, expected_yaw),
+		"Front waiter robot should update its look direction as player moves."
+	)
+
+	front_waiter.turn_speed = 7.5
 	player.queue_free()
 
 	assert(queue.get_child_count() == 3, "The visible queue must contain exactly three robots.")

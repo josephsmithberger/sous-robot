@@ -18,6 +18,7 @@ const REACTION_COLORS := {
 @onready var animation_player: AnimationPlayer = $Robot/AnimationPlayer
 
 @export var look_target_offset := Vector3(0.0, 1.35, 0.0)
+@export var turn_speed := 7.5
 
 var queue_controller: Variant
 var order_data: Dictionary = {}
@@ -29,6 +30,7 @@ var reaction_label: Label3D
 var _face_background: MeshInstance3D
 var _face_features: MeshInstance3D
 var _reaction_tween: Tween
+var _cached_player: Node3D
 
 
 func get_look_target() -> Vector3:
@@ -40,6 +42,10 @@ func _ready() -> void:
 	_setup_reaction_label()
 	_reset_reaction()
 	_play(&"idle")
+
+
+func _process(delta: float) -> void:
+	_update_look_at_player(delta)
 
 
 func configure(controller: Variant, next_order: Dictionary, next_slot_index: int) -> void:
@@ -328,3 +334,49 @@ func _face_direction(direction: Vector3) -> void:
 func _play(animation_name: StringName) -> void:
 	if animation_player != null and animation_player.has_animation(animation_name):
 		animation_player.play(animation_name)
+
+
+func _update_look_at_player(delta: float) -> void:
+	if is_moving or not is_inside_tree():
+		return
+
+	var target_yaw := WINDOW_FACING
+	if _is_front_in_queue():
+		var player := _get_player()
+		if player != null and is_instance_valid(player):
+			var local_target := to_local(player.global_position)
+			var flat_target := Vector2(local_target.x, local_target.z)
+			if flat_target.length_squared() > 0.0001:
+				target_yaw = atan2(flat_target.x, flat_target.y)
+
+	var robot := $Robot as Node3D
+	if robot == null:
+		return
+
+	robot.rotation.y = rotate_toward(robot.rotation.y, target_yaw, turn_speed * delta)
+
+
+func _is_front_in_queue() -> bool:
+	if queue_controller != null:
+		if queue_controller.has_method(&"get_front_waiter"):
+			return queue_controller.get_front_waiter() == self
+		if "slot_index" in self:
+			return slot_index == 0
+	return slot_index == 0
+
+
+func _get_player() -> Node3D:
+	if _cached_player != null and is_instance_valid(_cached_player) and _cached_player.is_inside_tree():
+		return _cached_player
+	var player_node := get_tree().get_first_node_in_group(&"player") as Node3D
+	if player_node != null and is_instance_valid(player_node):
+		_cached_player = player_node
+		return _cached_player
+	var root := get_tree().current_scene
+	if root != null:
+		var named_player := root.find_child("player", true, false) as Node3D
+		if named_player != null:
+			_cached_player = named_player
+			return _cached_player
+	return null
+

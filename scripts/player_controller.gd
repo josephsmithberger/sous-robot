@@ -1,3 +1,4 @@
+class_name PlayerController
 extends CharacterBody3D
 
 @export var move_speed := 5.0
@@ -21,6 +22,7 @@ var _look_tween: Tween
 
 
 func _ready() -> void:
+	add_to_group(&"player")
 	interaction_area.area_entered.connect(_on_area_entered)
 	interaction_area.area_exited.connect(_on_area_exited)
 	GameControl.interaction_pressed.connect(_on_interaction_pressed)
