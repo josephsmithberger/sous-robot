@@ -28,6 +28,7 @@ func _ready() -> void:
 	GameControl.order_started.connect(_on_order_started)
 	GameControl.order_timer_updated.connect(_on_order_timer_updated)
 	GameControl.order_completed.connect(_on_order_completed)
+	GameControl.order_clock_paused_changed.connect(_on_clock_paused_changed)
 	queue_redraw()
 
 
@@ -40,6 +41,12 @@ func _exit_tree() -> void:
 		GameControl.order_timer_updated.disconnect(_on_order_timer_updated)
 	if GameControl.order_completed.is_connected(_on_order_completed):
 		GameControl.order_completed.disconnect(_on_order_completed)
+	if GameControl.order_clock_paused_changed.is_connected(_on_clock_paused_changed):
+		GameControl.order_clock_paused_changed.disconnect(_on_clock_paused_changed)
+
+
+func _on_clock_paused_changed(_paused: bool) -> void:
+	queue_redraw()
 
 
 func _process(_delta: float) -> void:
@@ -114,7 +121,7 @@ func _draw() -> void:
 		var fill_angle := urgency * TAU
 
 		# Urgent pulse when late (urgency > 0.65)
-		if urgency > 0.65:
+		if urgency > 0.65 and not GameControl.is_order_clock_paused():
 			var pulse_speed := 8.0 + (urgency - 0.65) * 18.0
 			var pulse_val := (sin(Time.get_ticks_msec() * 0.001 * pulse_speed) + 1.0) * 0.5
 			hand_color = base_color.lerp(DANGER_PULSE_RED, pulse_val * 0.55)

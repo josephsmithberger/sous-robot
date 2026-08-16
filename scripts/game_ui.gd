@@ -229,6 +229,7 @@ func _on_virtual_joystick_touch_started() -> void:
 
 
 func _on_tab_changed(tab_index: int) -> void:
+	GameControl.current_tab = tab_index
 	var kitchen_is_active := tab_index == KITCHEN_TAB
 	GameControl.set_controllable(kitchen_is_active)
 	_update_interaction_ui()

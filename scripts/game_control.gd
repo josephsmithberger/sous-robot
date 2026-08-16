@@ -4,6 +4,8 @@ extends Node
 const SENOR_FOOD_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
 const ORDER_DIALOGUE: DialogueResource = preload("res://dialogue/orders.dialogue")
 
+const KITCHEN_TAB := 0
+
 signal controllability_changed(is_controllable: bool)
 signal input_mode_changed(input_mode: InputMode)
 signal dialogue_activity_changed(is_active: bool)
@@ -57,6 +59,10 @@ signal placement_completed(item_id: StringName, position: Vector3, rotation_y: f
 signal arrange_mode_changed(is_arranging: bool)
 @warning_ignore("unused_signal")
 signal tab_change_requested(tab_index: int)
+@warning_ignore("unused_signal")
+signal tab_changed(tab_index: int)
+@warning_ignore("unused_signal")
+signal order_clock_paused_changed(is_paused: bool)
 
 enum InputMode {
 	KEYBOARD,
@@ -68,6 +74,14 @@ enum CameraMode {
 	MARKER,
 	WAITER,
 }
+
+var current_tab := KITCHEN_TAB:
+	set(value):
+		if current_tab == value:
+			return
+		current_tab = value
+		tab_changed.emit(current_tab)
+		_check_clock_pause_changed()
 
 var is_controllable := false:
 	set(value):
@@ -91,6 +105,7 @@ var camera_mode := CameraMode.MARKER:
 		camera_mode = value
 		camera_mode_changed.emit(camera_mode)
 		_sync_mouse_mode()
+		_check_clock_pause_changed()
 
 var is_ui_mode := true:
 	set(value):
@@ -130,6 +145,7 @@ var _mouse_look_delta := Vector2.ZERO
 var _camera_mode_before_dialogue: CameraMode = CameraMode.FIRST_PERSON
 var _ui_mode_before_dialogue := false
 var _dialogue_changed_camera := false
+var _last_clock_paused := true
 
 
 func is_process_picker_open() -> bool:
@@ -203,6 +219,7 @@ func _ready() -> void:
 	if not held_item_changed.is_connected(_on_held_item_changed_for_picker):
 		held_item_changed.connect(_on_held_item_changed_for_picker)
 	_connect_dialogue_manager()
+	_last_clock_paused = is_order_clock_paused()
 
 
 func _ensure_interact_action() -> void:
@@ -221,10 +238,12 @@ func _ensure_interact_action() -> void:
 
 func reset_session(starting_money: float = 0.0) -> void:
 	active_order_id = 0
+	current_tab = KITCHEN_TAB
 	owned_items = [&"DecoratedWall", &"BunCrate"]
 	var delta := starting_money - money
 	money = starting_money
 	money_changed.emit(money, delta, "SESSION START")
+	_check_clock_pause_changed()
 
 
 func begin_order(order_id: int) -> void:
@@ -404,6 +423,7 @@ func start_placement(item_id: StringName) -> void:
 	set_ui_mode(true)
 	placement_requested.emit(item_id)
 	placement_started.emit(item_id)
+	_check_clock_pause_changed()
 
 
 func cancel_placement() -> void:
@@ -412,12 +432,14 @@ func cancel_placement() -> void:
 	is_placing = false
 	placing_item_id = &""
 	placement_cancelled.emit()
+	_check_clock_pause_changed()
 
 
 func complete_placement(item_id: StringName, pos: Vector3, rot_y: float) -> void:
 	is_placing = false
 	placing_item_id = &""
 	placement_completed.emit(item_id, pos, rot_y)
+	_check_clock_pause_changed()
 
 
 func set_arrange_mode(enabled: bool) -> void:
@@ -431,6 +453,7 @@ func set_arrange_mode(enabled: bool) -> void:
 		if is_placing:
 			cancel_placement()
 	arrange_mode_changed.emit(is_arranging)
+	_check_clock_pause_changed()
 
 
 func toggle_arrange_mode() -> void:
@@ -438,6 +461,7 @@ func toggle_arrange_mode() -> void:
 
 
 func request_tab_switch(tab_index: int) -> void:
+	current_tab = tab_index
 	tab_change_requested.emit(tab_index)
 
 
@@ -468,6 +492,25 @@ func is_dialogue_active() -> bool:
 	return _active_dialogues > 0
 
 
+func is_kitchen_tab() -> bool:
+	return current_tab == KITCHEN_TAB
+
+
+func is_overview_mode() -> bool:
+	return camera_mode == CameraMode.MARKER or is_arranging or is_placing
+
+
+func is_order_clock_paused() -> bool:
+	return not is_kitchen_tab() or is_overview_mode() or is_dialogue_active()
+
+
+func _check_clock_pause_changed() -> void:
+	var paused := is_order_clock_paused()
+	if _last_clock_paused != paused:
+		_last_clock_paused = paused
+		order_clock_paused_changed.emit(paused)
+
+
 func _connect_dialogue_manager() -> void:
 	var dialogue_manager := get_node_or_null("/root/DialogueManager")
 	if dialogue_manager == null:
@@ -495,6 +538,7 @@ func _on_dialogue_started(resource: Resource) -> void:
 			_dialogue_changed_camera = false
 		dialogue_activity_changed.emit(true)
 	_refresh_controllability()
+	_check_clock_pause_changed()
 
 
 func _on_dialogue_ended(_resource: Resource) -> void:
@@ -507,6 +551,7 @@ func _on_dialogue_ended(_resource: Resource) -> void:
 	_refresh_controllability()
 	if _active_dialogues == 0 and _controllability_requested:
 		set_ui_mode(_ui_mode_before_dialogue)
+	_check_clock_pause_changed()
 
 
 func _refresh_controllability() -> void:

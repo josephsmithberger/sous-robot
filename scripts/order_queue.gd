@@ -115,6 +115,9 @@ func _process(delta: float) -> void:
 	if _active_order.is_empty() or _is_advancing:
 		return
 
+	if GameControl.is_order_clock_paused():
+		return
+
 	var elapsed := float(_active_order.get("elapsed_time", 0.0)) + delta
 	_active_order["elapsed_time"] = elapsed
 
