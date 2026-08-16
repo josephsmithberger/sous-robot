@@ -41,7 +41,7 @@ pointing/emulate_mouse_from_touch=false
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://dialogue/master.dialogue")
+locale/translations_pot_files=PackedStringArray("res://dialogue/master.dialogue", "res://dialogue/orders.dialogue")
 
 [rendering]
 
@@ -57,7 +57,6 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://scripts/player_controller.gd",
 "type": "file"
@@ -65,6 +64,13 @@ project/editorState=[{
 "column": 0,
 "line": 0,
 "path": "res://scripts/store_ui.gd",
+"type": "file"
+}, {
+"column": 0,
+"current": true,
+"line": 0,
+"path": "res://tests/order_queue_smoke.gd",
+"transient": true,
 "type": "file"
 }]
 project/shaderEditorState=[{

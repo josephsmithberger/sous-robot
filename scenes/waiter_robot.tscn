@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bohf6weo8agj8"]
+
+[ext_resource type="Script" uid="uid://ckxpuw24xh2ub" path="res://scripts/waiter_robot.gd" id="1_waiter"]
+[ext_resource type="PackedScene" uid="uid://qtkkhsgt4vbi" path="res://assets/robot.glb" id="2_robot"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_waiter"]
+radius = 1.25
+height = 5.2413087
+
+[node name="WaiterRobot" type="Area3D" unique_id=1752755580]
+script = ExtResource("1_waiter")
+
+[node name="Robot" parent="." unique_id=1208803652 instance=ExtResource("2_robot")]
+transform = Transform3D(-1.3113416e-07, 0, 3, 0, 3, 0, -3, 0, -1.3113416e-07, 0, 0, 0)
+
+[node name="InteractionShape" type="CollisionShape3D" parent="." unique_id=1134099361]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 1.15, 0.86327434, 0)
+shape = SubResource("CapsuleShape_waiter")

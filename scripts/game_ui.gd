@@ -17,6 +17,7 @@ const SLIDE_DURATION := 0.28
 @onready var _interact_button: Button = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton
 @onready var _interaction_fill: ProgressBar = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton/HoldFill
 @onready var _interaction_label: Label = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons/InteractButton/InteractionLabel
+@onready var _money_label: Label = $MarginContainer/HSplitContainer/stats/money
 
 var _previous_dialogue_host_resolver: Callable
 var _interaction_tween: Tween
@@ -38,6 +39,8 @@ func _ready() -> void:
 	GameControl.interact_available_changed.connect(_on_interact_available_changed)
 	GameControl.interaction_prompt_changed.connect(_on_interaction_prompt_changed)
 	GameControl.interaction_progress_changed.connect(_on_interaction_progress_changed)
+	GameControl.money_changed.connect(_on_money_changed)
+	GameControl.reset_session()
 	_on_interact_available_changed(GameControl.can_interact)
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
 	_hand_off_button.pressed.connect(GameControl.toggle_camera_mode)
@@ -60,6 +63,17 @@ func _ready() -> void:
 ## Helper method to launch dialogue in the interaction dialogue tray.
 func start_dialogue(resource: DialogueResource, title: String = "") -> Node:
 	return DialogueManager.show_dialogue_balloon(resource, title)
+
+
+func _on_money_changed(balance: float, delta: float, reason: String) -> void:
+	_money_label.text = "$%.2f" % balance
+	if is_zero_approx(delta):
+		return
+	_money_label.modulate = Color("55a630") if delta > 0.0 else Color("d62318")
+	var tween := create_tween()
+	tween.tween_property(_money_label, ^"modulate", Color.WHITE, 0.45)
+	if not reason.is_empty():
+		_money_label.tooltip_text = reason
 
 
 func _process(_delta: float) -> void:

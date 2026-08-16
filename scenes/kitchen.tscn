@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bkq40h6kvxj5m" path="res://assets/appliances/crate_buns.tscn" id="8_mwmjw"]
 [ext_resource type="Script" uid="uid://c67oc5bdvhvll" path="res://scripts/camera_controller.gd" id="9_mwmjw"]
 [ext_resource type="Script" uid="uid://dpb4omcj4gs8n" path="res://scripts/order_window.gd" id="11_order"]
+[ext_resource type="Script" path="res://scripts/order_queue.gd" id="12_queue"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_58u3k"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -347,6 +348,10 @@ size = Vector3(12.159546, 4.6047363, 1)
 script = ExtResource("1_58u3k")
 
 [node name="player" parent="." unique_id=317762243 instance=ExtResource("2_mwmjw")]
+
+[node name="OrderQueue" type="Node3D" parent="."]
+position = Vector3(-8.5, 0, -2)
+script = ExtResource("12_queue")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=815323668]
 environment = SubResource("Environment_mwmjw")

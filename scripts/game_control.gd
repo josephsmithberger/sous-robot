@@ -1,6 +1,8 @@
 extends Node
 ## Global source of truth for whether the 3D game viewport is currently controllable.
 
+const SENOR_FOOD_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
+
 signal controllability_changed(is_controllable: bool)
 signal input_mode_changed(input_mode: InputMode)
 signal dialogue_activity_changed(is_active: bool)
@@ -15,6 +17,19 @@ signal interaction_progress_changed(progress: float)
 signal held_item_changed(item: KitchenItem)
 @warning_ignore("unused_signal")
 signal item_delivered(item: KitchenItem)
+
+@warning_ignore("unused_signal")
+signal order_dialogue_confirmed
+@warning_ignore("unused_signal")
+signal order_started(order_id: int, order: Dictionary)
+@warning_ignore("unused_signal")
+signal order_item_fulfilled(order_id: int, item_id: StringName, fulfilled: int, required: int)
+@warning_ignore("unused_signal")
+signal order_penalized(order_id: int, remaining_tip: float, penalty: float, item_name: String)
+@warning_ignore("unused_signal")
+signal order_completed(order_id: int, payout: float, final_tip: float)
+@warning_ignore("unused_signal")
+signal money_changed(balance: float, delta: float, reason: String)
 
 enum InputMode {
 	KEYBOARD,
@@ -69,12 +84,15 @@ var look_input := Vector2.ZERO
 var interaction_prompt := ""
 var interaction_hold_duration := 0.0
 var interaction_progress := 0.0
+var money := 0.0
+var active_order_id := 0
 
 var _controllability_requested := false
 var _active_dialogues := 0
 var _mouse_look_delta := Vector2.ZERO
 var _camera_mode_before_dialogue: CameraMode = CameraMode.FIRST_PERSON
 var _ui_mode_before_dialogue := false
+var _dialogue_changed_camera := false
 
 
 func _ready() -> void:
@@ -96,6 +114,33 @@ func _ensure_interact_action() -> void:
 	var space_event := InputEventKey.new()
 	space_event.physical_keycode = KEY_SPACE
 	InputMap.action_add_event(&"interact", space_event)
+
+
+func reset_session(starting_money: float = 0.0) -> void:
+	active_order_id = 0
+	var delta := starting_money - money
+	money = starting_money
+	money_changed.emit(money, delta, "SESSION START")
+
+
+func begin_order(order_id: int) -> void:
+	active_order_id = order_id
+
+
+func end_order(order_id: int) -> void:
+	if active_order_id == order_id:
+		active_order_id = 0
+
+
+func has_active_order() -> bool:
+	return active_order_id > 0
+
+
+func change_money(delta: float, reason: String = "") -> void:
+	if is_zero_approx(delta):
+		return
+	money += delta
+	money_changed.emit(money, delta, reason)
 
 
 func _input(event: InputEvent) -> void:
@@ -247,13 +292,14 @@ func _connect_dialogue_manager() -> void:
 		dialogue_manager.dialogue_ended.connect(_on_dialogue_ended)
 
 
-func _on_dialogue_started(_resource: Resource) -> void:
+func _on_dialogue_started(resource: Resource) -> void:
 	_active_dialogues += 1
 	if _active_dialogues == 1:
-		if camera_mode == CameraMode.FIRST_PERSON:
-			_camera_mode_before_dialogue = camera_mode
-			_ui_mode_before_dialogue = is_ui_mode
-		set_camera_mode(CameraMode.MARKER)
+		_camera_mode_before_dialogue = camera_mode
+		_ui_mode_before_dialogue = is_ui_mode
+		_dialogue_changed_camera = resource == SENOR_FOOD_DIALOGUE
+		if _dialogue_changed_camera:
+			set_camera_mode(CameraMode.MARKER)
 		dialogue_activity_changed.emit(true)
 	_refresh_controllability()
 
@@ -261,7 +307,9 @@ func _on_dialogue_started(_resource: Resource) -> void:
 func _on_dialogue_ended(_resource: Resource) -> void:
 	_active_dialogues = maxi(_active_dialogues - 1, 0)
 	if _active_dialogues == 0:
-		set_camera_mode(_camera_mode_before_dialogue)
+		if _dialogue_changed_camera:
+			set_camera_mode(_camera_mode_before_dialogue)
+		_dialogue_changed_camera = false
 		dialogue_activity_changed.emit(false)
 	_refresh_controllability()
 	if _active_dialogues == 0 and _controllability_requested:

@@ -1,0 +1,3 @@
+~ take_order
+ROBOT WAITER: Order #{{dialogue_order_number}}. [do GameControl.emit_signal("order_dialogue_confirmed")]{{dialogue_order_text}}
+=> END

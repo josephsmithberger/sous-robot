@@ -1,10 +1,14 @@
 class_name OrderWindow
 extends InteractionArea
-## Delivery endpoint. The future order system can subscribe to GameControl.item_delivered.
+## Delivery endpoint for the currently accepted front-of-line order.
 
 
 func can_interact(player: Node) -> bool:
-	return player.has_method(&"has_held_item") and player.has_held_item()
+	return (
+		GameControl.has_active_order()
+		and player.has_method(&"has_held_item")
+		and player.has_held_item()
+	)
 
 
 func get_interaction_prompt(player: Node) -> String:

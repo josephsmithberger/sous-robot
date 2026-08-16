@@ -230,8 +230,6 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hold_fill_bg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hold_fill"]
@@ -240,6 +238,8 @@ corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trtic"]
 
 [node name="game" type="Control" unique_id=892098176]
 layout_mode = 3
@@ -294,8 +294,10 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_u5sy4")
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer/HSplitContainer/stats" unique_id=436325506]
+[node name="money" type="Label" parent="MarginContainer/HSplitContainer/stats" unique_id=1619888334]
 layout_mode = 2
+text = "$0"
+horizontal_alignment = 1
 
 [node name="ClockShelf" type="CenterContainer" parent="MarginContainer/HSplitContainer/stats" unique_id=1779623811]
 custom_minimum_size = Vector2(0, 148)
@@ -519,8 +521,8 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_yqjtg")
 layout_mode = 2
 
 [node name="InteractionStage" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer" unique_id=2024578857]
-clip_contents = true
 custom_minimum_size = Vector2(850, 557)
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -543,8 +545,8 @@ render_target_update_mode = 4
 
 [node name="DialogueTray" type="Control" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage" unique_id=1121593790]
 z_index = 2
-clip_contents = true
 custom_minimum_size = Vector2(0, 132)
+clip_contents = true
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -685,8 +687,8 @@ text = "HAND OFF"
 
 [node name="InteractButton" type="Button" parent="MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow/Spacer/ActionButtons" unique_id=322001702]
 visible = false
-clip_contents = true
 custom_minimum_size = Vector2(96, 44)
+clip_contents = true
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
@@ -724,7 +726,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16

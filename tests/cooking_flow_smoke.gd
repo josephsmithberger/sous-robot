@@ -68,6 +68,7 @@ func _ready() -> void:
 	player._on_area_exited(cutting_board)
 
 	GameControl.item_delivered.connect(_on_item_delivered, CONNECT_ONE_SHOT)
+	GameControl.begin_order(999)
 	player._on_area_entered(order_window)
 	assert(GameControl.interaction_prompt == "DELIVER SLICED BREAD")
 	GameControl.request_interaction()
@@ -76,6 +77,7 @@ func _ready() -> void:
 		delivered_item != null and delivered_item.item_id == &"sliced_bread",
 		"Order delivery signal was not emitted"
 	)
+	GameControl.end_order(999)
 
 	print("COOKING_FLOW_SMOKE_OK")
 	get_tree().quit()
