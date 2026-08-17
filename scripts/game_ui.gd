@@ -100,9 +100,7 @@ func _ready() -> void:
 	GameControl.reset_session()
 	_on_interact_available_changed(GameControl.can_interact)
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
-	_hand_off_button.text = "HAND OFF"
 	_hand_off_button.pressed.connect(_on_hand_off_button_pressed)
-	_arrange_button.text = "ARRANGE"
 	_arrange_button.pressed.connect(GameControl.toggle_arrange_mode)
 	_interact_button.button_down.connect(GameControl.request_interaction)
 	_interact_button.button_up.connect(GameControl.cancel_interaction)
@@ -526,6 +524,7 @@ func _on_tab_changed(tab_index: int) -> void:
 	GameControl.current_tab = tab_index
 	var kitchen_is_active := tab_index == KITCHEN_TAB
 	GameControl.set_controllable(kitchen_is_active)
+	_refresh_button_prompts()
 	_update_interaction_ui()
 
 
@@ -611,9 +610,8 @@ func _get_dialogue_host() -> Node:
 
 
 func _on_camera_mode_changed(_mode: GameControl.CameraMode) -> void:
-	_hand_off_button.text = "HAND OFF"
 	_arrange_button.visible = true
-	_arrange_button.text = "CONFIRM" if GameControl.is_arranging else "ARRANGE"
+	_refresh_button_prompts()
 
 
 func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:
@@ -622,6 +620,7 @@ func _on_input_mode_changed(_input_mode: GameControl.InputMode) -> void:
 	_move_joystick.visible = using_touch
 	_look_joystick.visible = using_touch
 	_keyboard_hint.visible = not using_touch
+	_refresh_button_prompts()
 
 
 func _on_interact_available_changed(is_available: bool) -> void:
@@ -631,9 +630,8 @@ func _on_interact_available_changed(is_available: bool) -> void:
 func _on_interaction_prompt_changed(prompt: String, hold_duration: float) -> void:
 	_interaction_prompt = prompt if not prompt.is_empty() else "INTERACT"
 	_interaction_is_hold = hold_duration > 0.0
-	_interact_button.text = _interaction_prompt
-	_interaction_label.text = _interaction_prompt
 	_set_interaction_fill(0.0)
+	_refresh_button_prompts()
 
 
 func _on_interaction_progress_changed(progress: float) -> void:
@@ -646,14 +644,57 @@ func _set_interaction_fill(progress: float) -> void:
 	_interaction_fill.visible = _interaction_is_hold and fill_amount > 0.0
 
 
+func _refresh_button_prompts() -> void:
+	var using_keyboard := not GameControl.is_using_touch()
+
+	if _tabs != null:
+		if _tabs.get_tab_count() > 0:
+			_tabs.set_tab_title(0, "KITCHEN (1)" if using_keyboard else "KITCHEN")
+		if _tabs.get_tab_count() > 1:
+			_tabs.set_tab_title(1, "RECIPES (2)" if using_keyboard else "RECIPES")
+		if _tabs.get_tab_count() > 2:
+			_tabs.set_tab_title(2, "STORE (3)" if using_keyboard else "STORE")
+
+	if _hand_off_button != null:
+		_hand_off_button.text = "HAND OFF (H)" if using_keyboard else "HAND OFF"
+
+	if _arrange_button != null:
+		if GameControl.is_arranging:
+			_arrange_button.text = "CONFIRM (G)" if using_keyboard else "CONFIRM"
+		else:
+			_arrange_button.text = "ARRANGE (G)" if using_keyboard else "ARRANGE"
+
+	if _interact_button != null and _interaction_label != null:
+		var prompt_text := _interaction_prompt
+		if using_keyboard and not prompt_text.is_empty():
+			var full_prompt := "%s (SPACE)" % prompt_text
+			_interact_button.text = full_prompt
+			_interaction_label.text = full_prompt
+		else:
+			_interact_button.text = prompt_text
+			_interaction_label.text = prompt_text
+
+	if _rotate_button != null:
+		_rotate_button.text = "ROTATE (R)" if using_keyboard else "ROTATE"
+	if _place_button != null:
+		_place_button.text = "PLACE (ENTER)" if using_keyboard else "PLACE"
+	if _cancel_placement_button != null:
+		_cancel_placement_button.text = "CANCEL (ESC)" if using_keyboard else "CANCEL"
+
+	if _process_picker_cancel_button != null:
+		_process_picker_cancel_button.text = "CANCEL (ESC)" if using_keyboard else "CANCEL"
+
+
 func _on_placement_started(item_id: StringName) -> void:
 	_placement_tray.visible = true
 	_placement_title.text = "PLACING: %s" % str(item_id).capitalize()
+	_refresh_button_prompts()
 	_update_interaction_ui()
 
 
 func _on_placement_completed(item_id: StringName, _pos: Vector3, _rot_y: float) -> void:
 	_placement_tray.visible = false
+	_refresh_button_prompts()
 	_update_interaction_ui()
 	match item_id:
 		&"Sink":
@@ -666,13 +707,13 @@ func _on_placement_completed(item_id: StringName, _pos: Vector3, _rot_y: float) 
 
 func _on_placement_cancelled() -> void:
 	_placement_tray.visible = false
+	_refresh_button_prompts()
 	_update_interaction_ui()
 
 
-func _on_arrange_mode_changed(is_arranging: bool) -> void:
+func _on_arrange_mode_changed(_is_arranging: bool) -> void:
 	_arrange_button.visible = true
-	_arrange_button.text = "CONFIRM" if is_arranging else "ARRANGE"
-	_hand_off_button.text = "HAND OFF"
+	_refresh_button_prompts()
 	_update_interaction_ui()
 
 

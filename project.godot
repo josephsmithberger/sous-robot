@@ -58,9 +58,14 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"current": true,
 "line": 0,
 "path": "res://tests/bot_handoff_execution_smoke.gd",
+"type": "file"
+}, {
+"column": 0,
+"line": 0,
+"path": "res://tests/bot_dispatch_ui_smoke.gd",
+"transient": true,
 "type": "file"
 }, {
 "column": 0,
@@ -69,7 +74,8 @@ project/editorState=[{
 "type": "file"
 }, {
 "column": 0,
-"line": 0,
+"current": true,
+"line": 65,
 "path": "res://tests/tutorial_overlay_smoke.gd",
 "type": "file"
 }]

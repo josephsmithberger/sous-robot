@@ -401,20 +401,101 @@ func _input(event: InputEvent) -> void:
 			input_mode = InputMode.TOUCH
 	elif event is InputEventKey and event.pressed and not event.echo:
 		input_mode = InputMode.KEYBOARD
-		if event.keycode == KEY_ESCAPE and _controllability_requested and not is_dialogue_active():
-			if is_bot_dispatch_open():
-				cancel_bot_dispatch()
-				get_viewport().set_input_as_handled()
+
+		var vp := get_viewport()
+		var focused: Control = vp.gui_get_focus_owner() if vp != null else null
+		var is_typing := focused is LineEdit or focused is TextEdit
+
+		if is_typing:
+			if event.keycode == KEY_ESCAPE:
+				focused.release_focus()
+				if vp != null:
+					vp.set_input_as_handled()
 				return
-			if is_process_picker_open():
-				cancel_process_picker()
-				get_viewport().set_input_as_handled()
-				return
-			if is_ui_mode or camera_mode != CameraMode.FIRST_PERSON:
-				give_player_control()
-			else:
-				set_ui_mode(true)
-			get_viewport().set_input_as_handled()
+		elif not is_dialogue_active():
+			match event.keycode:
+				KEY_ESCAPE:
+					if is_bot_dispatch_open():
+						cancel_bot_dispatch()
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+					if is_process_picker_open():
+						cancel_process_picker()
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+					if is_placing:
+						cancel_placement()
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+					if is_arranging:
+						set_arrange_mode(false)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+					if current_tab != KITCHEN_TAB:
+						request_tab_switch(KITCHEN_TAB)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+					if _controllability_requested:
+						if is_ui_mode or camera_mode != CameraMode.FIRST_PERSON:
+							give_player_control()
+						else:
+							set_ui_mode(true)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_1, KEY_KP_1:
+					if not is_bot_dispatch_open():
+						request_tab_switch(KITCHEN_TAB)
+						if is_ui_mode and _controllability_requested:
+							give_player_control()
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_2, KEY_KP_2:
+					if not is_bot_dispatch_open():
+						request_tab_switch(1)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_3, KEY_KP_3:
+					if not is_bot_dispatch_open():
+						request_tab_switch(2)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_H, KEY_B:
+					if not is_placing:
+						if is_bot_dispatch_open():
+							cancel_bot_dispatch()
+						else:
+							if current_tab != KITCHEN_TAB:
+								request_tab_switch(KITCHEN_TAB)
+							if has_active_order():
+								request_bot_dispatch()
+							else:
+								automation_available.emit(&"", "", "No active order to hand off!")
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_G:
+					if not is_placing and not is_bot_dispatch_open():
+						if current_tab != KITCHEN_TAB:
+							request_tab_switch(KITCHEN_TAB)
+						toggle_arrange_mode()
+						if vp != null:
+							vp.set_input_as_handled()
+						return
+				KEY_ENTER, KEY_KP_ENTER:
+					if is_arranging:
+						set_arrange_mode(false)
+						if vp != null:
+							vp.set_input_as_handled()
+						return
 
 	if event.is_action_pressed(&"interact", false) and not event.is_echo():
 		request_interaction()

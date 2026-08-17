@@ -113,6 +113,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.keycode == KEY_ESCAPE:
 			cancel_placement()
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE:
+			if is_valid_placement:
+				confirm_placement()
+				get_viewport().set_input_as_handled()
 	elif TouchUI.is_primary_press(event):
 		if is_valid_placement:
 			confirm_placement()

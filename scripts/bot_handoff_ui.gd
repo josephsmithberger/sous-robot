@@ -3,7 +3,7 @@ extends PanelContainer
 ## Controller for the Bot Handoff Modal UI.
 ##
 ## Manages assigning up to 3 automated bots across automatable items in an active order.
-## Provides full mouse and keyboard accessibility.
+## Provides full touch and keyboard accessibility with dynamic UI adaption.
 
 const FONT_LILITA: FontFile = preload("res://assets/fonts/LilitaOne-Regular.ttf")
 const FONT_TOMATO: FontFile = preload("res://assets/fonts/Sauce Tomato.otf")
@@ -16,7 +16,11 @@ const FONT_TOMATO: FontFile = preload("res://assets/fonts/Sauce Tomato.otf")
 @onready var key_hint_label: Label = %KeyHintLabel
 
 var _order_id: int = 0
-var _spinboxes: Dictionary = {}
+var _allocations: Dictionary = {}
+var _max_allowed_for_item: Dictionary = {}
+var _count_labels: Dictionary = {}
+var _minus_buttons: Dictionary = {}
+var _plus_buttons: Dictionary = {}
 var _row_panels: Dictionary = {}
 var _ordered_auto_item_ids: Array[StringName] = []
 var _selected_auto_index: int = 0
@@ -31,6 +35,8 @@ func _ready() -> void:
 
 	GameControl.bot_dispatch_requested.connect(_on_bot_dispatch_requested)
 	GameControl.bot_dispatch_closed.connect(hide_modal)
+	GameControl.input_mode_changed.connect(_on_input_mode_changed)
+	_on_input_mode_changed(GameControl.input_mode)
 
 
 func _exit_tree() -> void:
@@ -38,6 +44,19 @@ func _exit_tree() -> void:
 		GameControl.bot_dispatch_requested.disconnect(_on_bot_dispatch_requested)
 	if GameControl.bot_dispatch_closed.is_connected(hide_modal):
 		GameControl.bot_dispatch_closed.disconnect(hide_modal)
+	if GameControl.input_mode_changed.is_connected(_on_input_mode_changed):
+		GameControl.input_mode_changed.disconnect(_on_input_mode_changed)
+
+
+func _on_input_mode_changed(_mode: GameControl.InputMode = GameControl.input_mode) -> void:
+	var using_touch := GameControl.is_using_touch()
+	if key_hint_label != null:
+		key_hint_label.visible = not using_touch
+	if confirm_button != null:
+		confirm_button.text = "CONFIRM" if using_touch else "CONFIRM (ENTER)"
+	if cancel_button != null:
+		cancel_button.text = "SKIP" if using_touch else "SKIP (ESC)"
+	_refresh_row_highlights()
 
 
 func _on_bot_dispatch_requested(order_id: int, order_data: Dictionary, automatable_items: Dictionary) -> void:
@@ -50,7 +69,11 @@ func _on_bot_dispatch_requested(order_id: int, order_data: Dictionary, automatab
 
 	for child in items_list.get_children():
 		child.queue_free()
-	_spinboxes.clear()
+	_allocations.clear()
+	_max_allowed_for_item.clear()
+	_count_labels.clear()
+	_minus_buttons.clear()
+	_plus_buttons.clear()
 	_row_panels.clear()
 	_ordered_auto_item_ids.clear()
 	_selected_auto_index = 0
@@ -72,17 +95,13 @@ func _on_bot_dispatch_requested(order_id: int, order_data: Dictionary, automatab
 		items_list.add_child(item_row)
 
 	_update_pool_display()
-	_refresh_row_highlights()
+	_on_input_mode_changed(GameControl.input_mode)
 	visible = true
 
-	# Set focus on first interactive control
-	if not _ordered_auto_item_ids.is_empty():
-		var first_id := _ordered_auto_item_ids[0]
-		var sb := _spinboxes.get(first_id) as SpinBox
-		if sb != null:
-			sb.grab_focus.call_deferred()
-	elif confirm_button != null:
-		confirm_button.grab_focus.call_deferred()
+	# Set focus on interactive control if not using touch
+	if not GameControl.is_using_touch():
+		if confirm_button != null:
+			confirm_button.grab_focus.call_deferred()
 
 
 func _create_item_row(item_id: StringName, item_name: String, required_qty: int, is_automated: bool, initial_val: int) -> Control:
@@ -127,8 +146,13 @@ func _create_item_row(item_id: StringName, item_name: String, required_qty: int,
 	left_vbox.add_child(badge)
 
 	if is_automated:
+		var clamped_init := clampi(initial_val, 0, required_qty)
+		_allocations[item_id] = clamped_init
+		_max_allowed_for_item[item_id] = required_qty
+
 		var stepper_hbox := HBoxContainer.new()
-		stepper_hbox.add_theme_constant_override("separation", 6)
+		stepper_hbox.name = "StepperContainer"
+		stepper_hbox.add_theme_constant_override("separation", 8)
 		stepper_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		hbox.add_child(stepper_hbox)
 
@@ -136,61 +160,47 @@ func _create_item_row(item_id: StringName, item_name: String, required_qty: int,
 		var minus_btn := Button.new()
 		minus_btn.name = "MinusButton"
 		minus_btn.text = "-"
-		minus_btn.custom_minimum_size = Vector2(34, 34)
+		minus_btn.custom_minimum_size = Vector2(38, 38)
 		minus_btn.add_theme_font_override("font", FONT_LILITA)
-		minus_btn.add_theme_font_size_override("font_size", 18)
+		minus_btn.add_theme_font_size_override("font_size", 20)
 		minus_btn.focus_mode = Control.FOCUS_NONE
 		minus_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		_apply_stepper_button_style(minus_btn)
 		minus_btn.pressed.connect(func() -> void:
-			_adjust_spinbox(item_id, -1)
+			_adjust_allocation(item_id, -1)
 		)
 		stepper_hbox.add_child(minus_btn)
+		_minus_buttons[item_id] = minus_btn
 
-		# SpinBox
-		var spinbox := SpinBox.new()
-		spinbox.name = "SpinBox"
-		spinbox.min_value = 0
-		spinbox.max_value = required_qty
-		spinbox.step = 1
-		spinbox.value = mini(initial_val, required_qty)
-		spinbox.custom_minimum_size = Vector2(76, 38)
-		spinbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		spinbox.alignment = HORIZONTAL_ALIGNMENT_CENTER
-		spinbox.focus_mode = Control.FOCUS_ALL
-
-		# Theme the internal LineEdit
-		var line_edit := spinbox.get_line_edit()
-		if line_edit != null:
-			line_edit.add_theme_font_override("font", FONT_LILITA)
-			line_edit.add_theme_font_size_override("font_size", 16)
-			line_edit.add_theme_color_override("font_color", Color(1.0, 0.780392, 0.172549, 1.0))
-			line_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
-			line_edit.focus_entered.connect(func() -> void:
-				_set_selected_item_by_id(item_id)
-			)
-
-		spinbox.focus_entered.connect(func() -> void:
-			_set_selected_item_by_id(item_id)
-		)
-		spinbox.value_changed.connect(_on_spinbox_value_changed.bind(item_id))
-		stepper_hbox.add_child(spinbox)
-		_spinboxes[item_id] = spinbox
+		# Count Label (replaces the tickbox / spinbox)
+		var count_lbl := Label.new()
+		count_lbl.name = "CountLabel"
+		count_lbl.text = str(clamped_init)
+		count_lbl.custom_minimum_size = Vector2(36, 38)
+		count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		count_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		count_lbl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		count_lbl.add_theme_font_override("font", FONT_LILITA)
+		count_lbl.add_theme_font_size_override("font_size", 18)
+		count_lbl.add_theme_color_override("font_color", Color(1.0, 0.780392, 0.172549, 1.0))
+		stepper_hbox.add_child(count_lbl)
+		_count_labels[item_id] = count_lbl
 
 		# Plus Button
 		var plus_btn := Button.new()
 		plus_btn.name = "PlusButton"
 		plus_btn.text = "+"
-		plus_btn.custom_minimum_size = Vector2(34, 34)
+		plus_btn.custom_minimum_size = Vector2(38, 38)
 		plus_btn.add_theme_font_override("font", FONT_LILITA)
-		plus_btn.add_theme_font_size_override("font_size", 18)
+		plus_btn.add_theme_font_size_override("font_size", 20)
 		plus_btn.focus_mode = Control.FOCUS_NONE
 		plus_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		_apply_stepper_button_style(plus_btn)
 		plus_btn.pressed.connect(func() -> void:
-			_adjust_spinbox(item_id, 1)
+			_adjust_allocation(item_id, 1)
 		)
 		stepper_hbox.add_child(plus_btn)
+		_plus_buttons[item_id] = plus_btn
 	else:
 		var lock_lbl := Label.new()
 		lock_lbl.text = "MANUAL ONLY"
@@ -255,20 +265,38 @@ func _create_status_badge(is_automated: bool) -> PanelContainer:
 	return badge
 
 
-func _adjust_spinbox(item_id: StringName, delta: int) -> void:
-	var sb := _spinboxes.get(item_id) as SpinBox
-	if sb == null:
-		return
-	sb.value = clampf(sb.value + delta, sb.min_value, sb.max_value)
-	_set_selected_item_by_id(item_id)
+func get_allocation(item_id: StringName) -> int:
+	return int(_allocations.get(item_id, 0))
 
 
-func _set_spinbox_value(item_id: StringName, new_val: int) -> void:
-	var sb := _spinboxes.get(item_id) as SpinBox
-	if sb == null:
+func set_allocation(item_id: StringName, new_val: int) -> void:
+	if not _allocations.has(item_id):
 		return
-	sb.value = clampf(float(new_val), sb.min_value, sb.max_value)
-	_set_selected_item_by_id(item_id)
+
+	var req_qty: int = int(_max_allowed_for_item.get(item_id, 3))
+	var other_sum := 0
+	for it_id: StringName in _allocations:
+		if it_id != item_id:
+			other_sum += int(_allocations[it_id])
+
+	var max_allowed := clampi(GameControl.MAX_BOTS - other_sum, 0, req_qty)
+	var final_val := clampi(new_val, 0, max_allowed)
+	_allocations[item_id] = final_val
+
+	var lbl := _count_labels.get(item_id) as Label
+	if lbl != null:
+		lbl.text = str(final_val)
+
+	_update_pool_display()
+
+
+func _adjust_allocation(item_id: StringName, delta: int) -> void:
+	if not _allocations.has(item_id):
+		return
+	var cur_val: int = int(_allocations.get(item_id, 0))
+	set_allocation(item_id, cur_val + delta)
+	if not GameControl.is_using_touch():
+		_set_selected_item_by_id(item_id)
 
 
 func _set_selected_item_by_id(item_id: StringName) -> void:
@@ -279,6 +307,7 @@ func _set_selected_item_by_id(item_id: StringName) -> void:
 
 
 func _refresh_row_highlights() -> void:
+	var using_touch := GameControl.is_using_touch()
 	for i in range(_ordered_auto_item_ids.size()):
 		var it_id := _ordered_auto_item_ids[i]
 		var panel := _row_panels.get(it_id) as PanelContainer
@@ -286,7 +315,7 @@ func _refresh_row_highlights() -> void:
 			continue
 		var style := panel.get_theme_stylebox("panel") as StyleBoxFlat
 		if style != null:
-			if i == _selected_auto_index:
+			if not using_touch and i == _selected_auto_index:
 				style.border_color = Color(1.0, 0.92, 0.35, 1.0)
 				style.set_border_width_all(3)
 			else:
@@ -294,34 +323,10 @@ func _refresh_row_highlights() -> void:
 				style.set_border_width_all(2)
 
 
-func _on_spinbox_value_changed(_new_val: float, changed_item_id: StringName) -> void:
-	var total := 0
-	for it_id: StringName in _spinboxes:
-		var sb := _spinboxes[it_id] as SpinBox
-		if sb != null:
-			total += int(sb.value)
-
-	if total > GameControl.MAX_BOTS:
-		var other_sum := 0
-		for it_id: StringName in _spinboxes:
-			if it_id != changed_item_id:
-				var sb := _spinboxes[it_id] as SpinBox
-				if sb != null:
-					other_sum += int(sb.value)
-		var max_allowed := maxi(0, GameControl.MAX_BOTS - other_sum)
-		var changed_sb := _spinboxes.get(changed_item_id) as SpinBox
-		if changed_sb != null:
-			changed_sb.value = max_allowed
-
-	_update_pool_display()
-
-
 func _update_pool_display() -> void:
 	var total := 0
-	for it_id: StringName in _spinboxes:
-		var sb := _spinboxes[it_id] as SpinBox
-		if sb != null:
-			total += int(sb.value)
+	for it_id: StringName in _allocations:
+		total += int(_allocations[it_id])
 	var remaining := maxi(0, GameControl.MAX_BOTS - total)
 	if pool_label != null:
 		pool_label.text = "BOTS ASSIGNED: %d / %d  (%d Available)" % [
@@ -362,14 +367,14 @@ func _unhandled_input(event: InputEvent) -> void:
 					get_viewport().set_input_as_handled()
 			KEY_LEFT, KEY_A, KEY_MINUS, KEY_KP_SUBTRACT:
 				if cancel_button != null and cancel_button.has_focus():
-					pass # Normal UI navigation
+					pass
 				elif confirm_button != null and confirm_button.has_focus():
 					if event.keycode == KEY_LEFT or event.keycode == KEY_A:
 						cancel_button.grab_focus()
 						get_viewport().set_input_as_handled()
 				elif not _ordered_auto_item_ids.is_empty():
 					var cur_id := _ordered_auto_item_ids[_selected_auto_index]
-					_adjust_spinbox(cur_id, -1)
+					_adjust_allocation(cur_id, -1)
 					get_viewport().set_input_as_handled()
 			KEY_RIGHT, KEY_D, KEY_EQUAL, KEY_PLUS, KEY_KP_ADD:
 				if cancel_button != null and cancel_button.has_focus():
@@ -377,22 +382,22 @@ func _unhandled_input(event: InputEvent) -> void:
 						confirm_button.grab_focus()
 						get_viewport().set_input_as_handled()
 				elif confirm_button != null and confirm_button.has_focus():
-					pass # Normal UI navigation
+					pass
 				elif not _ordered_auto_item_ids.is_empty():
 					var cur_id := _ordered_auto_item_ids[_selected_auto_index]
-					_adjust_spinbox(cur_id, 1)
+					_adjust_allocation(cur_id, 1)
 					get_viewport().set_input_as_handled()
 			KEY_0, KEY_KP_0:
-				_set_current_spinbox_value(0)
+				_set_current_selection_value(0)
 				get_viewport().set_input_as_handled()
 			KEY_1, KEY_KP_1:
-				_set_current_spinbox_value(1)
+				_set_current_selection_value(1)
 				get_viewport().set_input_as_handled()
 			KEY_2, KEY_KP_2:
-				_set_current_spinbox_value(2)
+				_set_current_selection_value(2)
 				get_viewport().set_input_as_handled()
 			KEY_3, KEY_KP_3:
-				_set_current_spinbox_value(3)
+				_set_current_selection_value(3)
 				get_viewport().set_input_as_handled()
 
 
@@ -401,27 +406,21 @@ func _navigate_item_selection(delta: int) -> void:
 		return
 	_selected_auto_index = clampi(_selected_auto_index + delta, 0, _ordered_auto_item_ids.size() - 1)
 	_refresh_row_highlights()
-	var cur_id := _ordered_auto_item_ids[_selected_auto_index]
-	var sb := _spinboxes.get(cur_id) as SpinBox
-	if sb != null:
-		sb.grab_focus()
 
 
-func _set_current_spinbox_value(val: int) -> void:
+func _set_current_selection_value(val: int) -> void:
 	if _ordered_auto_item_ids.is_empty():
 		return
 	var cur_id := _ordered_auto_item_ids[_selected_auto_index]
-	_set_spinbox_value(cur_id, val)
+	set_allocation(cur_id, val)
 
 
 func _on_confirm_pressed() -> void:
 	var allocations: Dictionary = {}
-	for it_id: StringName in _spinboxes:
-		var sb := _spinboxes[it_id] as SpinBox
-		if sb != null:
-			var val := int(sb.value)
-			if val > 0:
-				allocations[it_id] = val
+	for it_id: StringName in _allocations:
+		var val := int(_allocations[it_id])
+		if val > 0:
+			allocations[it_id] = val
 	GameControl.confirm_bot_dispatch(_order_id, allocations)
 	hide_modal()
 
@@ -434,3 +433,4 @@ func _on_cancel_pressed() -> void:
 func hide_modal() -> void:
 	_order_id = 0
 	visible = false
+

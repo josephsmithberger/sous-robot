@@ -101,7 +101,8 @@ func _test_bot_dispatch_modal_creation_and_lifecycle() -> void:
 
 	var hand_off_btn := game_node.find_child("HandOffButton", true, false) as Button
 	assert(hand_off_btn != null, "HandOffButton must exist")
-	assert(hand_off_btn.text == "HAND OFF", "HandOffButton should be labeled 'HAND OFF'")
+	var expected_prompt := "HAND OFF (H)" if not GameControl.is_using_touch() else "HAND OFF"
+	assert(hand_off_btn.text == expected_prompt, "HandOffButton should match current input mode prompt")
 
 	# Request bot dispatch for order
 	var order_data := {
@@ -127,15 +128,17 @@ func _test_bot_dispatch_modal_creation_and_lifecycle() -> void:
 	# Check the row for bun
 	var bun_row := items_list.find_child("Row_bun", true, false) as PanelContainer
 	assert(bun_row != null, "Row_bun must exist")
-	var bun_spinbox := bun_row.find_child("SpinBox", true, false) as SpinBox
-	assert(bun_spinbox != null, "SpinBox must exist for automated bun item")
-	assert(bun_spinbox.max_value == 4, "bun spinbox max_value should equal required quantity 4")
+	var bun_count := bun_row.find_child("CountLabel", true, false) as Label
+	var bun_plus := bun_row.find_child("PlusButton", true, false) as Button
+	var bun_minus := bun_row.find_child("MinusButton", true, false) as Button
+	assert(bun_count != null and bun_plus != null and bun_minus != null, "CountLabel and +/- buttons must exist for automated bun item")
+	assert(bun_count.text == "0", "Initial bun count should be 0")
 
 	# Check the row for bread (unlocked=false)
 	var bread_row := items_list.find_child("Row_bread", true, false) as PanelContainer
 	assert(bread_row != null, "Row_bread must exist")
-	var bread_spinbox := bread_row.find_child("SpinBox", true, false) as SpinBox
-	assert(bread_spinbox == null, "Bread should not have an active SpinBox because it is not automated yet")
+	var bread_count := bread_row.find_child("CountLabel", true, false) as Label
+	assert(bread_count == null, "Bread should not have a CountLabel stepper because it is not automated yet")
 
 	game_node.queue_free()
 
@@ -159,34 +162,45 @@ func _test_spinbox_clamping_to_three_bots() -> void:
 	GameControl.begin_order(2, order_data)
 	GameControl.request_bot_dispatch(2, order_data)
 
-	var modal := game_node.find_child("BotHandoff", true, false) as PanelContainer
+	var modal := game_node.find_child("BotHandoff", true, false) as BotHandoffUI
 	var items_list := modal.find_child("ItemsList", true, false) as VBoxContainer
 
-	var bun_spinbox := items_list.find_child("Row_bun", true, false).find_child("SpinBox", true, false) as SpinBox
-	var cheese_spinbox := items_list.find_child("Row_cheese_slice", true, false).find_child("SpinBox", true, false) as SpinBox
+	var bun_row := items_list.find_child("Row_bun", true, false)
+	var cheese_row := items_list.find_child("Row_cheese_slice", true, false)
+	var bun_count := bun_row.find_child("CountLabel", true, false) as Label
+	var cheese_count := cheese_row.find_child("CountLabel", true, false) as Label
+	var bun_plus := bun_row.find_child("PlusButton", true, false) as Button
+	var bun_minus := bun_row.find_child("MinusButton", true, false) as Button
+	var cheese_plus := cheese_row.find_child("PlusButton", true, false) as Button
 
-	assert(bun_spinbox != null and cheese_spinbox != null, "Both spinboxes must exist")
+	assert(bun_count != null and cheese_count != null, "Both count labels must exist")
 
-	# Set bun to 2 bots
-	bun_spinbox.value = 2
-	assert(bun_spinbox.value == 2, "Bun bots should be 2")
+	# Set bun to 2 bots via plus clicks
+	bun_plus.pressed.emit()
+	bun_plus.pressed.emit()
+	assert(modal.get_allocation(&"bun") == 2, "Bun bots should be 2")
+	assert(bun_count.text == "2", "Bun label should show 2")
 
 	# Set cheese to 1 bot -> total = 3
-	cheese_spinbox.value = 1
-	assert(cheese_spinbox.value == 1, "Cheese bots should be 1")
+	cheese_plus.pressed.emit()
+	assert(modal.get_allocation(&"cheese_slice") == 1, "Cheese bots should be 1")
+	assert(cheese_count.text == "1", "Cheese label should show 1")
 
 	# Try to increase cheese to 2 bots -> total would be 4 -> must clamp cheese to 1 bot!
-	cheese_spinbox.value = 2
-	assert(cheese_spinbox.value == 1, "Cheese bots must clamp to 1 so total bots does not exceed 3")
+	cheese_plus.pressed.emit()
+	assert(modal.get_allocation(&"cheese_slice") == 1, "Cheese bots must clamp to 1 so total bots does not exceed 3")
+	assert(cheese_count.text == "1", "Cheese label should stay 1")
 
 	# Now decrease bun to 1 bot -> cheese can now be increased to 2 bots!
-	bun_spinbox.value = 1
-	cheese_spinbox.value = 2
-	assert(bun_spinbox.value == 1 and cheese_spinbox.value == 2, "Bun=1, Cheese=2 should sum to 3")
+	bun_minus.pressed.emit()
+	cheese_plus.pressed.emit()
+	assert(modal.get_allocation(&"bun") == 1 and modal.get_allocation(&"cheese_slice") == 2, "Bun=1, Cheese=2 should sum to 3")
+	assert(bun_count.text == "1" and cheese_count.text == "2", "Labels should reflect 1 and 2")
 
-	# Try to set bun to 3 bots -> total would be 5 -> must clamp bun to 1!
-	bun_spinbox.value = 3
-	assert(bun_spinbox.value == 1, "Bun bots must clamp to 1 (3 - 2) so total does not exceed 3")
+	# Try to set bun to 3 bots directly -> total would be 5 -> must clamp bun to 1!
+	modal.set_allocation(&"bun", 3)
+	assert(modal.get_allocation(&"bun") == 1, "Bun bots must clamp to 1 (3 - 2) so total does not exceed 3")
+	assert(bun_count.text == "1", "Bun label should stay 1")
 
 	game_node.queue_free()
 
@@ -208,11 +222,8 @@ func _test_confirm_and_cancel_bot_dispatch() -> void:
 	GameControl.begin_order(3, order_data)
 	GameControl.request_bot_dispatch(3, order_data)
 
-	var modal := game_node.find_child("BotHandoff", true, false) as PanelContainer
-	var items_list := modal.find_child("ItemsList", true, false) as VBoxContainer
-	var bun_spinbox := items_list.find_child("Row_bun", true, false).find_child("SpinBox", true, false) as SpinBox
-
-	bun_spinbox.value = 3
+	var modal := game_node.find_child("BotHandoff", true, false) as BotHandoffUI
+	modal.set_allocation(&"bun", 3)
 
 	var received_allocations: Dictionary = {}
 	var cb := func(o_id: int, allocs: Dictionary) -> void:
@@ -387,37 +398,65 @@ func _test_stepper_buttons_and_keyboard_interaction() -> void:
 
 	var plus_btn := bun_row.find_child("PlusButton", true, false) as Button
 	var minus_btn := bun_row.find_child("MinusButton", true, false) as Button
-	var spinbox := bun_row.find_child("SpinBox", true, false) as SpinBox
+	var bun_count := bun_row.find_child("CountLabel", true, false) as Label
 
-	assert(plus_btn != null and minus_btn != null and spinbox != null, "Plus/Minus buttons and SpinBox must exist")
-	assert(spinbox.value == 0, "Initial value should be 0")
+	assert(plus_btn != null and minus_btn != null and bun_count != null, "Plus/Minus buttons and CountLabel must exist")
+	assert(modal.get_allocation(&"bun") == 0, "Initial value should be 0")
+	assert(bun_count.text == "0", "Initial label text should be 0")
 
-	# Test mouse button press (+ and -)
+	# Test touch mode vs keyboard mode display
+	var key_hint := modal.find_child("KeyHintLabel", true, false) as Label
+	var cancel_btn := modal.find_child("CancelButton", true, false) as Button
+	var confirm_btn := modal.find_child("ConfirmButton", true, false) as Button
+	var hand_off_btn := game_node.find_child("HandOffButton", true, false) as Button
+	assert(key_hint != null and cancel_btn != null and confirm_btn != null and hand_off_btn != null, "UI controls must exist")
+
+	# Switch to touch mode
+	GameControl.input_mode = GameControl.InputMode.TOUCH
+	assert(not key_hint.visible, "Key hint should be hidden on touch / mobile")
+	assert(confirm_btn.text == "CONFIRM", "Confirm button text should be 'CONFIRM' on touch / mobile")
+	assert(cancel_btn.text == "SKIP", "Cancel button text should be 'SKIP' on touch / mobile")
+	assert(hand_off_btn.text == "HAND OFF", "HandOffButton should be 'HAND OFF' on touch / mobile")
+
+	# Switch to keyboard mode
+	GameControl.input_mode = GameControl.InputMode.KEYBOARD
+	assert(key_hint.visible, "Key hint should be visible on keyboard")
+	assert(confirm_btn.text == "CONFIRM (ENTER)", "Confirm button text should be 'CONFIRM (ENTER)' on keyboard")
+	assert(cancel_btn.text == "SKIP (ESC)", "Cancel button text should be 'SKIP (ESC)' on keyboard")
+	assert(hand_off_btn.text == "HAND OFF (H)", "HandOffButton should be 'HAND OFF (H)' on keyboard")
+
+	# Test mouse/touch button press (+ and -)
 	plus_btn.pressed.emit()
-	assert(spinbox.value == 1, "Clicking plus button should increment value to 1")
+	assert(modal.get_allocation(&"bun") == 1, "Clicking plus button should increment value to 1")
+	assert(bun_count.text == "1", "CountLabel should show 1")
 	plus_btn.pressed.emit()
-	assert(spinbox.value == 2, "Clicking plus button again should increment value to 2")
+	assert(modal.get_allocation(&"bun") == 2, "Clicking plus button again should increment value to 2")
+	assert(bun_count.text == "2", "CountLabel should show 2")
 	minus_btn.pressed.emit()
-	assert(spinbox.value == 1, "Clicking minus button should decrement value to 1")
+	assert(modal.get_allocation(&"bun") == 1, "Clicking minus button should decrement value to 1")
+	assert(bun_count.text == "1", "CountLabel should show 1")
 
 	# Test keyboard shortcut events (Right arrow, Left arrow, Number keys, Enter)
 	var right_event := InputEventKey.new()
 	right_event.pressed = true
 	right_event.keycode = KEY_RIGHT
 	modal._unhandled_input(right_event)
-	assert(spinbox.value == 2, "Right arrow key should increment bot assignment to 2")
+	assert(modal.get_allocation(&"bun") == 2, "Right arrow key should increment bot assignment to 2")
+	assert(bun_count.text == "2", "CountLabel should show 2")
 
 	var left_event := InputEventKey.new()
 	left_event.pressed = true
 	left_event.keycode = KEY_LEFT
 	modal._unhandled_input(left_event)
-	assert(spinbox.value == 1, "Left arrow key should decrement bot assignment to 1")
+	assert(modal.get_allocation(&"bun") == 1, "Left arrow key should decrement bot assignment to 1")
+	assert(bun_count.text == "1", "CountLabel should show 1")
 
 	var num_event := InputEventKey.new()
 	num_event.pressed = true
 	num_event.keycode = KEY_3
 	modal._unhandled_input(num_event)
-	assert(spinbox.value == 3, "Pressing key '3' should set bot assignment to 3")
+	assert(modal.get_allocation(&"bun") == 3, "Pressing key '3' should set bot assignment to 3")
+	assert(bun_count.text == "3", "CountLabel should show 3")
 
 	# Test Enter key confirms bot dispatch
 	var enter_event := InputEventKey.new()
@@ -430,4 +469,5 @@ func _test_stepper_buttons_and_keyboard_interaction() -> void:
 	assert(int(GameControl.get_active_bot_allocations().get(&"bun", 0)) == 3, "Bots allocated should be 3")
 
 	game_node.queue_free()
+
 
