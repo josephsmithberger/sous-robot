@@ -2,6 +2,7 @@ extends Control
 
 const MASTER_DIALOGUE: DialogueResource = preload("res://dialogue/master.dialogue")
 const FONT_LILITA: FontFile = preload("res://assets/fonts/LilitaOne-Regular.ttf")
+const TUTORIAL_OVERLAY_SCRIPT: Script = preload("res://scripts/tutorial_overlay.gd")
 const KITCHEN_TAB := 0
 const TRAY_HEIGHT := 132.0
 const SLIDE_DURATION := 0.28
@@ -19,6 +20,8 @@ const FIRST_UPGRADE_ITEMS: Array[StringName] = [
 
 @onready var _tabs: TabContainer = $MarginContainer/HSplitContainer/TabContainer
 @onready var _game_viewport_container: SubViewportContainer = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer
+@onready var _kitchen: Node3D = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer/SubViewport/kitchen
+@onready var _orders_panel: Control = $MarginContainer/HSplitContainer/stats/orders
 @onready var _dialogue_slot: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/DialogueTray/DialogueSlot
 @onready var _control_deck: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck
 @onready var _joystick_row: Control = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/ControlTray/ControlDeck/DeckMargin/JoystickRow
@@ -57,12 +60,15 @@ var _alert_tween: Tween
 # Señor Food conversation. A title is marked seen as soon as it is queued.
 var _story_queue: Array[StringName] = []
 var _seen_story_titles: Dictionary = {}
+var _tutorial_overlay: Control
+var _tutorial_finished := false
 
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
 	_create_process_picker()
 	_create_alert_banner()
+	_create_tutorial()
 
 	_tabs.tab_changed.connect(_on_tab_changed)
 	GameControl.controllability_changed.connect(_on_controllability_changed)
@@ -115,6 +121,8 @@ func _ready() -> void:
 	_on_tab_changed(_tabs.current_tab)
 
 	start_dialogue(MASTER_DIALOGUE, "intro")
+	if _tutorial_overlay != null:
+		_tutorial_overlay.call("arm")
 
 
 ## Helper method to launch dialogue in the interaction dialogue tray.
@@ -141,6 +149,32 @@ func _exit_tree() -> void:
 		GameControl.bot_task_completed.disconnect(_on_bot_task_completed)
 	if is_instance_valid(_alert_tween):
 		_alert_tween.kill()
+
+
+func _create_tutorial() -> void:
+	var interaction_stage := _game_viewport_container.get_parent() as Control
+	if interaction_stage == null:
+		return
+	_tutorial_overlay = TUTORIAL_OVERLAY_SCRIPT.new() as Control
+	_tutorial_overlay.name = "TutorialOverlay"
+	_tutorial_overlay.call(
+		"configure",
+		_game_viewport_container,
+		_kitchen,
+		_move_joystick,
+		_keyboard_hint,
+		_tabs,
+		_orders_panel
+	)
+	interaction_stage.add_child(_tutorial_overlay)
+	_tutorial_overlay.connect(&"tutorial_finished", _on_tutorial_finished)
+
+
+func _on_tutorial_finished() -> void:
+	if _tutorial_finished:
+		return
+	_tutorial_finished = true
+	call_deferred("_try_start_next_story_dialogue")
 
 
 func _create_alert_banner() -> void:
@@ -252,6 +286,8 @@ func _queue_story_dialogue(title: StringName) -> void:
 
 
 func _try_start_next_story_dialogue() -> void:
+	if not _tutorial_finished:
+		return
 	if _story_queue.is_empty() or GameControl.is_dialogue_active():
 		return
 	if GameControl.is_placing or GameControl.is_arranging:

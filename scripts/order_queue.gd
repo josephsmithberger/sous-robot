@@ -16,6 +16,17 @@ const STEAK: KitchenItem = preload("res://resources/items/steak.tres")
 const TOMATO: KitchenItem = preload("res://resources/items/tomato.tres")
 const TWO_BUNS: KitchenItem = preload("res://resources/items/two_buns.tres")
 
+# The first customer is a fixed, starter-friendly tutorial order. All later
+# customers remain procedural when use_procedural_orders is enabled.
+const FIRST_TUTORIAL_ORDER := {
+	"items": {"bread": 1, "bun": 1},
+	"base_reward": 7.5,
+	"tip": 2.5,
+	"wrong_item_penalty": 1.0,
+	"target_time": 22.0,
+	"max_time": 45.0,
+}
+
 @export_category("Visible Queue")
 @export_range(1, 8, 1) var visible_waiter_count := 3
 @export var waiter_spacing := Vector3(-2.5, 0.0, 0.0)
@@ -87,6 +98,7 @@ var _waiters: Array[WaiterRobot] = []
 var _catalog_by_id: Dictionary = {}
 var _item_names: Dictionary = {}
 var _cycle_index := 0
+var _has_issued_tutorial_order := false
 var _next_order_id := 1
 var _active_order: Dictionary = {}
 var _dialogue_waiter: WaiterRobot
@@ -348,6 +360,9 @@ const NON_ORDERABLE_ITEMS: Array[StringName] = [
 
 func _next_order_definition() -> Dictionary:
 	if use_procedural_orders:
+		if not _has_issued_tutorial_order:
+			_has_issued_tutorial_order = true
+			return FIRST_TUTORIAL_ORDER.duplicate(true)
 		return generate_random_order()
 
 	if order_cycle.is_empty():
