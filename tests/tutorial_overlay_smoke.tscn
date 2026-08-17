@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://v2n7qvxk5wb4"]
+
+[ext_resource type="Script" uid="uid://bmvqwqba5irmn" path="res://tests/tutorial_overlay_smoke.gd" id="1_mqmw8"]
+
+[node name="TutorialOverlaySmoke" type="Node" unique_id=2058810300]
+script = ExtResource("1_mqmw8")
