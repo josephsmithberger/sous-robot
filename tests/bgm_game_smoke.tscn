@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgm_game_smoke_test_01"]
+
+[ext_resource type="Script" path="res://tests/bgm_game_smoke.gd" id="1_bgm"]
+
+[node name="BGMGameSmoke" type="Node"]
+script = ExtResource("1_bgm")

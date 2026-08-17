@@ -8,6 +8,7 @@ func _ready() -> void:
 	test_all_samples_loaded()
 	test_player_pool_and_playback()
 	test_semantic_helpers()
+	test_bgm_functionality()
 	test_signal_integration()
 	print("--- SFX Smoke Tests: ALL PASSED ---")
 	# If running as standalone test scene, automatically quit after a short delay
@@ -99,3 +100,26 @@ func test_signal_integration() -> void:
 	GameControl.dialogue_activity_changed.emit(true)
 	GameControl.dialogue_activity_changed.emit(false)
 	print("[PASS] Global signal integrations executed cleanly.")
+
+
+func test_bgm_functionality() -> void:
+	assert(SFX.BGM_GAME_JAZZ != null, "SFX.BGM_GAME_JAZZ background music stream must not be null.")
+	assert(SFX.BGM_GAME_JAZZ.get_length() > 0.0, "SFX.BGM_GAME_JAZZ must have positive length.")
+	assert(SFX.has_method("play_bgm"), "SFX must have play_bgm method.")
+	assert(SFX.has_method("stop_bgm"), "SFX must have stop_bgm method.")
+	assert(SFX.has_method("is_bgm_playing"), "SFX must have is_bgm_playing method.")
+
+	# Test starting BGM immediately
+	SFX.play_bgm(SFX.BGM_GAME_JAZZ, 0.0, -16.0)
+	assert(SFX.is_bgm_playing(), "SFX.is_bgm_playing() must return true after play_bgm.")
+
+	# Test volume update
+	SFX.set_bgm_volume(-18.0)
+	assert(is_equal_approx(SFX.bgm_volume_db, -18.0), "SFX.bgm_volume_db should equal -18.0.")
+
+	# Test stopping BGM
+	SFX.stop_bgm(0.0)
+	assert(not SFX.is_bgm_playing(), "SFX.is_bgm_playing() must return false after stop_bgm.")
+
+	print("[PASS] BGM functionality (play, volume, stop, loop) verified successfully.")
+

@@ -122,6 +122,9 @@ func _ready() -> void:
 	if _tutorial_overlay != null:
 		_tutorial_overlay.call("arm")
 
+	if SFX != null:
+		SFX.play_bgm(SFX.BGM_GAME_JAZZ, 1.2, -16.0)
+
 
 ## Helper method to launch dialogue in the interaction dialogue tray.
 func start_dialogue(resource: DialogueResource, title: String = "") -> Node:
@@ -134,6 +137,8 @@ func _process(_delta: float) -> void:
 
 
 func _exit_tree() -> void:
+	if SFX != null:
+		SFX.stop_bgm(0.8)
 	DialogueManager.get_current_scene = _previous_dialogue_host_resolver
 	GameControl.set_virtual_input(Vector2.ZERO, Vector2.ZERO)
 	GameControl.set_controllable(false)

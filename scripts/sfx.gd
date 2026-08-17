@@ -114,16 +114,24 @@ const PUFFS: Array[StringName] = [
 	&"clothBelt", &"clothBelt2", &"cloth1", &"cloth2",
 ]
 
+const BGM_GAME_JAZZ: AudioStream = preload("res://assets/audio/hitslab-jazz-restaurant-cafe-music-334836.mp3")
+
 var _players: Array[AudioStreamPlayer] = []
 var _pool_index := 0
 var _last_footstep_index := -1
-var sfx_volume_db := 0.0
+var sfx_volume_db := -14.0
 var sfx_enabled := true
+
+var _bgm_player: AudioStreamPlayer
+var _bgm_tween: Tween
+var bgm_volume_db := -16.0
+var bgm_enabled := true
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_init_player_pool()
+	_init_bgm_player()
 	_connect_global_signals()
 
 
@@ -134,6 +142,80 @@ func _init_player_pool() -> void:
 		player.bus = &"Master"
 		add_child(player)
 		_players.append(player)
+
+
+func _init_bgm_player() -> void:
+	_bgm_player = AudioStreamPlayer.new()
+	_bgm_player.name = "BGMPlayer"
+	_bgm_player.bus = &"Master"
+	_bgm_player.volume_db = bgm_volume_db
+	add_child(_bgm_player)
+
+
+## Plays background music looping seamlessly and subtly.
+func play_bgm(stream: AudioStream = null, fade_duration: float = 1.2, target_volume_db: float = -16.0) -> void:
+	if not bgm_enabled:
+		return
+	if stream == null:
+		stream = BGM_GAME_JAZZ
+	if stream == null:
+		return
+
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif "loop" in stream:
+		stream.set("loop", true)
+
+	if _bgm_player.playing and _bgm_player.stream == stream:
+		return
+
+	bgm_volume_db = target_volume_db
+
+	if _bgm_tween != null and _bgm_tween.is_valid():
+		_bgm_tween.kill()
+
+	_bgm_player.stream = stream
+	if fade_duration > 0.0:
+		_bgm_player.volume_db = -80.0
+		_bgm_player.play()
+		_bgm_tween = create_tween()
+		_bgm_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_bgm_tween.tween_property(_bgm_player, "volume_db", bgm_volume_db, fade_duration)
+	else:
+		_bgm_player.volume_db = bgm_volume_db
+		_bgm_player.play()
+
+
+## Stops the background music with an optional subtle fade out.
+func stop_bgm(fade_duration: float = 0.8) -> void:
+	if _bgm_player == null or not _bgm_player.playing:
+		return
+
+	if _bgm_tween != null and _bgm_tween.is_valid():
+		_bgm_tween.kill()
+
+	if fade_duration > 0.0:
+		_bgm_tween = create_tween()
+		_bgm_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		_bgm_tween.tween_property(_bgm_player, "volume_db", -80.0, fade_duration)
+		_bgm_tween.tween_callback(func():
+			if _bgm_player != null:
+				_bgm_player.stop()
+		)
+	else:
+		_bgm_player.stop()
+
+
+## Checks if background music is currently playing.
+func is_bgm_playing() -> bool:
+	return _bgm_player != null and _bgm_player.playing
+
+
+## Sets the volume level of the background music.
+func set_bgm_volume(volume_db: float) -> void:
+	bgm_volume_db = volume_db
+	if _bgm_player != null and _bgm_player.playing:
+		_bgm_player.volume_db = volume_db
 
 
 func _get_available_player() -> AudioStreamPlayer:
@@ -182,94 +264,104 @@ func play_random(sound_names: Array, volume_offset_db: float = 0.0, pitch_min: f
 	return play(chosen, volume_offset_db, pitch, 0.0)
 
 
+## Sets the master volume offset for all sound effects.
+func set_sfx_volume(volume_db: float) -> void:
+	sfx_volume_db = volume_db
+
+
+## Gets the master volume offset for all sound effects.
+func get_sfx_volume() -> float:
+	return sfx_volume_db
+
+
 # =========================================================================
 # Semantic Game Sound Helpers
 # =========================================================================
 
 func play_click(pitch_var: float = 0.08) -> AudioStreamPlayer:
-	return play(&"metalClick", -2.0, 1.0, pitch_var)
+	return play(&"metalClick", -4.0, 1.0, pitch_var)
 
 
 func play_tab() -> AudioStreamPlayer:
-	return play_random(BOOK_FLIPS, -1.0, 0.95, 1.05)
+	return play_random(BOOK_FLIPS, -4.0, 0.95, 1.05)
 
 
 func play_book_open() -> AudioStreamPlayer:
-	return play(&"bookOpen", 0.0, 1.0, 0.05)
+	return play(&"bookOpen", -2.0, 1.0, 0.05)
 
 
 func play_book_close() -> AudioStreamPlayer:
-	return play(&"bookClose", 0.0, 1.0, 0.05)
+	return play(&"bookClose", -2.0, 1.0, 0.05)
 
 
 func play_chop() -> AudioStreamPlayer:
-	return play(&"chop", 2.0, 1.0, 0.08)
+	return play(&"chop", -2.0, 1.0, 0.08)
 
 
 func play_slice() -> AudioStreamPlayer:
-	return play_random(SLICES, 1.0, 0.92, 1.08)
+	return play_random(SLICES, -2.0, 0.92, 1.08)
 
 
 func play_knife() -> AudioStreamPlayer:
-	return play_random(KNIVES, 0.0, 0.95, 1.05)
+	return play_random(KNIVES, -3.0, 0.95, 1.05)
 
 
 func play_pot() -> AudioStreamPlayer:
-	return play_random(POTS, 1.0, 0.95, 1.05)
+	return play_random(POTS, -3.0, 0.95, 1.05)
 
 
 func play_pickup() -> AudioStreamPlayer:
-	return play_random(PICKUPS, 1.0, 0.92, 1.08)
+	return play_random(PICKUPS, -3.0, 0.92, 1.08)
 
 
 func play_drop() -> AudioStreamPlayer:
-	return play(&"dropLeather", 0.0, 1.0, 0.06)
+	return play(&"dropLeather", -3.0, 1.0, 0.06)
 
 
 func play_place() -> AudioStreamPlayer:
-	return play_random(BOOK_PLACES, 2.0, 0.95, 1.05)
+	return play_random(BOOK_PLACES, -2.0, 0.95, 1.05)
 
 
 func play_trash() -> AudioStreamPlayer:
-	return play_random(CREAKS, 1.0, 0.90, 1.10)
+	return play_random(CREAKS, -3.0, 0.90, 1.10)
 
 
 func play_coin() -> AudioStreamPlayer:
-	return play_random(COINS, 2.0, 0.95, 1.05)
+	return play_random(COINS, -2.0, 0.95, 1.05)
 
 
 func play_deliver() -> AudioStreamPlayer:
-	play(&"metalLatch", 0.0, 1.0)
-	return play_random(POTS, 1.0, 1.05, 1.15)
+	play(&"metalLatch", -3.0, 1.0)
+	return play_random(POTS, -3.0, 1.05, 1.15)
 
 
 func play_order_complete() -> AudioStreamPlayer:
-	play(&"metalLatch", 2.0, 1.1)
-	return play(&"handleCoins", 3.0, 1.0, 0.05)
+	play(&"metalLatch", -2.0, 1.1)
+	return play(&"handleCoins", -1.0, 1.0, 0.05)
 
 
 func play_order_penalty() -> AudioStreamPlayer:
-	return play_random(CREAKS, 2.0, 0.85, 0.95)
+	return play_random(CREAKS, -2.0, 0.85, 0.95)
 
 
 func play_door_open() -> AudioStreamPlayer:
-	return play_random(DOORS_OPEN, 0.0, 0.95, 1.05)
+	return play_random(DOORS_OPEN, -2.0, 0.95, 1.05)
 
 
 func play_door_close() -> AudioStreamPlayer:
-	return play_random(DOORS_CLOSE, 0.0, 0.95, 1.05)
+	return play_random(DOORS_CLOSE, -2.0, 0.95, 1.05)
 
 
 func play_latch() -> AudioStreamPlayer:
-	return play(&"metalLatch", 1.0, 1.0, 0.05)
+	return play(&"metalLatch", -2.0, 1.0, 0.05)
 
 
 func play_creak() -> AudioStreamPlayer:
-	return play_random(CREAKS, 0.0, 0.95, 1.05)
+	return play_random(CREAKS, -3.0, 0.95, 1.05)
 
 
 func play_puff() -> AudioStreamPlayer:
-	return play_random(PUFFS, 2.0, 0.90, 1.10)
+	return play_random(PUFFS, -2.0, 0.90, 1.10)
 
 
 func play_footstep() -> AudioStreamPlayer:

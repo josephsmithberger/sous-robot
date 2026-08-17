@@ -1,6 +1,352 @@
 [gd_scene format=3 uid="uid://ct7d4u74y3oht"]
 
 [ext_resource type="Script" uid="uid://dwm5bf4kcwrcv" path="res://scripts/title.gd" id="1_4ignj"]
+[ext_resource type="Shader" uid="uid://dx7n6wksdw6qf" path="res://shaders/bg.gdshader" id="2_wosw1"]
+[ext_resource type="FontFile" uid="uid://csmkktpefub4j" path="res://assets/fonts/Sauce Tomato.otf" id="3_font_tomato"]
+[ext_resource type="FontFile" uid="uid://dd0mykotyonnj" path="res://assets/fonts/LilitaOne-Regular.ttf" id="4_font_body"]
+[ext_resource type="Texture2D" uid="uid://c1qsaqtd5d85n" path="res://assets/ui/utensil_decal.svg" id="5_utensils"]
+[ext_resource type="Texture2D" uid="uid://dj13rfjr8v1v" path="res://assets/appliances/thumbnails/crate_tomatoes.png" id="6_tomatoes"]
+[ext_resource type="Texture2D" uid="uid://vndntl2q6ut0" path="res://assets/appliances/thumbnails/oven.png" id="7_oven"]
+[ext_resource type="Texture2D" uid="uid://r4vkvunfjt86" path="res://assets/appliances/thumbnails/crate_buns.png" id="8_buns"]
+[ext_resource type="Texture2D" uid="uid://cc5ui125sq3q3" path="res://assets/appliances/thumbnails/crate_cheese.png" id="9_cheese"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_title_bg"]
+shader = ExtResource("2_wosw1")
+shader_parameter/color_one = Color(0.854902, 0.160784, 0.109804, 1)
+shader_parameter/color_two = Color(1, 0.780392, 0.172549, 1)
+shader_parameter/angle = 35.0
+shader_parameter/line_count = 28.0
+shader_parameter/speed = 0.6
+shader_parameter/blur = 0.0
+
+[sub_resource type="Gradient" id="Gradient_vignette"]
+colors = PackedColorArray(0, 0, 0, 0, 0.08, 0.06, 0.05, 0.45)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vignette"]
+gradient = SubResource("Gradient_vignette")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_badge"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.988235, 0.968627, 0.909804, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hero_plaque"]
+content_margin_left = 44.0
+content_margin_top = 26.0
+content_margin_right = 44.0
+content_margin_bottom = 28.0
+bg_color = Color(0.992157, 0.976471, 0.917647, 0.98)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+shadow_color = Color(0.12, 0.1, 0.08, 0.45)
+shadow_size = 16
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ribbon"]
+content_margin_left = 18.0
+content_margin_top = 5.0
+content_margin_right = 18.0
+content_margin_bottom = 5.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.3)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_divider"]
+color = Color(1, 0.780392, 0.172549, 1)
+thickness = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_normal"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.780392, 0.172549, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
+shadow_size = 5
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_hover"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.858824, 0.298039, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.55)
+shadow_size = 7
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_pressed"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.92, 0.69, 0.1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.3)
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_focus"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.858824, 0.298039, 1)
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.854902, 0.160784, 0.109804, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_normal"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.4)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_hover"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.95, 0.24, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.5)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_pressed"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 6.0
+bg_color = Color(0.7, 0.12, 0.08, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.25)
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_normal"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.921569, 0.898039, 0.835294, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.32, 0.28, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.2)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_hover"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.86, 0.83, 0.76, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_pressed"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.78, 0.75, 0.68, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bottom_pill"]
+content_margin_left = 18.0
+content_margin_top = 6.0
+content_margin_right = 18.0
+content_margin_bottom = 6.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_deck"]
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 26.0
+bg_color = Color(0.992157, 0.976471, 0.917647, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.854902, 0.160784, 0.109804, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.1, 0.08, 0.06, 0.6)
+shadow_size = 24
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guide_card"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.152941, 0.145098, 0.121569, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.780392, 0.172549, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tips_box"]
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+bg_color = Color(0.854902, 0.160784, 0.109804, 0.12)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.854902, 0.160784, 0.109804, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="title" type="Control" unique_id=1405306987]
 layout_mode = 3
@@ -11,6 +357,209 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4ignj")
 
+[node name="Background" type="ColorRect" parent="." unique_id=713197550]
+material = SubResource("ShaderMaterial_title_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Vignette" type="TextureRect" parent="." unique_id=198273641]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_vignette")
+
+[node name="DecorativeLayer" type="Control" parent="." unique_id=581920381]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BadgeTopLeft" type="PanelContainer" parent="DecorativeLayer" unique_id=110293847]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 232.0
+offset_bottom = 86.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_corner_badge")
+
+[node name="HBox" type="HBoxContainer" parent="DecorativeLayer/BadgeTopLeft" unique_id=110293848]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Icon" type="TextureRect" parent="DecorativeLayer/BadgeTopLeft/HBox" unique_id=110293849]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_tomatoes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="DecorativeLayer/BadgeTopLeft/HBox" unique_id=110293850]
+layout_mode = 2
+alignment = 1
+
+[node name="Header" type="Label" parent="DecorativeLayer/BadgeTopLeft/HBox/VBox" unique_id=110293851]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 15
+text = "FRESH CRATES"
+
+[node name="Sub" type="Label" parent="DecorativeLayer/BadgeTopLeft/HBox/VBox" unique_id=110293852]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 11
+text = "Tomatoes & Veggies"
+
+[node name="BadgeTopRight" type="PanelContainer" parent="DecorativeLayer" unique_id=220293847]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -232.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = 86.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_corner_badge")
+
+[node name="HBox" type="HBoxContainer" parent="DecorativeLayer/BadgeTopRight" unique_id=220293848]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Icon" type="TextureRect" parent="DecorativeLayer/BadgeTopRight/HBox" unique_id=220293849]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_oven")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="DecorativeLayer/BadgeTopRight/HBox" unique_id=220293850]
+layout_mode = 2
+alignment = 1
+
+[node name="Header" type="Label" parent="DecorativeLayer/BadgeTopRight/HBox/VBox" unique_id=220293851]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 15
+text = "AUTO BAKING"
+
+[node name="Sub" type="Label" parent="DecorativeLayer/BadgeTopRight/HBox/VBox" unique_id=220293852]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 11
+text = "Ovens & Stoves"
+
+[node name="BadgeBottomLeft" type="PanelContainer" parent="DecorativeLayer" unique_id=330293847]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -100.0
+offset_right = 232.0
+offset_bottom = -46.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_corner_badge")
+
+[node name="HBox" type="HBoxContainer" parent="DecorativeLayer/BadgeBottomLeft" unique_id=330293848]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Icon" type="TextureRect" parent="DecorativeLayer/BadgeBottomLeft/HBox" unique_id=330293849]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_buns")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="DecorativeLayer/BadgeBottomLeft/HBox" unique_id=330293850]
+layout_mode = 2
+alignment = 1
+
+[node name="Header" type="Label" parent="DecorativeLayer/BadgeBottomLeft/HBox/VBox" unique_id=330293851]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 15
+text = "ASSEMBLE"
+
+[node name="Sub" type="Label" parent="DecorativeLayer/BadgeBottomLeft/HBox/VBox" unique_id=330293852]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 11
+text = "Craft Gourmet Burgers"
+
+[node name="BadgeBottomRight" type="PanelContainer" parent="DecorativeLayer" unique_id=440293847]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -232.0
+offset_top = -100.0
+offset_right = -32.0
+offset_bottom = -46.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_corner_badge")
+
+[node name="HBox" type="HBoxContainer" parent="DecorativeLayer/BadgeBottomRight" unique_id=440293848]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Icon" type="TextureRect" parent="DecorativeLayer/BadgeBottomRight/HBox" unique_id=440293849]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("9_cheese")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="DecorativeLayer/BadgeBottomRight/HBox" unique_id=440293850]
+layout_mode = 2
+alignment = 1
+
+[node name="Header" type="Label" parent="DecorativeLayer/BadgeBottomRight/HBox/VBox" unique_id=440293851]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 15
+text = "BIG TIPS"
+
+[node name="Sub" type="Label" parent="DecorativeLayer/BadgeBottomRight/HBox/VBox" unique_id=440293852]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 11
+text = "Fast Diner Rush"
+
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=883046205]
 layout_mode = 1
 anchors_preset = 15
@@ -19,20 +568,343 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1634181199]
+[node name="HeroCard" type="PanelContainer" parent="CenterContainer" unique_id=990182736]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(550, 0)
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_styles/panel = SubResource("StyleBoxFlat_hero_plaque")
+
+[node name="ContentBox" type="VBoxContainer" parent="CenterContainer/HeroCard" unique_id=1634181199]
+layout_mode = 2
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=410952178]
-layout_mode = 2
-text = "Sous Robot by Joseph Smithberger"
-horizontal_alignment = 1
-
-[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=579761972]
-custom_minimum_size = Vector2(75, 0)
+[node name="TopRibbon" type="PanelContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=771829304]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Start"
+theme_override_styles/panel = SubResource("StyleBoxFlat_ribbon")
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[node name="RibbonLabel" type="Label" parent="CenterContainer/HeroCard/ContentBox/TopRibbon" unique_id=771829305]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 14
+text = "★ AUTOMATED CULINARY DINER ★"
+horizontal_alignment = 1
+
+[node name="TitleBox" type="MarginContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=881726354]
+layout_mode = 2
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 18
+
+[node name="MainTitle" type="Label" parent="CenterContainer/HeroCard/ContentBox/TitleBox" unique_id=410952178]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_colors/font_shadow_color = Color(0.152941, 0.145098, 0.121569, 0.75)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 6
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 64
+text = "SOUS ROBOT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/HeroCard/ContentBox" unique_id=992837465]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.28, 0.25, 0.22, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 16
+text = "Cook • Automate with Robots • Serve the Rush!"
+horizontal_alignment = 1
+
+[node name="DividerBox" type="HBoxContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=661728394]
+layout_mode = 2
+alignment = 1
+
+[node name="LeftLine" type="HSeparator" parent="CenterContainer/HeroCard/ContentBox/DividerBox" unique_id=661728395]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxLine_divider")
+
+[node name="UtensilIcon" type="TextureRect" parent="CenterContainer/HeroCard/ContentBox/DividerBox" unique_id=661728396]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+texture = ExtResource("5_utensils")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightLine" type="HSeparator" parent="CenterContainer/HeroCard/ContentBox/DividerBox" unique_id=661728397]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxLine_divider")
+
+[node name="ButtonStack" type="VBoxContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=551728391]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="StartButton" type="Button" parent="CenterContainer/HeroCard/ContentBox/ButtonStack" unique_id=579761972]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(290, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_start_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_start_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_start_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
+text = "▶  START COOKING"
+
+[node name="HowToPlayButton" type="Button" parent="CenterContainer/HeroCard/ContentBox/ButtonStack" unique_id=579761973]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(290, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_how_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_how_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_how_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
+text = "📖  HOW TO PLAY"
+
+[node name="QuitButton" type="Button" parent="CenterContainer/HeroCard/ContentBox/ButtonStack" unique_id=579761974]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(290, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.18, 0.15, 1)
+theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_quit_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_quit_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_quit_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
+text = "✕  EXIT"
+
+[node name="CreditLabel" type="Label" parent="CenterContainer/HeroCard/ContentBox" unique_id=331827461]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 0.85)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 13
+text = "A Game by Joseph Smithberger"
+horizontal_alignment = 1
+
+[node name="BottomBar" type="MarginContainer" parent="." unique_id=991827364]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 12
+
+[node name="Pill" type="PanelContainer" parent="BottomBar" unique_id=991827365]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_bottom_pill")
+
+[node name="HelperLabel" type="Label" parent="BottomBar/Pill" unique_id=991827366]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 13
+text = "CONTROLS:  [WASD / Touch] Move   •   [E] Interact & Cook   •   [Space / Enter] Start"
+horizontal_alignment = 1
+
+[node name="HowToPlayModal" type="Control" parent="." unique_id=880192837]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="HowToPlayModal" unique_id=880192838]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.07, 0.06, 0.72)
+
+[node name="CenterContainer" type="CenterContainer" parent="HowToPlayModal" unique_id=880192839]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalDeck" type="PanelContainer" parent="HowToPlayModal/CenterContainer" unique_id=880192840]
+custom_minimum_size = Vector2(740, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_deck")
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayModal/CenterContainer/ModalDeck" unique_id=880192841]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ModalTitle" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox" unique_id=880192842]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 26
+text = "HOW TO RUN YOUR AUTOMATED DINER"
+horizontal_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox" unique_id=880192843]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Card1" type="PanelContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid" unique_id=880192844]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_guide_card")
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card1" unique_id=880192845]
+layout_mode = 2
+
+[node name="Head" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card1/VBox" unique_id=880192846]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 16
+text = "1. TAKE ORDERS"
+
+[node name="Body" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card1/VBox" unique_id=880192847]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 12
+text = "Hungry patrons place orders at the counter. Complete tickets fast before the tip timer runs out!"
+autowrap_mode = 2
+
+[node name="Card2" type="PanelContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid" unique_id=880192848]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_guide_card")
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card2" unique_id=880192849]
+layout_mode = 2
+
+[node name="Head" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card2/VBox" unique_id=880192850]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 16
+text = "2. PREP AND COOK"
+
+[node name="Body" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card2/VBox" unique_id=880192851]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 12
+text = "Chop tomatoes and onions at cutting boards, fry burgers on the stove, and bake fresh buns in the oven."
+autowrap_mode = 2
+
+[node name="Card3" type="PanelContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid" unique_id=880192852]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_guide_card")
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card3" unique_id=880192853]
+layout_mode = 2
+
+[node name="Head" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card3/VBox" unique_id=880192854]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 16
+text = "3. ASSEMBLE AND DELIVER"
+
+[node name="Body" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card3/VBox" unique_id=880192855]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 12
+text = "Stack buns, patties, lettuce, and sauces on the Assembly Counter, then bring finished plates to the serving window!"
+autowrap_mode = 2
+
+[node name="Card4" type="PanelContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid" unique_id=880192856]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_guide_card")
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card4" unique_id=880192857]
+layout_mode = 2
+
+[node name="Head" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card4/VBox" unique_id=880192858]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 16
+text = "4. BOT CHEFS"
+
+[node name="Body" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/Grid/Card4/VBox" unique_id=880192859]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
+theme_override_fonts/font = ExtResource("4_font_body")
+theme_override_font_sizes/font_size = 12
+text = "Assign robot worker bots in the Bot Dispatch menu to automate food prep and assembly line tasks!"
+autowrap_mode = 2
+
+[node name="TipsPanel" type="PanelContainer" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox" unique_id=880192861]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tips_box")
+
+[node name="TipsLabel" type="Label" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox/TipsPanel" unique_id=880192862]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.854902, 0.160784, 0.109804, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 13
+text = "TIP: Switch tabs using [1] Kitchen, [2] Recipes, and [3] Store!"
+horizontal_alignment = 1
+
+[node name="CloseModalButton" type="Button" parent="HowToPlayModal/CenterContainer/ModalDeck/VBox" unique_id=880192860]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_fonts/font = ExtResource("3_font_tomato")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_start_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_start_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_start_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
+text = "LET'S COOK!"
+
+[connection signal="pressed" from="CenterContainer/HeroCard/ContentBox/ButtonStack/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="CenterContainer/HeroCard/ContentBox/ButtonStack/HowToPlayButton" to="." method="_on_how_to_play_button_pressed"]
+[connection signal="pressed" from="CenterContainer/HeroCard/ContentBox/ButtonStack/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="HowToPlayModal/CenterContainer/ModalDeck/VBox/CloseModalButton" to="." method="_on_close_modal_button_pressed"]
