@@ -60,6 +60,7 @@ func _ready() -> void:
 	GameControl.process_picker_selected.connect(_on_process_picker_selected)
 	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
 	GameControl.process_picker_refreshed.connect(_on_process_picker_refreshed)
+	GameControl.bot_task_completed.connect(_on_bot_task_completed)
 	GameControl.placement_started.connect(_on_placement_started)
 	GameControl.placement_completed.connect(_on_placement_completed)
 	GameControl.placement_cancelled.connect(_on_placement_cancelled)
@@ -109,6 +110,8 @@ func _exit_tree() -> void:
 	GameControl.set_controllable(false)
 	if RecipeTracker.automation_available.is_connected(_on_automation_available):
 		RecipeTracker.automation_available.disconnect(_on_automation_available)
+	if GameControl.bot_task_completed.is_connected(_on_bot_task_completed):
+		GameControl.bot_task_completed.disconnect(_on_bot_task_completed)
 	if is_instance_valid(_alert_tween):
 		_alert_tween.kill()
 
@@ -163,6 +166,22 @@ func _resolve_alert_message(recipe_id: StringName, recipe_name: String, message:
 	if not recipe_id.is_empty():
 		return "new automation available: %s" % str(recipe_id)
 	return ""
+
+
+func _on_bot_task_completed(
+	order_id: int,
+	item_id: StringName,
+	item_name: String,
+	succeeded: bool,
+	detail: String
+) -> void:
+	var display_name := item_name if not item_name.is_empty() else str(item_id).capitalize()
+	var message := "BOT COMPLETED %s · ORDER #%02d" % [display_name.to_upper(), order_id]
+	if not succeeded:
+		message = "BOT COULD NOT MAKE %s" % display_name.to_upper()
+		if not detail.is_empty():
+			message += " · %s" % detail
+	_on_automation_available(item_id, display_name, message)
 
 
 func _on_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:

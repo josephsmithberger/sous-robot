@@ -65,13 +65,15 @@ func get_selected_recipe() -> ItemProcessRecipe:
 
 
 func can_interact(player: Node) -> bool:
-	if GameControl.is_process_picker_open() and GameControl.process_picker_target != self:
+	var is_bot := player != null and player.is_in_group(&"bots")
+	if not is_bot and GameControl.is_process_picker_open() and GameControl.process_picker_target != self:
 		return false
 	var matches := get_matching_recipes(player)
 	if matches.is_empty():
-		_clear_selection()
+		if not is_bot:
+			_clear_selection()
 		return false
-	if _selected_recipe != null:
+	if not is_bot and _selected_recipe != null:
 		if not matches.has(_selected_recipe):
 			_clear_selection()
 			return false
@@ -82,7 +84,7 @@ func get_interaction_prompt(player: Node) -> String:
 	var matches := get_matching_recipes(player)
 	if matches.is_empty():
 		return ""
-	var recipe := _get_active_recipe(matches)
+	var recipe := _get_active_recipe(matches, player)
 	if recipe != null:
 		return "HOLD TO %s" % recipe.get_action_label() if recipe.hold_duration > 0.0 else recipe.get_action_label()
 	if matches.size() > 1:
@@ -92,18 +94,22 @@ func get_interaction_prompt(player: Node) -> String:
 
 func get_interaction_hold_duration(player: Node) -> float:
 	var matches := get_matching_recipes(player)
-	var recipe := _get_active_recipe(matches)
+	var recipe := _get_active_recipe(matches, player)
 	return recipe.hold_duration if recipe != null else 0.0
 
 
 func interact(player: Node) -> void:
+	var is_bot := player != null and player.is_in_group(&"bots")
 	var matches := get_matching_recipes(player)
 	if matches.is_empty():
-		_clear_selection()
+		if not is_bot:
+			_clear_selection()
 		return
 
-	var recipe := _get_active_recipe(matches)
+	var recipe := _get_active_recipe(matches, player)
 	if recipe == null:
+		if is_bot:
+			return
 		if matches.size() > 1:
 			GameControl.request_process_picker(self, matches)
 		else:
@@ -117,7 +123,14 @@ func clear_process_selection() -> void:
 	_clear_selection()
 
 
-func _get_active_recipe(matches: Array[ItemProcessRecipe]) -> ItemProcessRecipe:
+func _get_active_recipe(matches: Array[ItemProcessRecipe], player: Node = null) -> ItemProcessRecipe:
+	if player != null and player.has_method(&"get_desired_process_recipe_id"):
+		var desired_id: StringName = player.get_desired_process_recipe_id()
+		if not desired_id.is_empty():
+			for candidate in matches:
+				if candidate != null and candidate.recipe_id == desired_id:
+					return candidate
+			return null
 	if _selected_recipe != null:
 		if matches.has(_selected_recipe):
 			return _selected_recipe
@@ -126,13 +139,17 @@ func _get_active_recipe(matches: Array[ItemProcessRecipe]) -> ItemProcessRecipe:
 
 
 func _apply_recipe(player: Node, recipe: ItemProcessRecipe) -> void:
+	var is_bot := player != null and player.is_in_group(&"bots")
 	if player == null or not player.has_method(&"get_held_item") or player.get_held_item() == null:
-		_clear_selection()
+		if not is_bot:
+			_clear_selection()
 		return
 	if recipe == null or not recipe.is_valid() or not recipe.matches_item(player.get_held_item().item_id):
-		_clear_selection()
+		if not is_bot:
+			_clear_selection()
 		return
-	_clear_selection()
+	if not is_bot:
+		_clear_selection()
 	if player.has_method(&"set_held_item"):
 		player.set_held_item(recipe.output_item)
 		RecipeTracker.record_recipe_made(recipe.recipe_id, recipe.output_item)

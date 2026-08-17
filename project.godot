@@ -60,8 +60,7 @@ project/editorState=[{
 "column": 0,
 "current": true,
 "line": 0,
-"path": "res://tests/bot_worker_navigation_smoke.gd",
-"transient": true,
+"path": "res://tests/bot_handoff_execution_smoke.gd",
 "type": "file"
 }]
 project/shaderEditorState=[{

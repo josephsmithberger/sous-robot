@@ -18,7 +18,7 @@ signal despawn_completed
 
 const BOT_MATERIAL: Material = preload("res://assets/robot_green_material.tres")
 
-@export var move_speed := 3.5
+@export var move_speed := 5.8
 @export var rotation_speed := 10.0
 
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
@@ -34,6 +34,10 @@ var _interaction_elapsed := 0.0
 var _required_hold_duration := 0.0
 var _held_item_visual: Node3D
 var _anim_player: AnimationPlayer
+var _desired_process_recipe_id: StringName = &""
+var _walk_phase := 0.0
+var _path_cursor := 0
+var _procedural_parts: Dictionary = {}
 
 
 func _ready() -> void:
@@ -41,10 +45,14 @@ func _ready() -> void:
 	add_to_group(&"worker_robots")
 	_apply_bot_material()
 	_find_animation_player()
+	_cache_procedural_animation_parts()
 	_play_anim(&"idle")
 	if nav_agent != null:
 		nav_agent.path_desired_distance = 0.4
 		nav_agent.target_desired_distance = 0.6
+		# The kitchen navmesh is baked on the top face of the floor collider,
+		# while the character origin rests at floor level.
+		nav_agent.path_height_offset = 0.5
 		nav_agent.path_max_distance = 2.0
 		nav_agent.avoidance_enabled = false
 
@@ -65,6 +73,12 @@ func _find_animation_player() -> void:
 	if _anim_player != null:
 		return
 	_anim_player = find_child("AnimationPlayer", true, false) as AnimationPlayer
+
+
+func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+	_update_procedural_animation(delta)
 
 
 func _physics_process(delta: float) -> void:
@@ -105,18 +119,31 @@ func _process_navigation(delta: float) -> void:
 		_state = State.IDLE
 		return
 
-	var dist_to_target := global_position.distance_to(_target_position)
-	var is_reached := (
-		nav_agent.is_navigation_finished()
-		or nav_agent.is_target_reached()
-		or dist_to_target <= nav_agent.target_desired_distance
-	)
-
-	if is_reached:
+	var flat_to_target := Vector2(
+		global_position.x - _target_position.x,
+		global_position.z - _target_position.z
+	).length()
+	if flat_to_target <= nav_agent.target_desired_distance:
 		_on_target_reached()
 		return
 
+	var navigation_path := nav_agent.get_current_navigation_path()
 	var next_pos := nav_agent.get_next_path_position()
+	if not navigation_path.is_empty():
+		_path_cursor = mini(_path_cursor, navigation_path.size() - 1)
+		while _path_cursor < navigation_path.size():
+			var point := navigation_path[_path_cursor]
+			var flat_to_point := Vector2(
+				global_position.x - point.x,
+				global_position.z - point.z
+			).length()
+			if flat_to_point > nav_agent.path_desired_distance:
+				next_pos = point
+				break
+			_path_cursor += 1
+		if _path_cursor >= navigation_path.size():
+			next_pos = _target_position
+
 	var move_dir := next_pos - global_position
 	move_dir.y = 0.0
 
@@ -166,9 +193,11 @@ func _complete_interaction() -> void:
 		interaction_completed.emit(target)
 
 
-func dispatch_to(target_area: InteractionArea) -> void:
+func dispatch_to(target_area: InteractionArea, process_recipe_id: StringName = &"") -> void:
 	if target_area == null or not is_instance_valid(target_area):
 		return
+	_desired_process_recipe_id = process_recipe_id
+	_path_cursor = 0
 	current_target_area = target_area
 	_target_position = target_area.get_interaction_position(global_position)
 	if nav_agent != null:
@@ -177,6 +206,8 @@ func dispatch_to(target_area: InteractionArea) -> void:
 
 
 func navigate_to_position(target_pos: Vector3) -> void:
+	_desired_process_recipe_id = &""
+	_path_cursor = 0
 	current_target_area = null
 	_target_position = target_pos
 	if nav_agent != null:
@@ -185,6 +216,7 @@ func navigate_to_position(target_pos: Vector3) -> void:
 
 
 func stop_navigation() -> void:
+	_desired_process_recipe_id = &""
 	current_target_area = null
 	_state = State.IDLE
 	velocity = Vector3.ZERO
@@ -193,6 +225,10 @@ func stop_navigation() -> void:
 
 func get_state() -> State:
 	return _state
+
+
+func get_desired_process_recipe_id() -> StringName:
+	return _desired_process_recipe_id
 
 
 func is_navigating() -> bool:
@@ -257,7 +293,8 @@ func _look_at_xz(target_pos: Vector3, delta: float) -> void:
 	diff.y = 0.0
 	if diff.length_squared() < 0.0001:
 		return
-	var target_yaw := atan2(-diff.x, -diff.z)
+	# The imported robot model faces +Z (its face and hand are on that side).
+	var target_yaw := atan2(diff.x, diff.z)
 	rotation.y = rotate_toward(rotation.y, target_yaw, rotation_speed * delta)
 
 
@@ -267,6 +304,50 @@ func _play_anim(anim_name: StringName) -> void:
 	if _anim_player != null and _anim_player.has_animation(anim_name):
 		if _anim_player.current_animation != String(anim_name) or not _anim_player.is_playing():
 			_anim_player.play(anim_name)
+
+
+func _cache_procedural_animation_parts() -> void:
+	if _anim_player != null and _anim_player.has_animation(&"walk") and _anim_player.has_animation(&"idle"):
+		return
+	var names := [&"leg-left", &"leg-right", &"arm-left", &"arm-right", &"torso"]
+	for part_name: StringName in names:
+		var part := find_child(String(part_name), true, false) as Node3D
+		if part != null:
+			_procedural_parts[part_name] = {
+				"node": part,
+				"rotation": part.rotation,
+				"position": part.position,
+			}
+
+
+func _update_procedural_animation(delta: float) -> void:
+	if _procedural_parts.is_empty():
+		return
+	var moving := _state == State.NAVIGATING and Vector2(velocity.x, velocity.z).length() > 0.1
+	if moving:
+		_walk_phase += delta * move_speed * 3.0
+	var stride: float = sin(_walk_phase) * 0.55 if moving else 0.0
+	var bounce: float = abs(sin(_walk_phase * 2.0)) * 0.035 if moving else 0.0
+	_pose_part(&"leg-left", stride, delta)
+	_pose_part(&"leg-right", -stride, delta)
+	_pose_part(&"arm-left", -stride * 0.7, delta)
+	_pose_part(&"arm-right", stride * 0.7, delta)
+	var torso_data: Dictionary = _procedural_parts.get(&"torso", {})
+	if not torso_data.is_empty():
+		var torso := torso_data["node"] as Node3D
+		var base_pos := torso_data["position"] as Vector3
+		torso.position = torso.position.lerp(base_pos + Vector3(0.0, bounce, 0.0), minf(delta * 14.0, 1.0))
+
+
+func _pose_part(part_name: StringName, x_offset: float, delta: float) -> void:
+	var data: Dictionary = _procedural_parts.get(part_name, {})
+	if data.is_empty():
+		return
+	var part := data["node"] as Node3D
+	var base_rotation := data["rotation"] as Vector3
+	var target := base_rotation
+	target.x += x_offset
+	part.rotation = part.rotation.lerp(target, minf(delta * 14.0, 1.0))
 
 
 # --- Despawn / Smoke Effect ---

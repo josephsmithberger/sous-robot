@@ -70,6 +70,8 @@ signal bot_dispatch_requested(order_id: int, order: Dictionary, automatable_item
 @warning_ignore("unused_signal")
 signal bots_assigned(order_id: int, bot_allocations: Dictionary)
 @warning_ignore("unused_signal")
+signal bot_task_completed(order_id: int, item_id: StringName, item_name: String, succeeded: bool, detail: String)
+@warning_ignore("unused_signal")
 signal bot_dispatch_cancelled(order_id: int)
 @warning_ignore("unused_signal")
 signal bot_dispatch_closed

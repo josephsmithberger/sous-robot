@@ -76,7 +76,8 @@ func _ready() -> void:
 	_build_static_batches()
 	_add_toon_filter()
 	if not Engine.is_editor_hint():
-		bake_navmesh.call_deferred()
+		# Initial bot paths must exist before the first handoff can be dispatched.
+		bake_navmesh.call_deferred(false)
 		GameControl.placement_completed.connect(_on_placement_completed)
 
 
@@ -92,17 +93,37 @@ func _on_placement_completed(_item_id: StringName, _pos: Vector3, _rot_y: float)
 func bake_navmesh(on_thread: bool = true) -> void:
 	if navigation_region == null:
 		navigation_region = get_node_or_null("NavigationRegion3D") as NavigationRegion3D
-	if navigation_region != null:
-		if navigation_region.navigation_mesh == null:
-			var nav_mesh := NavigationMesh.new()
-			nav_mesh.agent_radius = 0.35
-			nav_mesh.agent_height = 1.5
-			nav_mesh.agent_max_climb = 0.25
-			nav_mesh.agent_max_slope = 45.0
-			nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_BOTH
-			nav_mesh.geometry_collision_mask = 1
-			navigation_region.navigation_mesh = nav_mesh
-		navigation_region.bake_navigation_mesh(on_thread)
+	if navigation_region == null:
+		return
+
+	var nav_mesh := navigation_region.navigation_mesh.duplicate() as NavigationMesh
+	if nav_mesh == null:
+		nav_mesh = NavigationMesh.new()
+	nav_mesh.agent_radius = 0.35
+	nav_mesh.agent_height = 1.5
+	nav_mesh.agent_max_climb = 0.25
+	nav_mesh.agent_max_slope = 45.0
+	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
+	nav_mesh.geometry_collision_mask = 1
+
+	# The region is a sibling of the kitchen geometry, so the convenience baker
+	# would only inspect its empty child tree. Parse from the kitchen root.
+	var source_geometry := NavigationMeshSourceGeometryData3D.new()
+	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, self)
+	if on_thread:
+		NavigationServer3D.bake_from_source_geometry_data_async(
+			nav_mesh,
+			source_geometry,
+			_on_navmesh_baked.bind(nav_mesh)
+		)
+	else:
+		NavigationServer3D.bake_from_source_geometry_data(nav_mesh, source_geometry)
+		_on_navmesh_baked(nav_mesh)
+
+
+func _on_navmesh_baked(nav_mesh: NavigationMesh) -> void:
+	if navigation_region != null and is_instance_valid(navigation_region):
+		navigation_region.navigation_mesh = nav_mesh
 
 
 func _add_toon_filter() -> void:

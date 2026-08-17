@@ -21,6 +21,9 @@ func _ready() -> void:
 	_test_bot_worker_instantiation_and_properties()
 	print("Step 1 done")
 	await get_tree().process_frame
+	_test_bot_worker_faces_movement_direction()
+	print("Step 1b done")
+	await get_tree().process_frame
 	_test_collision_layer_matrix()
 	print("Step 2 done")
 	await get_tree().process_frame
@@ -70,6 +73,23 @@ func _test_bot_worker_instantiation_and_properties() -> void:
 	# Hand marker & Smoke particles
 	assert(bot.hand != null, "Bot must have a Hand Marker3D node")
 	assert(bot.smoke_particles != null, "Bot must have SmokeParticles GPUParticles3D")
+
+	bot.queue_free()
+
+
+func _test_bot_worker_faces_movement_direction() -> void:
+	var bot := BOT_WORKER_SCENE.instantiate() as BotWorker
+	add_child(bot)
+
+	# robot.glb presents its face toward local +Z, so that axis must turn toward
+	# the direction of travel rather than Godot default visual forward (-Z).
+	bot.rotation.y = 0.0
+	bot._look_at_xz(bot.global_position + Vector3.BACK, 1.0)
+	var visual_forward := bot.global_basis.z.normalized()
+	assert(
+		visual_forward.dot(Vector3.BACK) > 0.99,
+		"Bot visual forward (+Z) must face its movement target"
+	)
 
 	bot.queue_free()
 
