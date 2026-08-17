@@ -56,10 +56,10 @@ func _test_bot_worker_instantiation_and_properties() -> void:
 	assert(is_equal_approx(bot.scale.y, 0.75), "Bot scale Y must be 0.75")
 	assert(is_equal_approx(bot.scale.z, 0.75), "Bot scale Z must be 0.75")
 
-	# Collision layer: Layer 3 (Bots = bit 2 -> 4)
-	assert(bot.collision_layer == 4, "Bot collision_layer must be 4 (Layer 3 Bots)")
-	# Collision mask: Layer 1 + 2 (World + Player = 1 + 2 -> 3)
-	assert(bot.collision_mask == 3, "Bot collision_mask must be 3 (Layer 1 World + Layer 2 Player)")
+	# Workers are non-physical navmesh actors so they cannot lift the player or
+	# receive platform-dependent collision responses.
+	assert(bot.collision_layer == 0, "Bot collision_layer must be disabled")
+	assert(bot.collision_mask == 0, "Bot collision_mask must be disabled")
 
 	# Groups
 	assert(bot.is_in_group(&"bots"), "Bot must be in 'bots' group")
@@ -71,6 +71,7 @@ func _test_bot_worker_instantiation_and_properties() -> void:
 	assert(is_equal_approx(nav.path_desired_distance, 0.4), "path_desired_distance should be 0.4")
 	assert(is_equal_approx(nav.target_desired_distance, 0.6), "target_desired_distance should be 0.6")
 	assert(is_equal_approx(nav.path_max_distance, 2.0), "path_max_distance should be 2.0")
+	assert(is_equal_approx(nav.path_height_offset, 0.5), "path_height_offset must convert nav height to actor feet")
 	assert(not nav.avoidance_enabled, "avoidance_enabled must be false")
 
 	# Hand marker & Smoke particles
@@ -101,9 +102,9 @@ func _test_collision_layer_matrix() -> void:
 	var player := PLAYER_SCENE.instantiate() as CharacterBody3D
 	add_child(player)
 
-	# Player CharacterBody3D: Layer 2 (value 2), Mask 1 + 3 (World + Bots = 1 + 4 = 5)
+	# Player CharacterBody3D collides only with the static world.
 	assert(player.collision_layer == 2, "Player collision_layer must be 2 (Layer 2 Player)")
-	assert(player.collision_mask == 5, "Player collision_mask must be 5 (Layer 1 World + Layer 3 Bots)")
+	assert(player.collision_mask == 1, "Player collision_mask must contain only Layer 1 World")
 
 	# Player InteractionArea: Layer 0, Mask 8 (Layer 4 Interactions)
 	var p_interact := player.find_child("InteractionArea", true, false) as Area3D
@@ -114,12 +115,9 @@ func _test_collision_layer_matrix() -> void:
 	var bot := BOT_WORKER_SCENE.instantiate() as BotWorker
 	add_child(bot)
 
-	# Bots collide with Player (Player has Layer 2, Bot masks Layer 2)
-	assert((bot.collision_mask & (1 << (2 - 1))) != 0, "Bot must collide with Player (Layer 2)")
-	# Player collides with Bot (Bot has Layer 3, Player masks Layer 3)
-	assert((player.collision_mask & (1 << (3 - 1))) != 0, "Player must collide with Bot (Layer 3)")
-	# Bots DO NOT collide with each other (Bot collision mask does NOT have bit 2 / Layer 3)
-	assert((bot.collision_mask & (1 << (3 - 1))) == 0, "Bot must NOT collide with other bots (Layer 3 excluded)")
+	# Neither actor includes the other in its collision matrix.
+	assert(bot.collision_layer == 0 and bot.collision_mask == 0, "Bot physics must be disabled")
+	assert((player.collision_mask & (1 << (3 - 1))) == 0, "Player must not collide with bots")
 
 	player.queue_free()
 	bot.queue_free()

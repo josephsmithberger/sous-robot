@@ -5,15 +5,19 @@ extends Node
 const BOT_WORKER_SCENE: PackedScene = preload("res://scenes/bot_worker.tscn")
 const MAX_ROUTE_DEPTH := 16
 const NAVIGATION_TIMEOUT := 45.0
+const NAVIGATION_READY_TIMEOUT := 8.0
 const ASSEMBLY_STEP_MINIMUM := 0.35
-const SPAWN_ATTEMPTS := 12
-const SPAWN_ANGLE_STEP := PI * (3.0 - sqrt(5.0))
+const SPAWN_ATTEMPTS := 32
 const SPAWN_NAV_TOLERANCE := 0.2
+const NAVMESH_HEIGHT_OFFSET := 0.5
 const MIN_PLAYER_SPAWN_DISTANCE := 1.25
 const MIN_BOT_SPAWN_DISTANCE := 0.85
+const KITCHEN_SPAWN_MIN_X := -4.5
+const KITCHEN_SPAWN_MAX_X := 4.5
+const KITCHEN_SPAWN_MIN_Z := -10.5
+const KITCHEN_SPAWN_MAX_Z := 6.5
 
-@export var spawn_radius := 2.2
-@export var spawn_height := 0.05
+@export var spawn_height := 0.0
 
 var _active_bots: Dictionary = {}
 var _requirements_by_order: Dictionary = {}
@@ -106,9 +110,25 @@ func _start_bot_job(order_id: int, item_id: StringName) -> void:
 	bot.name = "Bot_%02d_%s" % [_spawn_serial, item_id]
 	bot.set_meta(&"order_id", order_id)
 	bot.set_meta(&"item_id", item_id)
-	bot.global_position = _choose_spawn_position(_spawn_serial)
+	bot.visible = false
 	_active_bots[bot.get_instance_id()] = bot
 
+	# Mobile can need several physics frames before a runtime-baked navigation
+	# map is synchronized. Do not expose a worker at the player origin while that
+	# happens; place it only after a real random navmesh point is available.
+	var nav_map := await _wait_for_navigation_map()
+	if not nav_map.is_valid() or not _is_task_active(order_id):
+		_active_bots.erase(bot.get_instance_id())
+		_sync_active_allocations(order_id)
+		if is_instance_valid(bot):
+			bot.queue_free()
+		if _is_task_active(order_id):
+			_emit_job_result(order_id, item_id, false, "navigation map unavailable")
+		return
+
+	bot.set_navigation_map(nav_map)
+	bot.global_position = _choose_spawn_position(_spawn_serial)
+	bot.visible = true
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 
@@ -198,15 +218,84 @@ func _travel_and_interact(
 ) -> bool:
 	if bot == null or not is_instance_valid(bot) or target == null or not is_instance_valid(target):
 		return false
-	bot.dispatch_to(target, process_recipe_id)
+	var requested_position := target.get_interaction_position(bot.global_position)
+	var resolved: Variant = await _wait_for_reachable_position(bot, requested_position)
+	if resolved == null:
+		return false
+	var resolved_position: Vector3 = resolved
+	bot.dispatch_to_position(target, resolved_position, process_recipe_id)
 	return await _wait_for_bot(bot)
 
 
 func _travel_to_area(bot: BotWorker, target: InteractionArea) -> bool:
 	if bot == null or not is_instance_valid(bot) or target == null or not is_instance_valid(target):
 		return false
-	bot.navigate_to_position(target.get_interaction_position(bot.global_position))
+	var requested_position := target.get_interaction_position(bot.global_position)
+	var resolved: Variant = await _wait_for_reachable_position(bot, requested_position)
+	if resolved == null:
+		return false
+	var resolved_position: Vector3 = resolved
+	bot.navigate_to_position(resolved_position)
 	return await _wait_for_bot(bot)
+
+
+func _get_navigation_map() -> RID:
+	# The shipped kitchen lives inside a SubViewport whose world_3d property can
+	# be null on-device. The NavigationRegion3D still owns a valid active map, so
+	# resolve that map directly before falling back to the viewport world.
+	var ancestor := get_parent()
+	while ancestor != null:
+		for child in ancestor.get_children():
+			var region := child as NavigationRegion3D
+			if region != null:
+				var region_map := region.get_navigation_map()
+				if region_map.is_valid():
+					return region_map
+		ancestor = ancestor.get_parent()
+
+	var viewport := get_viewport()
+	var world := viewport.world_3d if viewport != null else null
+	return world.navigation_map if world != null else RID()
+
+
+func _wait_for_navigation_map() -> RID:
+	var active_elapsed := 0.0
+	while active_elapsed < NAVIGATION_READY_TIMEOUT:
+		var nav_map := _get_navigation_map()
+		if (
+			nav_map.is_valid()
+			and NavigationServer3D.map_is_active(nav_map)
+			and NavigationServer3D.map_get_iteration_id(nav_map) > 0
+		):
+			return nav_map
+		await get_tree().physics_frame
+		if not GameControl.is_robot_pathfinding_paused():
+			active_elapsed += get_physics_process_delta_time()
+	return RID()
+
+
+func _wait_for_reachable_position(bot: BotWorker, requested_position: Vector3) -> Variant:
+	var active_elapsed := 0.0
+	while is_instance_valid(bot) and active_elapsed < NAVIGATION_READY_TIMEOUT:
+		var nav_map := _get_navigation_map()
+		if (
+			nav_map.is_valid()
+			and NavigationServer3D.map_is_active(nav_map)
+			and NavigationServer3D.map_get_iteration_id(nav_map) > 0
+		):
+			var nav_start := NavigationServer3D.map_get_closest_point(nav_map, bot.global_position)
+			var nav_target := NavigationServer3D.map_get_closest_point(nav_map, requested_position)
+			var path := NavigationServer3D.map_get_path(nav_map, nav_start, nav_target, true)
+			if (
+				not path.is_empty()
+				and path[0].distance_to(nav_start) <= SPAWN_NAV_TOLERANCE
+				and path[path.size() - 1].distance_to(nav_target) <= SPAWN_NAV_TOLERANCE
+			):
+				return nav_target
+		await get_tree().physics_frame
+		if not GameControl.is_robot_pathfinding_paused():
+			active_elapsed += get_physics_process_delta_time()
+	return null
 
 
 func _wait_for_bot(bot: BotWorker) -> bool:
@@ -296,40 +385,52 @@ func _find_order_window_below(node: Node) -> OrderWindow:
 	return null
 
 
-func _choose_spawn_position(serial: int) -> Vector3:
+func _choose_spawn_position(_serial: int) -> Vector3:
 	var player := get_tree().get_first_node_in_group(&"player") as Node3D
 	var center := player.global_position if player != null else Vector3.ZERO
-	var world := get_viewport().world_3d
-	if world == null:
-		return center + Vector3.UP * spawn_height
-
-	var nav_map := world.navigation_map
-	if not nav_map.is_valid() or not NavigationServer3D.map_is_active(nav_map):
-		return center + Vector3.UP * spawn_height
+	var floor_fallback := Vector3(center.x, spawn_height, center.z)
+	var nav_map := _get_navigation_map()
+	if (
+		not nav_map.is_valid()
+		or not NavigationServer3D.map_is_active(nav_map)
+		or NavigationServer3D.map_get_iteration_id(nav_map) == 0
+	):
+		return floor_fallback
 
 	var nav_origin := NavigationServer3D.map_get_closest_point(nav_map, center)
-	var base_angle := float(serial) * TAU / float(GameControl.MAX_BOTS)
-	for attempt in SPAWN_ATTEMPTS:
-		# Sweep around the player so a sample across a wall is replaced by one
-		# inside the same reachable kitchen island. The jitter keeps repeated
-		# handoffs from appearing in an identical formation.
-		var angle := (
-			base_angle
-			+ float(attempt) * SPAWN_ANGLE_STEP
-			+ randf_range(-0.18, 0.18)
+	for _attempt in SPAWN_ATTEMPTS:
+		# Pick anywhere inside the playable kitchen, then project that sample onto
+		# the player-connected navmesh so bots never appear inside walls or props.
+		var desired := Vector3(
+			randf_range(KITCHEN_SPAWN_MIN_X, KITCHEN_SPAWN_MAX_X),
+			0.0,
+			randf_range(KITCHEN_SPAWN_MIN_Z, KITCHEN_SPAWN_MAX_Z)
 		)
-		var radius := spawn_radius + randf_range(-0.25, 0.25)
-		var desired := center + Vector3(cos(angle) * radius, 0.0, sin(angle) * radius)
 		var nav_point := NavigationServer3D.map_get_closest_point(nav_map, desired)
+		if not _is_spawn_inside_kitchen(nav_point):
+			continue
 		if not _is_reachable_spawn(nav_map, nav_origin, nav_point):
 			continue
 		if not _is_spawn_position_clear(nav_point, player):
 			continue
-		return nav_point + Vector3.UP * spawn_height
+		return _floor_position_for_nav_point(nav_point)
 
-	# This remains on the player connected navmesh even in very cramped
-	# layouts. Normal kitchen geometry finds a separated point in the loop.
-	return nav_origin + Vector3.UP * spawn_height
+	# The random search only fails in an exceptionally crowded layout. Staying on
+	# the same navmesh island is safer than placing a worker inside world geometry.
+	return _floor_position_for_nav_point(nav_origin)
+
+
+func _floor_position_for_nav_point(nav_point: Vector3) -> Vector3:
+	return nav_point + Vector3.UP * (spawn_height - NAVMESH_HEIGHT_OFFSET)
+
+
+func _is_spawn_inside_kitchen(candidate: Vector3) -> bool:
+	return (
+		candidate.x >= KITCHEN_SPAWN_MIN_X
+		and candidate.x <= KITCHEN_SPAWN_MAX_X
+		and candidate.z >= KITCHEN_SPAWN_MIN_Z
+		and candidate.z <= KITCHEN_SPAWN_MAX_Z
+	)
 
 
 func _is_reachable_spawn(nav_map: RID, origin: Vector3, candidate: Vector3) -> bool:

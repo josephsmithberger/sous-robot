@@ -37,12 +37,19 @@ var _anim_player: AnimationPlayer
 var _desired_process_recipe_id: StringName = &""
 var _walk_phase := 0.0
 var _path_cursor := 0
+var _navigation_map := RID()
+var _navigation_path := PackedVector3Array()
 var _procedural_parts: Dictionary = {}
 
 
 func _ready() -> void:
 	add_to_group(&"bots")
 	add_to_group(&"worker_robots")
+	# Workers are visual navigation actors, not moving physics obstacles. The
+	# navmesh constrains their route, and zero layers prevent them from lifting
+	# the player or being blocked differently across desktop and mobile physics.
+	collision_layer = 0
+	collision_mask = 0
 	_apply_bot_material()
 	_find_animation_player()
 	_cache_procedural_animation_parts()
@@ -50,8 +57,8 @@ func _ready() -> void:
 	if nav_agent != null:
 		nav_agent.path_desired_distance = 0.4
 		nav_agent.target_desired_distance = 0.6
-		# The kitchen navmesh is baked on the top face of the floor collider,
-		# while the character origin rests at floor level.
+		# Runtime-baked kitchen paths sit 0.5 above actor feet. Offset returned
+		# path points to the same floor height as the worker root.
 		nav_agent.path_height_offset = 0.5
 		nav_agent.path_max_distance = 2.0
 		nav_agent.avoidance_enabled = false
@@ -88,43 +95,35 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
-		velocity += get_gravity() * delta
+	velocity.y = 0.0
 
 	if GameControl.is_robot_pathfinding_paused():
 		velocity.x = 0.0
 		velocity.z = 0.0
 		_play_anim(&"idle")
-		move_and_slide()
 		return
 
 	match _state:
 		State.DESPAWNING:
-			velocity.x = 0.0
-			velocity.z = 0.0
-			move_and_slide()
-			return
+			velocity = Vector3.ZERO
 
 		State.INTERACTING:
-			velocity.x = 0.0
-			velocity.z = 0.0
+			velocity = Vector3.ZERO
 			if current_target_area != null and is_instance_valid(current_target_area):
 				_look_at_xz(current_target_area.global_position, delta)
 			_interaction_elapsed += delta
 			if _interaction_elapsed >= _required_hold_duration:
 				_complete_interaction()
-			move_and_slide()
-			return
 
 		State.NAVIGATING:
 			_process_navigation(delta)
+			# Navigation supplies a collision-free horizontal path. Moving directly
+			# keeps identical behavior across desktop and mobile physics backends.
+			global_position += Vector3(velocity.x, 0.0, velocity.z) * delta
 
 		State.IDLE:
-			velocity.x = move_toward(velocity.x, 0.0, move_speed * 5.0 * delta)
-			velocity.z = move_toward(velocity.z, 0.0, move_speed * 5.0 * delta)
+			velocity = Vector3.ZERO
 			_play_anim(&"idle")
-
-	move_and_slide()
 
 
 func _process_navigation(delta: float) -> void:
@@ -140,8 +139,12 @@ func _process_navigation(delta: float) -> void:
 		_on_target_reached()
 		return
 
-	var navigation_path := nav_agent.get_current_navigation_path()
-	var next_pos := nav_agent.get_next_path_position()
+	# Use the path synchronously validated by NavigationServer3D at dispatch time.
+	# NavigationAgent3D may expose an empty internal path for much longer on iOS.
+	var navigation_path := _navigation_path
+	if navigation_path.is_empty():
+		navigation_path = nav_agent.get_current_navigation_path()
+	var next_pos := _target_position
 	if not navigation_path.is_empty():
 		_path_cursor = mini(_path_cursor, navigation_path.size() - 1)
 		while _path_cursor < navigation_path.size():
@@ -156,8 +159,6 @@ func _process_navigation(delta: float) -> void:
 			_path_cursor += 1
 		if _path_cursor >= navigation_path.size():
 			next_pos = _target_position
-	elif next_pos.distance_squared_to(global_position) < 0.0001:
-		next_pos = _target_position
 
 	var move_dir := next_pos - global_position
 	move_dir.y = 0.0
@@ -177,6 +178,7 @@ func _process_navigation(delta: float) -> void:
 func _on_target_reached() -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
+	_navigation_path = PackedVector3Array()
 	var target_area := current_target_area
 	destination_reached.emit(target_area)
 
@@ -208,13 +210,53 @@ func _complete_interaction() -> void:
 		interaction_completed.emit(target)
 
 
+func set_navigation_map(nav_map: RID) -> void:
+	_navigation_map = nav_map
+	if nav_agent != null:
+		nav_agent.set_navigation_map(nav_map)
+
+
+func _cache_navigation_path() -> void:
+	_navigation_path = PackedVector3Array()
+	var nav_map := _navigation_map
+	if not nav_map.is_valid() and nav_agent != null:
+		nav_map = nav_agent.get_navigation_map()
+	if not nav_map.is_valid():
+		var world := get_world_3d()
+		nav_map = world.navigation_map if world != null else RID()
+	if (
+		not nav_map.is_valid()
+		or not NavigationServer3D.map_is_active(nav_map)
+		or NavigationServer3D.map_get_iteration_id(nav_map) == 0
+	):
+		return
+	var nav_start := NavigationServer3D.map_get_closest_point(nav_map, global_position)
+	var nav_target := NavigationServer3D.map_get_closest_point(nav_map, _target_position)
+	_navigation_path = NavigationServer3D.map_get_path(nav_map, nav_start, nav_target, true)
+
+
 func dispatch_to(target_area: InteractionArea, process_recipe_id: StringName = &"") -> void:
+	if target_area == null or not is_instance_valid(target_area):
+		return
+	dispatch_to_position(
+		target_area,
+		target_area.get_interaction_position(global_position),
+		process_recipe_id
+	)
+
+
+func dispatch_to_position(
+	target_area: InteractionArea,
+	target_position: Vector3,
+	process_recipe_id: StringName = &""
+) -> void:
 	if target_area == null or not is_instance_valid(target_area):
 		return
 	_desired_process_recipe_id = process_recipe_id
 	_path_cursor = 0
 	current_target_area = target_area
-	_target_position = target_area.get_interaction_position(global_position)
+	_target_position = target_position
+	_cache_navigation_path()
 	if nav_agent != null:
 		nav_agent.target_position = _target_position
 	_state = State.NAVIGATING
@@ -225,6 +267,7 @@ func navigate_to_position(target_pos: Vector3) -> void:
 	_path_cursor = 0
 	current_target_area = null
 	_target_position = target_pos
+	_cache_navigation_path()
 	if nav_agent != null:
 		nav_agent.target_position = _target_position
 	_state = State.NAVIGATING
@@ -232,6 +275,7 @@ func navigate_to_position(target_pos: Vector3) -> void:
 
 func stop_navigation() -> void:
 	_desired_process_recipe_id = &""
+	_navigation_path = PackedVector3Array()
 	current_target_area = null
 	_state = State.IDLE
 	velocity = Vector3.ZERO

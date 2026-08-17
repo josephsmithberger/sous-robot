@@ -437,6 +437,16 @@ func get_creation_steps(recipe_id: StringName) -> Array[Dictionary]:
 # Internal Resource Discovery and Step Building
 # ==============================================================================
 
+func _resource_path_from_listing(directory: String, file_name: String) -> String:
+	# Exported PCK directories expose remap manifests (for example,
+	# `slice_bread.tres.remap`) instead of the source extension seen in-editor.
+	# Loading the original res:// path lets Godot resolve that remap normally.
+	var resource_name := file_name.trim_suffix(".remap")
+	if not resource_name.ends_with(".tres") and not resource_name.ends_with(".res"):
+		return ""
+	return directory.path_join(resource_name)
+
+
 func _load_all_resources() -> void:
 	_items_by_id.clear()
 	_assembly_recipes.clear()
@@ -449,8 +459,8 @@ func _load_all_resources() -> void:
 		items_dir.list_dir_begin()
 		var file_name := items_dir.get_next()
 		while not file_name.is_empty():
-			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
-				var path := "res://resources/items/".path_join(file_name)
+			var path := _resource_path_from_listing("res://resources/items", file_name)
+			if not path.is_empty():
 				var item := load(path) as KitchenItem
 				if item != null and not item.item_id.is_empty():
 					_items_by_id[item.item_id] = item
@@ -462,8 +472,8 @@ func _load_all_resources() -> void:
 		recipes_dir.list_dir_begin()
 		var file_name := recipes_dir.get_next()
 		while not file_name.is_empty():
-			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
-				var path := "res://resources/recipes/".path_join(file_name)
+			var path := _resource_path_from_listing("res://resources/recipes", file_name)
+			if not path.is_empty():
 				var recipe := load(path) as Recipe
 				if recipe != null and not recipe.recipe_id.is_empty():
 					_assembly_recipes.append(recipe)
@@ -476,8 +486,8 @@ func _load_all_resources() -> void:
 		proc_dir.list_dir_begin()
 		var file_name := proc_dir.get_next()
 		while not file_name.is_empty():
-			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
-				var path := "res://resources/processing/".path_join(file_name)
+			var path := _resource_path_from_listing("res://resources/processing", file_name)
+			if not path.is_empty():
 				var proc_recipe := load(path) as ItemProcessRecipe
 				if proc_recipe != null and not proc_recipe.recipe_id.is_empty():
 					_process_recipes.append(proc_recipe)

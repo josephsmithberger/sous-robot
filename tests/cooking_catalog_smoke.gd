@@ -47,6 +47,7 @@ const ROUTES := [
 
 func _ready() -> void:
 	_validate_items()
+	_validate_recipe_tracker_catalog()
 	_validate_appliances()
 	print("COOKING_CATALOG_SMOKE_PASS")
 	await get_tree().process_frame
@@ -68,6 +69,17 @@ func _validate_items() -> void:
 		assert(visual != null, "Held scene did not instantiate for %s" % item_id)
 		assert(_count_meshes(visual) > 0, "Held scene has no meshes for %s" % item_id)
 		visual.free()
+
+
+func _validate_recipe_tracker_catalog() -> void:
+	assert(
+		RecipeTracker._resource_path_from_listing(
+			"res://resources/processing", "slice_bread.tres.remap"
+		) == "res://resources/processing/slice_bread.tres",
+		"Exported recipe remaps must resolve to their loadable source path"
+	)
+	assert(not RecipeTracker.get_all_process_recipes().is_empty(), "Process recipe catalog must load")
+	assert(not RecipeTracker.get_all_assembly_recipes().is_empty(), "Assembly recipe catalog must load")
 
 
 func _validate_appliances() -> void:
