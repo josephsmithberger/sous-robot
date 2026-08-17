@@ -108,25 +108,6 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 5
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_hover"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
-bg_color = Color(1, 0.858824, 0.298039, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.55)
-shadow_size = 7
-shadow_offset = Vector2(0, 5)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_pressed"]
 content_margin_left = 20.0
 content_margin_top = 12.0
@@ -145,6 +126,25 @@ corner_radius_bottom_left = 20
 shadow_color = Color(0.152941, 0.145098, 0.121569, 0.3)
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_hover"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.858824, 0.298039, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.55)
+shadow_size = 7
+shadow_offset = Vector2(0, 5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_focus"]
 content_margin_left = 20.0
@@ -186,25 +186,6 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.4)
 shadow_size = 4
 shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_hover"]
-content_margin_left = 18.0
-content_margin_top = 8.0
-content_margin_right = 18.0
-content_margin_bottom = 8.0
-bg_color = Color(0.95, 0.24, 0.18, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0.152941, 0.145098, 0.121569, 0.5)
-shadow_size = 6
-shadow_offset = Vector2(0, 4)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_pressed"]
 content_margin_left = 18.0
 content_margin_top = 10.0
@@ -223,6 +204,25 @@ corner_radius_bottom_left = 18
 shadow_color = Color(0.152941, 0.145098, 0.121569, 0.25)
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_how_hover"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.95, 0.24, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.152941, 0.145098, 0.121569, 0.5)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_normal"]
 content_margin_left = 16.0
@@ -243,6 +243,22 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.2)
 shadow_size = 3
 shadow_offset = Vector2(0, 2)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_pressed"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.78, 0.75, 0.68, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.152941, 0.145098, 0.121569, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_hover"]
 content_margin_left = 16.0
 content_margin_top = 6.0
@@ -261,41 +277,6 @@ corner_radius_bottom_left = 14
 shadow_color = Color(0.152941, 0.145098, 0.121569, 0.35)
 shadow_size = 4
 shadow_offset = Vector2(0, 3)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_pressed"]
-content_margin_left = 16.0
-content_margin_top = 7.0
-content_margin_right = 16.0
-content_margin_bottom = 5.0
-bg_color = Color(0.78, 0.75, 0.68, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.152941, 0.145098, 0.121569, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bottom_pill"]
-content_margin_left = 18.0
-content_margin_top = 6.0
-content_margin_right = 18.0
-content_margin_bottom = 6.0
-bg_color = Color(0.152941, 0.145098, 0.121569, 0.94)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.780392, 0.172549, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_deck"]
 content_margin_left = 32.0
@@ -591,7 +572,7 @@ theme_override_colors/font_outline_color = Color(0.152941, 0.145098, 0.121569, 1
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 14
-text = "★ AUTOMATED CULINARY DINER ★"
+text = "AUTOMATED CULINARY DINER"
 horizontal_alignment = 1
 
 [node name="TitleBox" type="MarginContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=881726354]
@@ -654,16 +635,16 @@ custom_minimum_size = Vector2(290, 52)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_start_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_start_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_start_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
-text = "▶  START COOKING"
+text = "START COOKING"
 
 [node name="HowToPlayButton" type="Button" parent="CenterContainer/HeroCard/ContentBox/ButtonStack" unique_id=579761973]
 unique_name_in_owner = true
@@ -671,16 +652,16 @@ custom_minimum_size = Vector2(290, 44)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 0.9)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_how_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_how_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_how_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
-text = "📖  HOW TO PLAY"
+text = "HOW TO PLAY"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/HeroCard/ContentBox/ButtonStack" unique_id=579761974]
 unique_name_in_owner = true
@@ -688,16 +669,16 @@ custom_minimum_size = Vector2(290, 36)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.3, 0.28, 0.25, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.18, 0.15, 1)
 theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_quit_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_quit_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_quit_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_start_focus")
-text = "✕  EXIT"
+text = "EXIT"
 
 [node name="CreditLabel" type="Label" parent="CenterContainer/HeroCard/ContentBox" unique_id=331827461]
 layout_mode = 2
@@ -705,30 +686,6 @@ theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 0.85)
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 13
 text = "A Game by Joseph Smithberger"
-horizontal_alignment = 1
-
-[node name="BottomBar" type="MarginContainer" parent="." unique_id=991827364]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -48.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/margin_bottom = 12
-
-[node name="Pill" type="PanelContainer" parent="BottomBar" unique_id=991827365]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_bottom_pill")
-
-[node name="HelperLabel" type="Label" parent="BottomBar/Pill" unique_id=991827366]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.780392, 0.172549, 1)
-theme_override_fonts/font = ExtResource("4_font_body")
-theme_override_font_sizes/font_size = 13
-text = "CONTROLS:  [WASD / Touch] Move   •   [E] Interact & Cook   •   [Space / Enter] Start"
 horizontal_alignment = 1
 
 [node name="HowToPlayModal" type="Control" parent="." unique_id=880192837]
@@ -893,9 +850,9 @@ custom_minimum_size = Vector2(260, 46)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.152941, 0.145098, 0.121569, 1)
+theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_pressed_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_colors/font_hover_color = Color(0.152941, 0.145098, 0.121569, 1)
-theme_override_colors/font_focus_color = Color(0.152941, 0.145098, 0.121569, 1)
 theme_override_fonts/font = ExtResource("3_font_tomato")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_start_normal")

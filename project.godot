@@ -76,7 +76,7 @@ project/editorState=[{
 }, {
 "column": 0,
 "current": true,
-"line": 65,
+"line": 0,
 "path": "res://tests/tutorial_overlay_smoke.gd",
 "type": "file"
 }]
