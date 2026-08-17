@@ -6,17 +6,6 @@ const TUTORIAL_OVERLAY_SCRIPT: Script = preload("res://scripts/tutorial_overlay.
 const KITCHEN_TAB := 0
 const TRAY_HEIGHT := 132.0
 const SLIDE_DURATION := 0.28
-const FIRST_UPGRADE_ITEMS: Array[StringName] = [
-	&"CarrotCrate",
-	&"CheeseCrate",
-	&"HamCrate",
-	&"LettuceCrate",
-	&"OnionCrate",
-	&"PotatoCrate",
-	&"SteakCrate",
-	&"TomatoCrate",
-	&"Counter",
-]
 
 @onready var _tabs: TabContainer = $MarginContainer/HSplitContainer/TabContainer
 @onready var _game_viewport_container: SubViewportContainer = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer
@@ -83,8 +72,6 @@ func _ready() -> void:
 	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
 	GameControl.process_picker_refreshed.connect(_on_process_picker_refreshed)
 	GameControl.bot_task_completed.connect(_on_bot_task_completed)
-	GameControl.order_completed.connect(_on_story_order_completed)
-	GameControl.item_unlocked.connect(_on_story_item_unlocked)
 	GameControl.bots_assigned.connect(_on_story_bots_assigned)
 	GameControl.placement_started.connect(_on_placement_started)
 	GameControl.placement_completed.connect(_on_placement_completed)
@@ -251,16 +238,6 @@ func _on_bot_task_completed(
 func _on_recipe_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
 	_on_automation_available(recipe_id, recipe_name, message)
 	_queue_story_dialogue(&"story_first_automation")
-
-
-func _on_story_order_completed(_order_id: int, payout: float, _final_tip: float) -> void:
-	if payout > 0.0:
-		_queue_story_dialogue(&"story_first_earnings")
-
-
-func _on_story_item_unlocked(item_id: StringName) -> void:
-	if item_id in FIRST_UPGRADE_ITEMS:
-		_queue_story_dialogue(&"story_first_upgrade")
 
 
 func _on_story_bots_assigned(_order_id: int, allocations: Dictionary) -> void:

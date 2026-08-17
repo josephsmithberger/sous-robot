@@ -52,7 +52,7 @@ func _ready() -> void:
 	dismiss.pressed.emit()
 	await get_tree().process_frame
 	assert(not tutorial.visible, "GOT IT must dismiss the tutorial.")
-	assert(GameControl.is_dialogue_active(), "The first story beat must begin after the tutorial is acknowledged.")
+	assert(not GameControl.is_dialogue_active(), "No story dialogue should interrupt immediately after tutorial is acknowledged.")
 
 	print("TUTORIAL_OVERLAY_SMOKE_PASS")
 	get_tree().quit(0)
@@ -61,7 +61,7 @@ func _ready() -> void:
 func _assert_behind_camera_pointer(tutorial: Control) -> void:
 	var camera := tutorial.get("_camera") as Camera3D
 	var kitchen := tutorial.get("_kitchen") as Node3D
-	var arrow := tutorial.find_child("TargetArrow", true, false) as Label
+	var arrow := tutorial.find_child("TargetArrow", true, false) as Control
 	var previous_ui_target := tutorial.get("_ui_target") as Control
 	assert(camera != null and kitchen != null and arrow != null, "Tutorial direction test requires its camera, kitchen, and arrow.")
 
