@@ -18,6 +18,25 @@ enum Step {
 const GOLD := Color(1.0, 0.78, 0.17, 1.0)
 const INK := Color(0.07, 0.06, 0.05, 0.97)
 const TARGET_MARGIN := 34.0
+const ROBOT_MARKER_SIZE := Vector2(148.0, 176.0)
+
+
+class TargetBrackets extends Control:
+	const COLOR := Color(1.0, 0.78, 0.17, 1.0)
+	const STROKE := 4.0
+
+	func _draw() -> void:
+		var inset := STROKE * 0.5
+		var corner := 30.0
+		var end := size - Vector2.ONE * inset
+		draw_line(Vector2(inset, corner), Vector2(inset, inset), COLOR, STROKE, true)
+		draw_line(Vector2(inset, inset), Vector2(corner, inset), COLOR, STROKE, true)
+		draw_line(Vector2(end.x - corner, inset), Vector2(end.x, inset), COLOR, STROKE, true)
+		draw_line(Vector2(end.x, inset), Vector2(end.x, corner), COLOR, STROKE, true)
+		draw_line(Vector2(inset, end.y - corner), Vector2(inset, end.y), COLOR, STROKE, true)
+		draw_line(Vector2(inset, end.y), Vector2(corner, end.y), COLOR, STROKE, true)
+		draw_line(Vector2(end.x - corner, end.y), Vector2(end.x, end.y), COLOR, STROKE, true)
+		draw_line(Vector2(end.x, end.y - corner), Vector2(end.x, end.y), COLOR, STROKE, true)
 
 signal tutorial_finished
 
@@ -36,6 +55,7 @@ var _message: Label
 var _dismiss_button: Button
 var _arrow: Label
 var _target_ring: Panel
+var _target_brackets: Control
 
 var _step := Step.WAITING_FOR_INTRO
 var _armed := false
@@ -179,6 +199,14 @@ func _build_pointer() -> void:
 	_target_ring.add_theme_stylebox_override("panel", ring_style)
 	add_child(_target_ring)
 
+	_target_brackets = TargetBrackets.new()
+	_target_brackets.name = "TargetBrackets"
+	_target_brackets.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_target_brackets.size = ROBOT_MARKER_SIZE
+	_target_brackets.pivot_offset = _target_brackets.size * 0.5
+	_target_brackets.visible = false
+	add_child(_target_brackets)
+
 	_arrow = Label.new()
 	_arrow.name = "TargetArrow"
 	_arrow.text = "➤"
@@ -213,8 +241,9 @@ func _show_take_order() -> void:
 		return
 	_step = Step.TAKE_ORDER
 	_eyebrow.text = "TRAINING RUN · 2/4"
-	_message.text = "Follow the arrow to the robot at the front of the line. When TAKE ORDER appears, use INTERACT."
-	_set_world_target(_front_waiter(), 1.65)
+	_message.text = "Go to the robot framed at the front of the line. When TAKE ORDER appears, use INTERACT."
+	# Frame the robot as a subject instead of placing a cursor on its torso.
+	_set_world_target(_front_waiter(), 2.5)
 
 
 func _show_get_ingredient() -> void:
@@ -321,11 +350,12 @@ func _set_ui_target(target: Control) -> void:
 
 
 func _update_pointer() -> void:
-	if _arrow == null or _target_ring == null or not visible:
+	if _arrow == null or _target_ring == null or _target_brackets == null or not visible:
 		return
 	var target_position := Vector2.ZERO
 	var has_target := false
-	var target_is_on_screen := true
+	var target_is_in_front := true
+	var target_camera_x := 0.0
 
 	if _ui_target != null and is_instance_valid(_ui_target) and _ui_target.is_visible_in_tree():
 		var target_rect := _ui_target.get_global_rect()
@@ -341,7 +371,8 @@ func _update_pointer() -> void:
 		)
 		target_position = _viewport_container.position + projected * scale_factor
 		has_target = true
-		target_is_on_screen = not _camera.is_position_behind(world_position)
+		target_is_in_front = not _camera.is_position_behind(world_position)
+		target_camera_x = _camera.to_local(world_position).x
 
 	if not has_target:
 		_arrow.visible = false
@@ -353,24 +384,30 @@ func _update_pointer() -> void:
 		clampf(target_position.x, bounds.position.x, bounds.end.x),
 		clampf(target_position.y, bounds.position.y, bounds.end.y)
 	)
-	if not target_is_on_screen:
+	if not target_is_in_front:
 		var center := size * 0.5
-		var direction := target_position - center
-		if direction.length_squared() < 0.01:
-			direction = Vector2.DOWN
-		clamped = center + direction.normalized() * minf(size.x, size.y) * 0.42
+		# Perspective projection mirrors targets behind the camera. Use the
+		# camera-local horizontal side so rear-left remains left and rear-right
+		# remains right. Exactly behind defaults right to give a stable turn.
+		var direction := Vector2.LEFT if target_camera_x < -0.01 else Vector2.RIGHT
+		clamped = center + direction * minf(size.x, size.y) * 0.42
 		clamped.x = clampf(clamped.x, bounds.position.x, bounds.end.x)
 		clamped.y = clampf(clamped.y, bounds.position.y, bounds.end.y)
 
-	var on_screen := target_is_on_screen and target_position.distance_to(clamped) < 2.0
+	var on_screen := target_is_in_front and target_position.distance_to(clamped) < 2.0
 	var pulse := 1.0 + sin(_bounce_time * 5.0) * 0.08
-	_target_ring.visible = on_screen
+	var is_robot_target := _step == Step.TAKE_ORDER and _world_target != null
+	_target_ring.visible = on_screen and not is_robot_target and _step != Step.MOVE_AND_LOOK
 	_target_ring.position = clamped - _target_ring.size * 0.5
 	_target_ring.scale = Vector2.ONE * pulse
+	_target_brackets.visible = on_screen and is_robot_target
+	_target_brackets.position = clamped - _target_brackets.size * 0.5
+	_target_brackets.scale = Vector2.ONE * pulse
 
 	# The card already identifies movement controls; a floating arrow is
 	# visually misleading because the controls move with the responsive layout.
-	_arrow.visible = _ui_target == null
+	# The framed robot is self-explanatory, so it does not need a second marker.
+	_arrow.visible = _ui_target == null and not is_robot_target
 	if not _arrow.visible:
 		return
 	if on_screen:

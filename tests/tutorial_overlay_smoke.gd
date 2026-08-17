@@ -22,6 +22,7 @@ func _ready() -> void:
 	assert(_tutorial_heading(tutorial).contains("1/4"), "Tutorial must begin at movement step 1/4.")
 	var controls_arrow := tutorial.find_child("TargetArrow", true, false) as Label
 	assert(controls_arrow != null and not controls_arrow.visible, "Controls must not show a misaligned tutorial arrow.")
+	_assert_behind_camera_pointer(tutorial)
 
 	tutorial.set("_movement_time", 0.5)
 	tutorial.call("_process", 0.01)
@@ -55,6 +56,42 @@ func _ready() -> void:
 
 	print("TUTORIAL_OVERLAY_SMOKE_PASS")
 	get_tree().quit(0)
+
+
+func _assert_behind_camera_pointer(tutorial: Control) -> void:
+	var camera := tutorial.get("_camera") as Camera3D
+	var kitchen := tutorial.get("_kitchen") as Node3D
+	var arrow := tutorial.find_child("TargetArrow", true, false) as Label
+	var previous_ui_target := tutorial.get("_ui_target") as Control
+	assert(camera != null and kitchen != null and arrow != null, "Tutorial direction test requires its camera, kitchen, and arrow.")
+
+	var target := Node3D.new()
+	target.name = "TutorialDirectionTestTarget"
+	kitchen.add_child(target)
+	var local_positions: Array[Vector3] = [
+		Vector3(-5.0, 0.0, 5.0),
+		Vector3(5.0, 0.0, 5.0),
+		Vector3(0.0, 0.0, 5.0),
+	]
+	var expected_horizontal: Array[float] = [-1.0, 1.0, 1.0]
+	var case_names: Array[String] = ["rear-left", "rear-right", "directly behind"]
+
+	for index in range(local_positions.size()):
+		target.global_position = camera.to_global(local_positions[index])
+		tutorial.call("_set_world_target", target, 0.0)
+		tutorial.call("_update_pointer")
+		var arrow_direction := Vector2.RIGHT.rotated(arrow.rotation)
+		assert(arrow.visible, "The %s target must show the tutorial arrow." % case_names[index])
+		assert(
+			arrow_direction.x * expected_horizontal[index] > 0.99,
+			"The %s target must point %s." % [
+				case_names[index],
+				"left" if expected_horizontal[index] < 0.0 else "right",
+			]
+		)
+
+	tutorial.call("_set_ui_target", previous_ui_target)
+	target.queue_free()
 
 
 func _tutorial_heading(tutorial: Control) -> String:
