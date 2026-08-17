@@ -132,6 +132,10 @@ func _begin_touch(event: InputEventScreenTouch, source: Control) -> void:
 		if target.action_mode == BaseButton.ACTION_MODE_BUTTON_PRESS:
 			_activate_button(target)
 			_touches[event.index]["activated"] = true
+	elif target is TabBar:
+		_focus_if_possible(target)
+		if _activate_tab(target, viewport_position):
+			_touches[event.index]["activated"] = true
 	elif target is Slider:
 		_set_slider_from_touch(target, viewport_position)
 
@@ -182,7 +186,7 @@ func _end_touch(event: InputEventScreenTouch, source: Control) -> void:
 		):
 			_activate_button(target)
 	elif target is TabBar:
-		if not state["dragged"]:
+		if not state["activated"]:
 			_activate_tab(target, viewport_position)
 	elif target is LineEdit or target is TextEdit:
 		if not state["dragged"]:
@@ -197,6 +201,12 @@ func _find_activation_target(source: Control) -> Control:
 	var current: Node = source
 	while current is Control:
 		if current is BaseButton or current is TabBar or current is Slider:
+			return current
+		if current is TabContainer:
+			var tc := current as TabContainer
+			var tb := tc.get_tab_bar()
+			if tb != null:
+				return tb
 			return current
 		if current is LineEdit or current is TextEdit:
 			return current
@@ -228,15 +238,32 @@ func _activate_button(button: BaseButton) -> void:
 	button.pressed.emit()
 
 
-func _activate_tab(tab_bar: TabBar, viewport_position: Vector2) -> void:
+func _activate_tab(tab_bar: TabBar, viewport_position: Vector2) -> bool:
+	if not is_instance_valid(tab_bar) or tab_bar.tab_count == 0:
+		return false
 	var local_position := tab_bar.get_global_transform_with_canvas().affine_inverse() * viewport_position
 	for tab_index in range(tab_bar.tab_count):
 		if tab_bar.is_tab_disabled(tab_index) or tab_bar.is_tab_hidden(tab_index):
 			continue
-		if tab_bar.get_tab_rect(tab_index).has_point(local_position):
+		var tab_rect := tab_bar.get_tab_rect(tab_index)
+		# Generous touch hit box for mobile tabs (vertical tolerance for thumb/finger taps)
+		var hit_rect := tab_rect.grow_individual(4.0, 24.0, 4.0, 24.0)
+		if hit_rect.has_point(local_position):
 			tab_bar.current_tab = tab_index
 			tab_bar.tab_clicked.emit(tab_index)
-			return
+			tab_bar.tab_selected.emit(tab_index)
+			tab_bar.tab_changed.emit(tab_index)
+
+			var parent := tab_bar.get_parent()
+			while parent != null:
+				if parent is TabContainer:
+					var tc := parent as TabContainer
+					if tc.current_tab != tab_index:
+						tc.current_tab = tab_index
+					break
+				parent = parent.get_parent()
+			return true
+	return false
 
 
 func _focus_if_possible(control: Control) -> void:

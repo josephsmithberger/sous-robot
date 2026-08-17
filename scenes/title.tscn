@@ -600,7 +600,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.28, 0.25, 0.22, 1)
 theme_override_fonts/font = ExtResource("4_font_body")
 theme_override_font_sizes/font_size = 16
-text = "Cook • Automate with Robots • Serve the Rush!"
+text = "The first automated diner of San Jose"
 horizontal_alignment = 1
 
 [node name="DividerBox" type="HBoxContainer" parent="CenterContainer/HeroCard/ContentBox" unique_id=661728394]
