@@ -9,6 +9,7 @@ enum Step {
 	MOVE_AND_LOOK,
 	TAKE_ORDER,
 	GET_INGREDIENT,
+	PREP_BUN,
 	DELIVER_ORDER,
 	COMPLETE,
 	DISMISSED,
@@ -17,6 +18,8 @@ enum Step {
 const GOLD := Color(1.0, 0.78, 0.17, 1.0)
 const INK := Color(0.07, 0.06, 0.05, 0.97)
 const TARGET_MARGIN := 34.0
+
+signal tutorial_finished
 
 var _viewport_container: SubViewportContainer
 var _kitchen: Node3D
@@ -217,8 +220,15 @@ func _show_take_order() -> void:
 func _show_get_ingredient() -> void:
 	_step = Step.GET_INGREDIENT
 	_eyebrow.text = "TRAINING RUN · 3/4"
-	_message.text = "The receipt on the left shows what the customer wants. Follow the arrow to the bun crate and TAKE BREAD."
+	_message.text = "The receipt needs bread and a bun. Follow the arrow to the bun crate and TAKE BREAD."
 	_set_world_target(_bun_crate(), 1.15)
+
+
+func _show_prep_bun() -> void:
+	_step = Step.PREP_BUN
+	_eyebrow.text = "TRAINING RUN · 3/4"
+	_message.text = "Follow the arrow to the cutting board and SLICE BREAD to make the bun."
+	_set_world_target(_cutting_board(), 1.15)
 
 
 func _show_delivery() -> void:
@@ -262,7 +272,11 @@ func _on_held_item_changed(item: KitchenItem) -> void:
 	if not _armed or _step == Step.DISMISSED:
 		return
 	if _step == Step.GET_INGREDIENT and item != null:
-		_show_delivery()
+		if item.item_id == &"bread":
+			_show_prep_bun()
+	elif _step == Step.PREP_BUN and item != null:
+		if item.item_id == &"bun":
+			_show_delivery()
 	elif _step == Step.DELIVER_ORDER:
 		_update_delivery_instruction(item != null)
 
@@ -279,7 +293,7 @@ func _on_order_completed(_order_id: int, _payout: float, _final_tip: float) -> v
 
 func _update_delivery_instruction(is_holding: bool) -> void:
 	if GameControl.has_active_order() and is_holding:
-		_message.text = "Carry the bread to the service window and use DELIVER. Repeat until every line on the receipt is complete."
+		_message.text = "Carry it to the service window and use DELIVER. Repeat until every line on the receipt is complete."
 		_set_world_target(_order_window(), 1.15)
 	elif GameControl.has_active_order():
 		_message.text = "The receipt still needs food. Return to the bun crate, grab another bread, and deliver it at the window."
@@ -302,6 +316,8 @@ func _set_world_target(target: Node3D, height: float) -> void:
 func _set_ui_target(target: Control) -> void:
 	_ui_target = target
 	_world_target = null
+	if _arrow != null:
+		_arrow.visible = false
 
 
 func _update_pointer() -> void:
@@ -352,7 +368,11 @@ func _update_pointer() -> void:
 	_target_ring.position = clamped - _target_ring.size * 0.5
 	_target_ring.scale = Vector2.ONE * pulse
 
-	_arrow.visible = true
+	# The card already identifies movement controls; a floating arrow is
+	# visually misleading because the controls move with the responsive layout.
+	_arrow.visible = _ui_target == null
+	if not _arrow.visible:
+		return
 	if on_screen:
 		_arrow.position = clamped + Vector2(-_arrow.size.x * 0.5, -92.0 + sin(_bounce_time * 6.0) * 7.0)
 		_arrow.rotation = PI * 0.5
@@ -381,12 +401,19 @@ func _bun_crate() -> Node3D:
 	return _kitchen.get_node_or_null("Architecture/crate_buns") as Node3D if _kitchen != null else null
 
 
+func _cutting_board() -> Node3D:
+	return _kitchen.get_node_or_null("Architecture/wall_decorated/cutboard") as Node3D if _kitchen != null else null
+
+
 func _order_window() -> Node3D:
 	return _kitchen.get_node_or_null("Architecture/wall_orderwindow_decorated/order_window") as Node3D if _kitchen != null else null
 
 
 func _dismiss() -> void:
+	var completed := _step == Step.COMPLETE
 	_step = Step.DISMISSED
 	_armed = false
 	visible = false
+	if completed:
+		tutorial_finished.emit()
 

@@ -61,6 +61,7 @@ var _alert_tween: Tween
 var _story_queue: Array[StringName] = []
 var _seen_story_titles: Dictionary = {}
 var _tutorial_overlay: Control
+var _tutorial_finished := false
 
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
@@ -166,6 +167,14 @@ func _create_tutorial() -> void:
 		_orders_panel
 	)
 	interaction_stage.add_child(_tutorial_overlay)
+	_tutorial_overlay.connect(&"tutorial_finished", _on_tutorial_finished)
+
+
+func _on_tutorial_finished() -> void:
+	if _tutorial_finished:
+		return
+	_tutorial_finished = true
+	call_deferred("_try_start_next_story_dialogue")
 
 
 func _create_alert_banner() -> void:
@@ -277,6 +286,8 @@ func _queue_story_dialogue(title: StringName) -> void:
 
 
 func _try_start_next_story_dialogue() -> void:
+	if not _tutorial_finished:
+		return
 	if _story_queue.is_empty() or GameControl.is_dialogue_active():
 		return
 	if GameControl.is_placing or GameControl.is_arranging:
