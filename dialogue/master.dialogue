@@ -17,18 +17,17 @@ Señor Food: The arrows will guide your first order. After that, spend your earn
 => END
 
 
-# STORY SCAFFOLD
+# STORY BEATS
 # These titles are intentionally passive: no player responses or branches.
-# Call each title once when its noted gameplay milestone happens. The TODO
-# lines are writing prompts, not finished dialogue, so the final voice can be
-# written in place without changing the progression structure.
+# Call each title once when its noted gameplay milestone happens.
 
 
 ## Beat 1 — First proof the restaurant can earn money.
 ## Trigger: after the first completed order / first positive money change.
 ## Story job: establish that Señor Food still thinks about success in startup terms.
 ~ story_first_earnings
-Señor Food: TODO — FIRST EARNINGS: a short observation about the first dollars coming in; connect the small rush of a successful order to shipping or launching something in Silicon Valley.
+Señor Food: ¡Oye, mira eso! Our first real dollar in the register! That chime gives me the exact rush of shipping code to production.
+Señor Food: We officially have product-market fit and positive cash flow. Back at Google we called this 'traction'—here, it's dinner money!
 => END
 
 
@@ -37,7 +36,8 @@ Señor Food: TODO — FIRST EARNINGS: a short observation about the first dollar
 ## Story job: show him taking genuine pleasure in expanding what can be cooked,
 ## while framing it with product/scale language he has not shaken.
 ~ story_first_upgrade
-Señor Food: TODO — FIRST UPGRADE: notice the new ingredient or workspace; let cooking excitement and old tech-job instincts sit side by side.
+Señor Food: ¡Eso es! Expanding our workspace is just like scaling backend infrastructure—more throughput, zero bottlenecks.
+Señor Food: Plus, fresh produce smells infinitely better than an overheated server rack in Sunnyvale. Let's see what we can compile!
 => END
 
 
@@ -45,7 +45,8 @@ Señor Food: TODO — FIRST UPGRADE: notice the new ingredient or workspace; let
 ## Trigger: after purchasing and placing the Sink.
 ## Story job: contrast physical, sensory kitchen work with the abstraction of his old job.
 ~ story_sink
-Señor Food: TODO — SINK: a brief reflection on touching, washing, or preparing real ingredients; suggest that this is what he did not know he missed.
+Señor Food: Ah, the sink. Listen to that running water. For ten years, my whole life was abstract microservices living in the cloud.
+Señor Food: But here? You wash a tomato and feel the cold water on your hands. I forgot how good it feels to touch the real world.
 => END
 
 
@@ -54,7 +55,8 @@ Señor Food: TODO — SINK: a brief reflection on touching, washing, or preparin
 ## Story job: bring Silicon Valley into the foreground: office perks, colleagues,
 ## routine, or belonging. Do not resolve his conflict yet.
 ~ story_fridge
-Señor Food: TODO — FRIDGE: a memory of the old workplace prompted by this appliance; acknowledge that he misses more than the paycheck.
+Señor Food: The hum of the fridge reminds me of the micro-kitchens at Google... cold brew on tap and arguing about algorithms.
+Señor Food: Free snacks were nice, claro. But what I really miss was having teammates right there to share the day with.
 => END
 
 
@@ -63,7 +65,8 @@ Señor Food: TODO — FRIDGE: a memory of the old workplace prompted by this app
 ## Story job: pivot toward cooking as craft; he should recognize that his former
 ## job also gave him purpose, pressure, and a sense of making things with others.
 ~ story_oven
-Señor Food: TODO — OVEN: reflect on waiting, timing, and care; put the satisfaction of cooking beside the parts of Silicon Valley he still misses.
+Señor Food: Now that's the test of a chef: the oven. Silicon Valley wants everything shipped yesterday, but you cannot rush heat.
+Señor Food: Yet building software had that patience too—sitting with a hard problem until it all clicks. Craft is craft, no matter the medium.
 => END
 
 
@@ -72,7 +75,9 @@ Señor Food: TODO — OVEN: reflect on waiting, timing, and care; put the satisf
 ## Story job: make the tension explicit: automation is exciting, but it echoes
 ## the job and replacement anxiety introduced in the opening.
 ~ story_first_automation
-Señor Food: TODO — AUTOMATION: react to the robot handling learned work; leave him proud, uneasy, and reminded of the team or work he used to have.
+Señor Food: ¡Madre mía! Look at that bot go—it learned from your hands and executed the entire pipeline autonomously!
+Señor Food: It’s brilliant, but... ay, it gives me that familiar knot in my stomach from the all-hands meeting before the layoffs.
+Señor Food: It's thrilling to automate the work, but I wonder... what happens to the human touch when the machines know every recipe?
 => END
 
 
@@ -82,5 +87,7 @@ Señor Food: TODO — AUTOMATION: react to the robot handling learned work; leav
 ## complicated meal come together and understands he misses cooking and Silicon
 ## Valley at the same time. Leave the future open.
 ~ story_final_veggie_burger
-Señor Food: TODO — FINAL VEGGIE BURGER: witness the finished six-step dish; land on a quiet, unresolved realization that both kitchens—the restaurant and his old career—matter to him.
+Señor Food: ¡Santo cielo! Look at that Garden Veggie Burger—six complex stages operating in total harmony.
+Señor Food: The engineer in me designed this kitchen, but the human in me fell in love with the craft. I miss my old team, and I love this grill.
+Señor Food: Maybe I don't have to choose between who I was and who I'm becoming. Gracias, my friend—now let's keep cooking!
 => END
