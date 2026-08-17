@@ -338,6 +338,7 @@ func _create_made_badge(is_made: bool, count: int) -> PanelContainer:
 # ==============================================================================
 
 func _on_category_button_pressed(category_name: String) -> void:
+	SFX.play_click()
 	_active_filter_category = category_name
 	_highlight_active_category_button()
 	_filter_cards()
@@ -351,6 +352,7 @@ func _on_search_text_changed(new_text: String) -> void:
 
 
 func _on_clear_search_pressed() -> void:
+	SFX.play_click()
 	if search_input != null:
 		search_input.text = ""
 	_on_search_text_changed("")

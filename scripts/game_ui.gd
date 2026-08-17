@@ -722,6 +722,7 @@ func _on_tab_change_requested(tab_index: int) -> void:
 
 
 func _on_rotate_button_pressed() -> void:
+	SFX.play_click()
 	var pm := _get_placement_manager()
 	if pm != null:
 		pm.rotate_ghost()

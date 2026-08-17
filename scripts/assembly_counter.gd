@@ -169,6 +169,7 @@ func add_ingredient(item: KitchenItem) -> void:
 		return
 	placed_items.append(item)
 	_update_visuals()
+	SFX.play_drop()
 	_check_recipes()
 
 
@@ -177,6 +178,7 @@ func pop_ingredient() -> KitchenItem:
 		return null
 	var item: KitchenItem = placed_items.pop_back()
 	_update_visuals()
+	SFX.play_pickup()
 	return item
 
 
@@ -185,6 +187,8 @@ func _check_recipes() -> void:
 		if recipe != null and recipe.matches(placed_items):
 			completed_item = recipe.output_item
 			_show_completed_visual(completed_item)
+			SFX.play_pot()
+			SFX.play_latch()
 			RecipeTracker.record_recipe_made(recipe.recipe_id, recipe.output_item)
 			return
 

@@ -19,6 +19,7 @@ var _active_interaction: InteractionArea
 var _interaction_is_held := false
 var _interaction_elapsed := 0.0
 var _look_tween: Tween
+var _footstep_timer := 0.0
 
 
 func _ready() -> void:
@@ -50,9 +51,25 @@ func _physics_process(delta: float) -> void:
 		_apply_look(GameControl.consume_mouse_look_delta() * mouse_sensitivity)
 
 	move_and_slide()
+	_update_footsteps(delta, can_move)
 	_update_hand_bob(delta)
 	_update_interaction_target()
 	_update_held_interaction(delta)
+
+
+func _update_footsteps(delta: float, can_move: bool) -> void:
+	if not can_move or not is_on_floor():
+		_footstep_timer = 0.0
+		return
+	var horiz_speed := Vector2(velocity.x, velocity.z).length()
+	if horiz_speed < 0.2:
+		_footstep_timer = 0.0
+		return
+	_footstep_timer += delta
+	var step_interval := 0.36
+	if _footstep_timer >= step_interval:
+		_footstep_timer = 0.0
+		SFX.play_footstep()
 
 
 func _update_hand_bob(delta: float) -> void:
@@ -130,6 +147,7 @@ func set_held_item(item: KitchenItem) -> void:
 		_held_item_visual.queue_free()
 		_held_item_visual = null
 
+	var had_item := held_item != null
 	held_item = item
 	if held_item != null and held_item.held_scene != null:
 		var visual := held_item.held_scene.instantiate() as Node3D
@@ -138,6 +156,9 @@ func set_held_item(item: KitchenItem) -> void:
 			visual.transform = Transform3D.IDENTITY
 			_disable_held_collisions(visual)
 			_held_item_visual = visual
+
+	if held_item != null and not had_item:
+		SFX.play_pickup()
 
 	GameControl.held_item_changed.emit(held_item)
 	_update_interaction_target(true)

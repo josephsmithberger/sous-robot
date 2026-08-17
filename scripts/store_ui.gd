@@ -119,6 +119,7 @@ func _refresh_card_state(card: Button) -> void:
 
 
 func _on_card_pressed(card: Button) -> void:
+	SFX.play_click()
 	_pending_card = card
 	if not is_instance_valid(card) or not card.has_meta(&"item_id"):
 		return
@@ -182,6 +183,7 @@ func _on_purchase_confirmed() -> void:
 
 
 func _on_purchase_canceled() -> void:
+	SFX.play_click()
 	if _pending_card != null and is_instance_valid(_pending_card):
 		_refresh_card_state(_pending_card)
 	_pending_card = null

@@ -294,6 +294,7 @@ func _adjust_allocation(item_id: StringName, delta: int) -> void:
 	if not _allocations.has(item_id):
 		return
 	var cur_val: int = int(_allocations.get(item_id, 0))
+	SFX.play_click()
 	set_allocation(item_id, cur_val + delta)
 	if not GameControl.is_using_touch():
 		_set_selected_item_by_id(item_id)

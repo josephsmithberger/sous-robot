@@ -152,7 +152,22 @@ func _apply_recipe(player: Node, recipe: ItemProcessRecipe) -> void:
 		_clear_selection()
 	if player.has_method(&"set_held_item"):
 		player.set_held_item(recipe.output_item)
+		_play_process_sound(recipe)
 		RecipeTracker.record_recipe_made(recipe.recipe_id, recipe.output_item)
+
+
+func _play_process_sound(recipe: ItemProcessRecipe) -> void:
+	if not is_inside_tree() or recipe == null:
+		return
+	var verb := recipe.action_verb.to_upper()
+	if verb.contains("CHOP"):
+		SFX.play_chop()
+	elif verb.contains("SLICE"):
+		SFX.play_slice()
+	elif verb.contains("COOK") or verb.contains("FRY") or verb.contains("BOIL") or verb.contains("STEW") or verb.contains("BROIL") or verb.contains("ROAST"):
+		SFX.play_pot()
+	else:
+		SFX.play_knife()
 
 
 func _on_process_picker_selected(target: Node, recipe: ItemProcessRecipe) -> void:

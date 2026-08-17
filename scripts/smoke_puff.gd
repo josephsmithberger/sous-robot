@@ -13,6 +13,7 @@ func _ready() -> void:
 	if auto_start:
 		restart()
 		emitting = true
+		SFX.play_puff()
 
 	if auto_free and one_shot:
 		_schedule_cleanup()
@@ -21,6 +22,7 @@ func _ready() -> void:
 func play() -> void:
 	restart()
 	emitting = true
+	SFX.play_puff()
 	if auto_free and one_shot:
 		_schedule_cleanup()
 
