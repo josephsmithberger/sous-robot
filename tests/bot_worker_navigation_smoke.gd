@@ -36,6 +36,9 @@ func _ready() -> void:
 	_test_bot_worker_dispatch_interaction()
 	print("Step 5 done")
 	await get_tree().process_frame
+	_test_bot_worker_pathfinding_pause()
+	print("Step 5b done")
+	await get_tree().process_frame
 	await _test_bot_worker_despawn()
 	print("Step 6 done")
 	await get_tree().process_frame
@@ -216,6 +219,55 @@ func _test_bot_worker_dispatch_interaction() -> void:
 	assert(bot.get_state() == BotWorker.State.IDLE, "Bot should return to IDLE state after interaction")
 
 	crate_node.queue_free()
+	bot.queue_free()
+
+
+func _test_bot_worker_pathfinding_pause() -> void:
+	GameControl.reset_session()
+	assert(not GameControl.is_robot_pathfinding_paused(), "Robot pathfinding should not be paused initially")
+
+	var bot := BOT_WORKER_SCENE.instantiate() as BotWorker
+	add_child(bot)
+	bot.global_position = Vector3.ZERO
+	bot.navigate_to_position(Vector3(10.0, 0.0, 10.0))
+
+	assert(bot.is_navigating(), "Bot should be in NAVIGATING state")
+
+	# Physics process while unpaused should generate velocity toward target
+	bot._physics_process(0.016)
+	assert(Vector2(bot.velocity.x, bot.velocity.z).length() > 0.0, "Bot should have non-zero horizontal velocity while navigating unpaused")
+
+	# Test 1: Pause on tab switch (switching away from kitchen tab)
+	GameControl.current_tab = 1
+	assert(GameControl.is_robot_pathfinding_paused(), "Robot pathfinding should be paused on non-kitchen tab")
+
+	bot._physics_process(0.016)
+	assert(is_zero_approx(bot.velocity.x) and is_zero_approx(bot.velocity.z), "Bot velocity should be zero while tab is switched away")
+	assert(bot.is_navigating(), "Bot should still retain NAVIGATING state while paused")
+
+	# Return to kitchen tab
+	GameControl.current_tab = GameControl.KITCHEN_TAB
+	assert(not GameControl.is_robot_pathfinding_paused(), "Robot pathfinding should unpause when returning to kitchen tab")
+
+	bot._physics_process(0.016)
+	assert(Vector2(bot.velocity.x, bot.velocity.z).length() > 0.0, "Bot should resume movement after returning to kitchen tab")
+
+	# Test 2: Pause during dialogue
+	GameControl._active_dialogues = 1
+	GameControl._check_robot_pathfinding_pause_changed()
+	assert(GameControl.is_robot_pathfinding_paused(), "Robot pathfinding should be paused when dialogue is active")
+
+	bot._physics_process(0.016)
+	assert(is_zero_approx(bot.velocity.x) and is_zero_approx(bot.velocity.z), "Bot velocity should be zero while dialogue is active")
+
+	# Dialogue ends
+	GameControl._active_dialogues = 0
+	GameControl._check_robot_pathfinding_pause_changed()
+	assert(not GameControl.is_robot_pathfinding_paused(), "Robot pathfinding should unpause when dialogue ends")
+
+	bot._physics_process(0.016)
+	assert(Vector2(bot.velocity.x, bot.velocity.z).length() > 0.0, "Bot should resume movement after dialogue ends")
+
 	bot.queue_free()
 
 

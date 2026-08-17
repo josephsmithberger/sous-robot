@@ -78,12 +78,25 @@ func _find_animation_player() -> void:
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
+	if GameControl.is_robot_pathfinding_paused():
+		_pose_part(&"leg-left", 0.0, delta)
+		_pose_part(&"leg-right", 0.0, delta)
+		_pose_part(&"arm-left", 0.0, delta)
+		_pose_part(&"arm-right", 0.0, delta)
+		return
 	_update_procedural_animation(delta)
 
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+
+	if GameControl.is_robot_pathfinding_paused():
+		velocity.x = 0.0
+		velocity.z = 0.0
+		_play_anim(&"idle")
+		move_and_slide()
+		return
 
 	match _state:
 		State.DESPAWNING:
@@ -143,6 +156,8 @@ func _process_navigation(delta: float) -> void:
 			_path_cursor += 1
 		if _path_cursor >= navigation_path.size():
 			next_pos = _target_position
+	elif next_pos.distance_squared_to(global_position) < 0.0001:
+		next_pos = _target_position
 
 	var move_dir := next_pos - global_position
 	move_dir.y = 0.0

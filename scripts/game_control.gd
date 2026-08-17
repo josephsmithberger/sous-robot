@@ -66,6 +66,7 @@ signal tab_changed(tab_index: int)
 @warning_ignore("unused_signal")
 signal order_clock_paused_changed(is_paused: bool)
 @warning_ignore("unused_signal")
+signal robot_pathfinding_paused_changed(is_paused: bool)
 signal bot_dispatch_requested(order_id: int, order: Dictionary, automatable_items: Dictionary)
 @warning_ignore("unused_signal")
 signal bots_assigned(order_id: int, bot_allocations: Dictionary)
@@ -96,6 +97,7 @@ var current_tab := KITCHEN_TAB:
 		current_tab = value
 		tab_changed.emit(current_tab)
 		_check_clock_pause_changed()
+		_check_robot_pathfinding_pause_changed()
 
 var is_controllable := false:
 	set(value):
@@ -163,6 +165,7 @@ var _camera_mode_before_dialogue: CameraMode = CameraMode.FIRST_PERSON
 var _ui_mode_before_dialogue := false
 var _dialogue_changed_camera := false
 var _last_clock_paused := true
+var _last_robot_pathfinding_paused := false
 var _pending_bot_dispatch: Dictionary = {}
 
 
@@ -298,6 +301,7 @@ func _ready() -> void:
 		RecipeTracker.automation_available.connect(_on_recipe_tracker_automation_available)
 	_connect_dialogue_manager()
 	_last_clock_paused = is_order_clock_paused()
+	_last_robot_pathfinding_paused = is_robot_pathfinding_paused()
 
 
 func _on_recipe_tracker_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
@@ -336,6 +340,7 @@ func reset_session(starting_money: float = 0.0) -> void:
 	money = starting_money
 	money_changed.emit(money, delta, "SESSION START")
 	_check_clock_pause_changed()
+	_check_robot_pathfinding_pause_changed()
 
 
 func begin_order(order_id: int, order_data: Dictionary = {}) -> void:
@@ -614,6 +619,17 @@ func _check_clock_pause_changed() -> void:
 		order_clock_paused_changed.emit(paused)
 
 
+func is_robot_pathfinding_paused() -> bool:
+	return not is_kitchen_tab() or is_dialogue_active()
+
+
+func _check_robot_pathfinding_pause_changed() -> void:
+	var paused := is_robot_pathfinding_paused()
+	if _last_robot_pathfinding_paused != paused:
+		_last_robot_pathfinding_paused = paused
+		robot_pathfinding_paused_changed.emit(paused)
+
+
 func _connect_dialogue_manager() -> void:
 	var dialogue_manager := get_node_or_null("/root/DialogueManager")
 	if dialogue_manager == null:
@@ -642,6 +658,7 @@ func _on_dialogue_started(resource: Resource) -> void:
 		dialogue_activity_changed.emit(true)
 	_refresh_controllability()
 	_check_clock_pause_changed()
+	_check_robot_pathfinding_pause_changed()
 
 
 func _on_dialogue_ended(resource: Resource) -> void:
@@ -665,6 +682,7 @@ func _on_dialogue_ended(resource: Resource) -> void:
 		else:
 			set_ui_mode(_ui_mode_before_dialogue)
 	_check_clock_pause_changed()
+	_check_robot_pathfinding_pause_changed()
 
 	if _active_dialogues == 0 and not _pending_bot_dispatch.is_empty():
 		var pending: Dictionary = _pending_bot_dispatch.duplicate(true)

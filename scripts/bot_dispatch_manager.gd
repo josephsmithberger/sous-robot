@@ -175,7 +175,13 @@ func _produce_item(
 			if not await _travel_to_area(bot, counter):
 				return false
 			var wait_time := maxf(counter.get_interaction_hold_duration(bot), ASSEMBLY_STEP_MINIMUM)
-			await get_tree().create_timer(wait_time).timeout
+			var elapsed_wait := 0.0
+			while elapsed_wait < wait_time:
+				await get_tree().physics_frame
+				if not _is_task_active(order_id):
+					return false
+				if not GameControl.is_robot_pathfinding_paused():
+					elapsed_wait += get_physics_process_delta_time()
 			if not _is_task_active(order_id):
 				return false
 			bot.set_held_item(null)
@@ -204,14 +210,16 @@ func _travel_to_area(bot: BotWorker, target: InteractionArea) -> bool:
 
 
 func _wait_for_bot(bot: BotWorker) -> bool:
-	var started := Time.get_ticks_msec()
+	var active_elapsed := 0.0
 	while is_instance_valid(bot) and (
 		bot.get_state() == BotWorker.State.NAVIGATING
 		or bot.get_state() == BotWorker.State.INTERACTING
 	):
-		if float(Time.get_ticks_msec() - started) / 1000.0 > NAVIGATION_TIMEOUT:
-			bot.stop_navigation()
-			return false
+		if not GameControl.is_robot_pathfinding_paused():
+			active_elapsed += get_physics_process_delta_time()
+			if active_elapsed > NAVIGATION_TIMEOUT:
+				bot.stop_navigation()
+				return false
 		await get_tree().physics_frame
 	return is_instance_valid(bot) and bot.get_state() == BotWorker.State.IDLE
 
