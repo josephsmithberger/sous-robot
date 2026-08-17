@@ -346,7 +346,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_clear_search")
-text = "✕"
+text = "X"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Margin/Layout" unique_id=2048571953]
 unique_name_in_owner = true

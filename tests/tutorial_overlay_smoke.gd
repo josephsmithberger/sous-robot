@@ -20,7 +20,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	assert(tutorial.visible, "Tutorial must appear when the intro dialogue ends.")
 	assert(_tutorial_heading(tutorial).contains("1/4"), "Tutorial must begin at movement step 1/4.")
-	var controls_arrow := tutorial.find_child("TargetArrow", true, false) as Label
+	var controls_arrow := tutorial.find_child("TargetArrow", true, false) as Control
 	assert(controls_arrow != null and not controls_arrow.visible, "Controls must not show a misaligned tutorial arrow.")
 	_assert_behind_camera_pointer(tutorial)
 

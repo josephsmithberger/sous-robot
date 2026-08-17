@@ -46,7 +46,7 @@ func _on_bot_dispatch_requested(order_id: int, order_data: Dictionary, automatab
 		return
 
 	if title_label != null:
-		title_label.text = "BOT HANDOFF — ORDER #%02d" % order_id if order_id > 0 else "BOT HANDOFF"
+		title_label.text = "BOT HANDOFF - ORDER #%02d" % order_id if order_id > 0 else "BOT HANDOFF"
 
 	for child in items_list.get_children():
 		child.queue_free()
@@ -135,7 +135,7 @@ func _create_item_row(item_id: StringName, item_name: String, required_qty: int,
 		# Minus Button
 		var minus_btn := Button.new()
 		minus_btn.name = "MinusButton"
-		minus_btn.text = "−"
+		minus_btn.text = "-"
 		minus_btn.custom_minimum_size = Vector2(34, 34)
 		minus_btn.add_theme_font_override("font", FONT_LILITA)
 		minus_btn.add_theme_font_size_override("font_size", 18)
@@ -193,9 +193,9 @@ func _create_item_row(item_id: StringName, item_name: String, required_qty: int,
 		stepper_hbox.add_child(plus_btn)
 	else:
 		var lock_lbl := Label.new()
-		lock_lbl.text = "🔒 Manual Only"
+		lock_lbl.text = "MANUAL ONLY"
 		lock_lbl.add_theme_font_override("font", FONT_LILITA)
-		lock_lbl.add_theme_font_size_override("font_size", 13)
+		lock_lbl.add_theme_font_size_override("font_size", 12)
 		lock_lbl.add_theme_color_override("font_color", Color(0.65, 0.62, 0.58, 1.0))
 		lock_lbl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		hbox.add_child(lock_lbl)
@@ -243,11 +243,11 @@ func _create_status_badge(is_automated: bool) -> PanelContainer:
 
 	if is_automated:
 		style.bg_color = Color(0.32549, 0.721569, 0.227451, 1.0)
-		label.text = "✓ AUTOMATED"
+		label.text = "AUTOMATED"
 		label.add_theme_color_override("font_color", Color(0.152941, 0.145098, 0.121569, 1.0))
 	else:
 		style.bg_color = Color(0.22, 0.20, 0.18, 1.0)
-		label.text = "🔒 NOT AUTOMATED"
+		label.text = "NOT AUTOMATED"
 		label.add_theme_color_override("font_color", Color(0.68, 0.65, 0.62, 1.0))
 
 	badge.add_theme_stylebox_override("panel", style)

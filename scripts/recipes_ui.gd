@@ -169,7 +169,7 @@ func _create_recipe_card(data: Dictionary) -> Control:
 
 	var formatted_price := "$%.2f" % price if fmod(price, 1.0) != 0.0 else "$%d" % int(price)
 	var price_label := Label.new()
-	price_label.text = "💰 Est. Value: %s" % formatted_price
+	price_label.text = "Est. Value: %s" % formatted_price
 	price_label.add_theme_font_override("font", FONT_LILITA)
 	price_label.add_theme_font_size_override("font_size", 15)
 	price_label.add_theme_color_override("font_color", Color(0.32549, 0.721569, 0.227451, 1)) # Game green
@@ -321,7 +321,7 @@ func _create_made_badge(is_made: bool, count: int) -> PanelContainer:
 
 	if is_made:
 		badge_style.bg_color = Color(0.32549, 0.721569, 0.227451, 1) # Game Green
-		label.text = "✓ MADE (%dx)" % count
+		label.text = "MADE (%dx)" % count
 		label.add_theme_color_override("font_color", Color(0.152941, 0.145098, 0.121569, 1))
 	else:
 		badge_style.bg_color = Color(0.20, 0.18, 0.16, 1)
@@ -520,7 +520,7 @@ func _update_card_made_state(recipe_id: StringName, count: int) -> void:
 			if is_made:
 				badge_style.bg_color = Color(0.32549, 0.721569, 0.227451, 1)
 				badge_style.border_color = Color(0.152941, 0.145098, 0.121569, 1)
-				label.text = "✓ MADE (%dx)" % count
+				label.text = "MADE (%dx)" % count
 				label.add_theme_color_override("font_color", Color(0.152941, 0.145098, 0.121569, 1))
 			else:
 				badge_style.bg_color = Color(0.20, 0.18, 0.16, 1)

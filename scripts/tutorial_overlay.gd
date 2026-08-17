@@ -38,6 +38,30 @@ class TargetBrackets extends Control:
 		draw_line(Vector2(end.x - corner, end.y), Vector2(end.x, end.y), COLOR, STROKE, true)
 		draw_line(Vector2(end.x, end.y - corner), Vector2(end.x, end.y), COLOR, STROKE, true)
 
+
+class TargetArrow extends Control:
+	const COLOR := Color(1.0, 0.78, 0.17, 1.0)
+	const OUTLINE_COLOR := Color(0.07, 0.06, 0.05, 1.0)
+	const OUTLINE_WIDTH := 4.0
+
+	func _draw() -> void:
+		var fill_pts := PackedVector2Array([
+			Vector2(46.0, 26.0),
+			Vector2(10.0, 10.0),
+			Vector2(20.0, 26.0),
+			Vector2(10.0, 42.0),
+		])
+		var outline_pts := PackedVector2Array([
+			Vector2(46.0, 26.0),
+			Vector2(10.0, 10.0),
+			Vector2(20.0, 26.0),
+			Vector2(10.0, 42.0),
+			Vector2(46.0, 26.0),
+		])
+		draw_colored_polygon(fill_pts, COLOR)
+		draw_polyline(outline_pts, OUTLINE_COLOR, OUTLINE_WIDTH, true)
+
+
 signal tutorial_finished
 
 var _viewport_container: SubViewportContainer
@@ -53,7 +77,7 @@ var _card: PanelContainer
 var _eyebrow: Label
 var _message: Label
 var _dismiss_button: Button
-var _arrow: Label
+var _arrow: TargetArrow
 var _target_ring: Panel
 var _target_brackets: Control
 
@@ -207,18 +231,11 @@ func _build_pointer() -> void:
 	_target_brackets.visible = false
 	add_child(_target_brackets)
 
-	_arrow = Label.new()
+	_arrow = TargetArrow.new()
 	_arrow.name = "TargetArrow"
-	_arrow.text = "➤"
 	_arrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_arrow.size = Vector2(52.0, 52.0)
 	_arrow.pivot_offset = _arrow.size * 0.5
-	_arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_arrow.add_theme_color_override("font_color", GOLD)
-	_arrow.add_theme_color_override("font_outline_color", Color(0.07, 0.06, 0.05, 1.0))
-	_arrow.add_theme_constant_override("outline_size", 8)
-	_arrow.add_theme_font_size_override("font_size", 42)
 	add_child(_arrow)
 
 
