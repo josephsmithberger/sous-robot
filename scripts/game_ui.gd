@@ -5,6 +5,17 @@ const FONT_LILITA: FontFile = preload("res://assets/fonts/LilitaOne-Regular.ttf"
 const KITCHEN_TAB := 0
 const TRAY_HEIGHT := 132.0
 const SLIDE_DURATION := 0.28
+const FIRST_UPGRADE_ITEMS: Array[StringName] = [
+	&"CarrotCrate",
+	&"CheeseCrate",
+	&"HamCrate",
+	&"LettuceCrate",
+	&"OnionCrate",
+	&"PotatoCrate",
+	&"SteakCrate",
+	&"TomatoCrate",
+	&"Counter",
+]
 
 @onready var _tabs: TabContainer = $MarginContainer/HSplitContainer/TabContainer
 @onready var _game_viewport_container: SubViewportContainer = $MarginContainer/HSplitContainer/TabContainer/Kitchen/PanelContainer/VBoxContainer/InteractionStage/SubViewportContainer
@@ -42,6 +53,11 @@ var _alert_queue: Array[Dictionary] = []
 var _is_showing_alert := false
 var _alert_tween: Tween
 
+# Story beats are queued so a milestone never interrupts an order or another
+# Señor Food conversation. A title is marked seen as soon as it is queued.
+var _story_queue: Array[StringName] = []
+var _seen_story_titles: Dictionary = {}
+
 func _ready() -> void:
 	_prepare_panel(_dialogue_slot, TRAY_HEIGHT)
 	_prepare_panel(_control_deck, TRAY_HEIGHT)
@@ -61,13 +77,20 @@ func _ready() -> void:
 	GameControl.process_picker_cancelled.connect(_on_process_picker_cancelled)
 	GameControl.process_picker_refreshed.connect(_on_process_picker_refreshed)
 	GameControl.bot_task_completed.connect(_on_bot_task_completed)
+	GameControl.order_completed.connect(_on_story_order_completed)
+	GameControl.item_unlocked.connect(_on_story_item_unlocked)
+	GameControl.bots_assigned.connect(_on_story_bots_assigned)
 	GameControl.placement_started.connect(_on_placement_started)
 	GameControl.placement_completed.connect(_on_placement_completed)
 	GameControl.placement_cancelled.connect(_on_placement_cancelled)
 	GameControl.arrange_mode_changed.connect(_on_arrange_mode_changed)
 	GameControl.tab_change_requested.connect(_on_tab_change_requested)
-	if not RecipeTracker.automation_available.is_connected(_on_automation_available):
-		RecipeTracker.automation_available.connect(_on_automation_available)
+	if not RecipeTracker.automation_available.is_connected(_on_recipe_automation_available):
+		RecipeTracker.automation_available.connect(_on_recipe_automation_available)
+	if not RecipeTracker.recipe_made.is_connected(_on_story_recipe_made):
+		RecipeTracker.recipe_made.connect(_on_story_recipe_made)
+	if not RecipeTracker.tracker_reset.is_connected(_on_story_tracker_reset):
+		RecipeTracker.tracker_reset.connect(_on_story_tracker_reset)
 	GameControl.reset_session()
 	_on_interact_available_changed(GameControl.can_interact)
 	_on_interaction_prompt_changed(GameControl.interaction_prompt, GameControl.interaction_hold_duration)
@@ -108,8 +131,12 @@ func _exit_tree() -> void:
 	DialogueManager.get_current_scene = _previous_dialogue_host_resolver
 	GameControl.set_virtual_input(Vector2.ZERO, Vector2.ZERO)
 	GameControl.set_controllable(false)
-	if RecipeTracker.automation_available.is_connected(_on_automation_available):
-		RecipeTracker.automation_available.disconnect(_on_automation_available)
+	if RecipeTracker.automation_available.is_connected(_on_recipe_automation_available):
+		RecipeTracker.automation_available.disconnect(_on_recipe_automation_available)
+	if RecipeTracker.recipe_made.is_connected(_on_story_recipe_made):
+		RecipeTracker.recipe_made.disconnect(_on_story_recipe_made)
+	if RecipeTracker.tracker_reset.is_connected(_on_story_tracker_reset):
+		RecipeTracker.tracker_reset.disconnect(_on_story_tracker_reset)
 	if GameControl.bot_task_completed.is_connected(_on_bot_task_completed):
 		GameControl.bot_task_completed.disconnect(_on_bot_task_completed)
 	if is_instance_valid(_alert_tween):
@@ -182,6 +209,57 @@ func _on_bot_task_completed(
 		if not detail.is_empty():
 			message += " · %s" % detail
 	_on_automation_available(item_id, display_name, message)
+
+
+func _on_recipe_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
+	_on_automation_available(recipe_id, recipe_name, message)
+	_queue_story_dialogue(&"story_first_automation")
+
+
+func _on_story_order_completed(_order_id: int, payout: float, _final_tip: float) -> void:
+	if payout > 0.0:
+		_queue_story_dialogue(&"story_first_earnings")
+
+
+func _on_story_item_unlocked(item_id: StringName) -> void:
+	if item_id in FIRST_UPGRADE_ITEMS:
+		_queue_story_dialogue(&"story_first_upgrade")
+
+
+func _on_story_bots_assigned(_order_id: int, allocations: Dictionary) -> void:
+	if not allocations.is_empty():
+		_queue_story_dialogue(&"story_first_automation")
+
+
+func _on_story_recipe_made(recipe_id: StringName, _item: KitchenItem, total_count: int) -> void:
+	if recipe_id == &"veggie_burger" and total_count == 1:
+		_queue_story_dialogue(&"story_final_veggie_burger")
+
+
+func _on_story_tracker_reset() -> void:
+	_story_queue.clear()
+	_seen_story_titles.clear()
+
+
+func _queue_story_dialogue(title: StringName) -> void:
+	if title.is_empty() or _seen_story_titles.has(title):
+		return
+	_seen_story_titles[title] = true
+	_story_queue.append(title)
+	# Signals can arrive from cooking, store, and order-completion callbacks.
+	# Defer the launch so their state changes finish before dialogue takes control.
+	call_deferred(&"_try_start_next_story_dialogue")
+
+
+func _try_start_next_story_dialogue() -> void:
+	if _story_queue.is_empty() or GameControl.is_dialogue_active():
+		return
+	if GameControl.is_placing or GameControl.is_arranging:
+		return
+	if GameControl.is_process_picker_open() or GameControl.is_bot_dispatch_open():
+		return
+	var title: StringName = _story_queue.pop_front()
+	start_dialogue(MASTER_DIALOGUE, str(title))
 
 
 func _on_automation_available(recipe_id: StringName, recipe_name: String, message: String) -> void:
@@ -421,6 +499,8 @@ func _on_controllability_changed(_is_controllable: bool) -> void:
 
 func _on_dialogue_activity_changed(_is_active: bool) -> void:
 	_update_interaction_ui()
+	if not _is_active:
+		call_deferred(&"_try_start_next_story_dialogue")
 
 
 func _update_interaction_ui() -> void:
@@ -536,9 +616,16 @@ func _on_placement_started(item_id: StringName) -> void:
 	_update_interaction_ui()
 
 
-func _on_placement_completed(_item_id: StringName, _pos: Vector3, _rot_y: float) -> void:
+func _on_placement_completed(item_id: StringName, _pos: Vector3, _rot_y: float) -> void:
 	_placement_tray.visible = false
 	_update_interaction_ui()
+	match item_id:
+		&"Sink":
+			_queue_story_dialogue(&"story_sink")
+		&"Fridge":
+			_queue_story_dialogue(&"story_fridge")
+		&"Oven":
+			_queue_story_dialogue(&"story_oven")
 
 
 func _on_placement_cancelled() -> void:
