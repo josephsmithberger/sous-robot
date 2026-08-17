@@ -28,6 +28,10 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_test_bot_handoff_deferred_until_dialogue_ends()
 	await get_tree().process_frame
+	_test_mouse_mode_visible_during_handoff()
+	await get_tree().process_frame
+	_test_stepper_buttons_and_keyboard_interaction()
+	await get_tree().process_frame
 	print("BOT_DISPATCH_UI_SMOKE_PASS")
 	get_tree().quit(0)
 
@@ -328,3 +332,102 @@ func _test_bot_handoff_deferred_until_dialogue_ends() -> void:
 	assert(not GameControl.is_bot_dispatch_open(), "is_bot_dispatch_open should be false after cancel")
 
 	game_node.queue_free()
+
+
+func _test_mouse_mode_visible_during_handoff() -> void:
+	var game_node := GAME_SCENE.instantiate()
+	add_child(game_node)
+	GameControl._on_dialogue_ended(SENOR_FOOD_DIALOGUE)
+	RecipeTracker.record_recipe_made(&"slice_bread")
+
+	# Simulate first person gameplay with captured mouse
+	GameControl.set_controllable(true)
+	GameControl.give_player_control()
+	assert(GameControl.has_player_control(), "Player should have control before handoff")
+
+	var order_data := {
+		"order_id": 10,
+		"items": {&"bun": 2},
+		"base_reward": 5.0,
+		"tip": 2.0,
+	}
+	GameControl.begin_order(10, order_data)
+	GameControl.request_bot_dispatch(10, order_data)
+
+	assert(GameControl.is_bot_dispatch_open(), "Bot dispatch modal should be open")
+	assert(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "Mouse mode MUST be VISIBLE while bot dispatch modal is open")
+	assert(not GameControl.has_player_control(), "Player must not control 3D player while modal is open")
+
+	GameControl.cancel_bot_dispatch(10)
+	assert(not GameControl.is_bot_dispatch_open(), "Modal closed")
+
+	game_node.queue_free()
+
+
+func _test_stepper_buttons_and_keyboard_interaction() -> void:
+	var game_node := GAME_SCENE.instantiate()
+	add_child(game_node)
+	GameControl._on_dialogue_ended(SENOR_FOOD_DIALOGUE)
+	RecipeTracker.record_recipe_made(&"slice_bread")
+
+	var modal := game_node.find_child("BotHandoff", true, false) as BotHandoffUI
+	assert(modal != null, "BotHandoffUI should exist")
+
+	var order_data := {
+		"order_id": 11,
+		"items": {&"bun": 3},
+		"base_reward": 5.0,
+		"tip": 2.0,
+	}
+	GameControl.begin_order(11, order_data)
+	GameControl.request_bot_dispatch(11, order_data)
+
+	var bun_row := modal.items_list.find_child("Row_bun", true, false)
+	assert(bun_row != null, "Row_bun should exist")
+
+	var plus_btn := bun_row.find_child("PlusButton", true, false) as Button
+	var minus_btn := bun_row.find_child("MinusButton", true, false) as Button
+	var spinbox := bun_row.find_child("SpinBox", true, false) as SpinBox
+
+	assert(plus_btn != null and minus_btn != null and spinbox != null, "Plus/Minus buttons and SpinBox must exist")
+	assert(spinbox.value == 0, "Initial value should be 0")
+
+	# Test mouse button press (+ and -)
+	plus_btn.pressed.emit()
+	assert(spinbox.value == 1, "Clicking plus button should increment value to 1")
+	plus_btn.pressed.emit()
+	assert(spinbox.value == 2, "Clicking plus button again should increment value to 2")
+	minus_btn.pressed.emit()
+	assert(spinbox.value == 1, "Clicking minus button should decrement value to 1")
+
+	# Test keyboard shortcut events (Right arrow, Left arrow, Number keys, Enter)
+	var right_event := InputEventKey.new()
+	right_event.pressed = true
+	right_event.keycode = KEY_RIGHT
+	modal._unhandled_input(right_event)
+	assert(spinbox.value == 2, "Right arrow key should increment bot assignment to 2")
+
+	var left_event := InputEventKey.new()
+	left_event.pressed = true
+	left_event.keycode = KEY_LEFT
+	modal._unhandled_input(left_event)
+	assert(spinbox.value == 1, "Left arrow key should decrement bot assignment to 1")
+
+	var num_event := InputEventKey.new()
+	num_event.pressed = true
+	num_event.keycode = KEY_3
+	modal._unhandled_input(num_event)
+	assert(spinbox.value == 3, "Pressing key '3' should set bot assignment to 3")
+
+	# Test Enter key confirms bot dispatch
+	var enter_event := InputEventKey.new()
+	enter_event.pressed = true
+	enter_event.keycode = KEY_ENTER
+	modal._unhandled_input(enter_event)
+
+	assert(not modal.visible, "Modal should close after pressing Enter")
+	assert(not GameControl.is_bot_dispatch_open(), "Bot dispatch is closed")
+	assert(int(GameControl.get_active_bot_allocations().get(&"bun", 0)) == 3, "Bots allocated should be 3")
+
+	game_node.queue_free()
+

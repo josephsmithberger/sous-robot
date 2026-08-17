@@ -93,6 +93,25 @@ shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_cancel_focus"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.95, 0.28, 0.22, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.9, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(1, 0.78, 0.17, 0.6)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_confirm_normal"]
 content_margin_left = 10.0
 content_margin_top = 2.0
@@ -146,6 +165,25 @@ corner_radius_bottom_left = 20
 shadow_color = Color(0.152941, 0.145098, 0.121569, 0.45)
 shadow_size = 3
 shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_confirm_focus"]
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+bg_color = Color(0.423529, 0.819608, 0.321569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.9, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(1, 0.78, 0.17, 0.6)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [node name="BotHandoff" type="PanelContainer" unique_id=413750706]
 visible = false
@@ -230,6 +268,7 @@ theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBox_cancel_normal")
 theme_override_styles/pressed = SubResource("StyleBox_cancel_pressed")
 theme_override_styles/hover = SubResource("StyleBox_cancel_hover")
+theme_override_styles/focus = SubResource("StyleBox_cancel_focus")
 text = "SKIP (ESC)"
 
 [node name="ConfirmButton" type="Button" parent="Layout/ActionButtons" unique_id=887579647]
@@ -244,4 +283,14 @@ theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBox_confirm_normal")
 theme_override_styles/pressed = SubResource("StyleBox_confirm_pressed")
 theme_override_styles/hover = SubResource("StyleBox_confirm_hover")
+theme_override_styles/focus = SubResource("StyleBox_confirm_focus")
 text = "DISPATCH BOTS"
+
+[node name="KeyHintLabel" type="Label" parent="Layout" unique_id=2081947261]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.55)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "⌨️  [↑/↓] Select   [←/→] Bots   [0-3] Set   [ENTER] Dispatch   [ESC] Skip"
+horizontal_alignment = 1

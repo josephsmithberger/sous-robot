@@ -195,6 +195,8 @@ func request_bot_dispatch(order_id: int = 0, order_data: Dictionary = {}) -> voi
 	var items: Dictionary = target_order.get("items", {})
 	var automatable_items := RecipeTracker.get_automatable_items_for_order(items)
 	bot_dispatch_open = true
+	set_ui_mode(true)
+	_sync_mouse_mode()
 	bot_dispatch_requested.emit(target_order_id, target_order, automatable_items)
 
 
@@ -204,6 +206,10 @@ func confirm_bot_dispatch(order_id: int, allocations: Dictionary) -> void:
 	_pending_bot_dispatch.clear()
 	bots_assigned.emit(order_id, active_bot_allocations)
 	bot_dispatch_closed.emit()
+	if _controllability_requested and not is_dialogue_active() and camera_mode == CameraMode.FIRST_PERSON:
+		set_ui_mode(false)
+	else:
+		_sync_mouse_mode()
 
 
 func cancel_bot_dispatch(order_id: int = 0) -> void:
@@ -212,6 +218,10 @@ func cancel_bot_dispatch(order_id: int = 0) -> void:
 	_pending_bot_dispatch.clear()
 	bot_dispatch_cancelled.emit(target_order_id)
 	bot_dispatch_closed.emit()
+	if _controllability_requested and not is_dialogue_active() and camera_mode == CameraMode.FIRST_PERSON:
+		set_ui_mode(false)
+	else:
+		_sync_mouse_mode()
 
 
 func is_process_picker_open() -> bool:
@@ -501,7 +511,7 @@ func toggle_camera_mode() -> void:
 
 
 func has_player_control() -> bool:
-	return is_controllable and not is_ui_mode and camera_mode == CameraMode.FIRST_PERSON and not is_placing and not is_arranging
+	return is_controllable and not is_ui_mode and camera_mode == CameraMode.FIRST_PERSON and not is_placing and not is_arranging and not is_bot_dispatch_open() and not is_process_picker_open()
 
 
 func start_placement(item_id: StringName) -> void:
@@ -648,7 +658,9 @@ func _on_dialogue_ended(resource: Resource) -> void:
 		dialogue_activity_changed.emit(false)
 	_refresh_controllability()
 	if _active_dialogues == 0 and _controllability_requested:
-		if resource == SENOR_FOOD_DIALOGUE:
+		if not _pending_bot_dispatch.is_empty():
+			set_ui_mode(true)
+		elif resource == SENOR_FOOD_DIALOGUE:
 			set_ui_mode(false)
 		else:
 			set_ui_mode(_ui_mode_before_dialogue)
@@ -679,6 +691,8 @@ func _sync_mouse_mode() -> void:
 		and camera_mode == CameraMode.FIRST_PERSON
 		and not is_placing
 		and not is_arranging
+		and not is_bot_dispatch_open()
+		and not is_process_picker_open()
 	)
 	if not should_capture:
 		_mouse_look_delta = Vector2.ZERO
